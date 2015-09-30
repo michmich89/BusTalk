@@ -3,7 +3,9 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,12 +20,16 @@ public class BusTalkServer {
     //private InputHandler inputHandler;
     private final Map<Integer, Chatroom> idToChatroom;
     private final Map<User, Session> userToSession;
+    private final List<String> disallowedNames;
 
 
     public BusTalkServer(){
     //    inputHandler = new InputHandler();
         idToChatroom = new HashMap<Integer, Chatroom>();
         userToSession = new HashMap<User, Session>();
+        disallowedNames = new ArrayList<String>();
+
+        disallowedNames.add("Alexander Kloutschek"); //TIHI
     }
 
     @OnMessage
@@ -48,52 +54,89 @@ public class BusTalkServer {
     }
 
     private void handleInput(UserMessage userMessage, Session session){
+        try {
+            String type = userMessage.getString("type");
 
-        if(userMessage.getType().equals("chat message")){
-            int chatId = userMessage.getChatID();
-            Chatroom chatRoom = idToChatroom.get(chatId);
-            String message = userMessage.getMessage();
+            if (type.equals("chat message")) {
+                int chatId = userMessage.getInt("chatId");
+                Chatroom chatRoom = idToChatroom.get(chatId);
+                String message = userMessage.getString("message");
 
-            for(Session s : chatRoom.getChatroomUsers()){
-                s.getAsyncRemote().sendText(message);
+                for (Session s : chatRoom.getChatroomUsers()) {
+                    //TODO: Vad ska skickas tillbaka?
+
+                    //s.getAsyncRemote().sendText(message);
+                }
+
+            } else if (type.equals("join room")) {
+                int chatId = userMessage.getInt("chatId");
+                Chatroom chatRoom = idToChatroom.get(chatId);
+                chatRoom.subscribeToRoom(session);
+
+                for (Session s : chatRoom.getChatroomUsers()) {
+                    //TODO: Vad ska skickas tillbaka?
+                }
+
+
+            } else if (type.equals("leave room")) {
+                int chatId = userMessage.getInt("chatId");
+                Chatroom chatRoom = idToChatroom.get(chatId);
+                chatRoom.unsubscribeToRoom(session);
+
+
+            } else if (type.equals("create room")) {
+                /*
+                TODO: ChatroomFactory, se till att rum skapas, vad ska skickas tillbaka, se till att "skaparen"
+                kommer med i rummet och att andra användare som Bör kunna se rummet får möjlighet till det
+                 */
+
+
+            } else if (type.equals("get users in room")) {
+                int chatId = userMessage.getInt("chatId");
+                Chatroom chatRoom = idToChatroom.get(chatId);
+                chatRoom.getChatroomUsers();
+
+                /*
+                TODO: Vad ska skickas tillbaka?
+                 */
+
+
+            } else if (type.equals("set credentials")) {
+                String nickName = userMessage.getString("name");
+
+                if (!disallowedNames.contains(nickName)){
+                    if(){
+
+                    }
+
+                    /*
+                    TODO: Se till att två användare inte kan ha samma namn, och meddela användaren om det valt ett
+                    namn som är upptaget.
+                     */
+
+
+                }
+
+
             }
-
-        }else if(userMessage.getType().equals("join room")){
-            int chatId = userMessage.getChatID();
-            Chatroom chatRoom = idToChatroom.get(chatId);
-            chatRoom.subscribeToRoom(session);
-
-            for(Session s : chatRoom.getChatroomUsers()){
-                s.getAsyncRemote().send
-            }
-
-
-        }else if(userMessage.getType().equals("leave room")) {
-            int chatId = userMessage.getChatID();
-            Chatroom chatRoom = idToChatroom.get(chatId);
-            chatRoom.unsubscribeToRoom(session);
-
-
-        }else if(userMessage.getType().equals("create room")){
-
-
-
-        }else if(userMessage.getType().equals("get users in room")){
-            int chatId = userMessage.getChatID();
-            Chatroom chatRoom = idToChatroom.get(chatId);
-            chatRoom.getChatroomUsers();
-
-
-        }else if(userMessage.getType().equals("set credentials")){
-            if(){
-               User user = new User()
-
-
-            }
-
+        }catch(IllegalArgumentException e){
+            //TODO: Vi ska skicka tillbaka information om Vad som gick fel
+            session.getAsyncRemote().sendText(e.getMessage());
 
         }
 
+    }
+
+    private void addDisallowedName(String name){
+        if(!disallowedNames.contains(name)) {
+            disallowedNames.add(name);
+        }
+    }
+
+    private void removeDisallowedName(String name){
+        //if(disallowedNames.contains(name)){
+            disallowedNames.remove(name);
+        //}
     }
 
 
