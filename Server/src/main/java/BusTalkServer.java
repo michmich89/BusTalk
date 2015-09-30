@@ -1,7 +1,7 @@
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,26 +14,26 @@ import java.util.Map;
 
 
 
-@ServerEndpoint("/chat"), encoders = , decoders =
+@ServerEndpoint(value = "/chat", encoders = BusTalkJsonEncoder.class, decoders = BusTalkJsonDecoder.class)
 public class BusTalkServer {
 
     //private InputHandler inputHandler;
     private final Map<Integer, Chatroom> idToChatroom;
-    private final Map<User, Session> userToSession;
+    private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
 
 
     public BusTalkServer(){
     //    inputHandler = new InputHandler();
         idToChatroom = new HashMap<Integer, Chatroom>();
-        userToSession = new HashMap<User, Session>();
+        userToSession = HashBiMap.create();
         disallowedNames = new ArrayList<String>();
 
         disallowedNames.add("Alexander Kloutschek"); //TIHI
     }
 
     @OnMessage
-    public void onMessage(Session session, UserMessage userMessage){
+    public void onMessage(UserMessage userMessage, Session session){
         handleInput(userMessage, session);
     }
 
@@ -42,10 +42,10 @@ public class BusTalkServer {
 
     }
 
-/*    @OnError
+    @OnError
     public void onError(){
 
-    }*/
+    }
 
 
     @OnClose
@@ -53,7 +53,10 @@ public class BusTalkServer {
 
     }
 
+
+    //Öppna på egen risk...
     private void handleInput(UserMessage userMessage, Session session){
+        //Du va när den sist - ditt ansvar!
         try {
             String type = userMessage.getString("type");
 
@@ -102,29 +105,58 @@ public class BusTalkServer {
 
 
             } else if (type.equals("set credentials")) {
-                String nickName = userMessage.getString("name");
+                String newNickName = userMessage.getString("name");
+                String newInterest = userMessage.getString("interests");
 
-                if (!disallowedNames.contains(nickName)){
-                    if(){
+                if (!disallowedNames.contains(newNickName)){
+
+                    //DOES THE USER EXIST? IF NOT - DO THIS
+                    if(!userToSession.containsValue(session)) {
+                        User user = new User(newNickName, newInterest);
+                        addUser(user, session);
+
+                    //THE USER EXIST - DO THIS
+                    //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
+                    }else{
+                        User user = userToSession.inverse().get(session);
+
+                        //BEGONE WITH THE OLD
+                        String oldName = user.getName();
+                        removeDisallowedName(oldName);
+
+                        //...IN WITH THE NEW
+                        user.setName(newNickName);
+                        user.setInterests(newInterest);
+                        addDisallowedName(newNickName);
 
                     }
-
                     /*
                     TODO: Se till att två användare inte kan ha samma namn, och meddela användaren om det valt ett
-                    namn som är upptaget.
+                    namn som är upptaget. Vad händer om en användare försöker byta till samma nick?
                      */
+                /*
+                Här tar vi hand om situationen då en användare försöker byta till samma namn
+                Vi plockar ut användaren
+                Kollar om denna användares namn överensstämmer med det nya smeknamnet, till exempel då han vill ha en
+                stor bokstav i mitten som en jävla chef, eller helt enkelt vill ha kvar namnet och enbart byta intressen
 
+                 */
+                }else if(userToSession.inverse().get(session).getName().equalsIgnoreCase(newNickName)){ //Urgh
+                    User user = userToSession.inverse().get(session);
+                    //BEGONE WITH THE OLD
+                    String oldName = user.getName();
+                    removeDisallowedName(oldName);
 
+                    //...IN WITH THE NEW
+                    user.setName(newNickName);
+                    user.setInterests(newInterest);
+                    addDisallowedName(newNickName);
                 }
-
-
             }
         }catch(IllegalArgumentException e){
             //TODO: Vi ska skicka tillbaka information om Vad som gick fel
             session.getAsyncRemote().sendText(e.getMessage());
-
         }
-
     }
 
     private void addDisallowedName(String name){
@@ -139,7 +171,13 @@ public class BusTalkServer {
         //}
     }
 
+    private void addUser(User user, Session session){
+        userToSession.put(user, session);
+        disallowedNames.add(user.getName());
+    }
 
-
-
+    private void removeUser(User user){
+        disallowedNames.remove(user.getName());
+        userToSession.remove(user);
+    }
 }

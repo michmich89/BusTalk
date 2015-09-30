@@ -44,4 +44,9 @@ public class UserMessage {
         }
     }
 
+    @Override
+    public String toString(){
+        return messageInfo.toString();
+    }
+
 }
