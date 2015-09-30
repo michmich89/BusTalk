@@ -7,10 +7,12 @@ import java.util.List;
  */
 public class Chatroom {
 
+    private String chatroomTitle;
     private final int idNbr;
     private final List<Session> chatroomUsers;
 
-    public Chatroom(int idNbr){
+    public Chatroom(int idNbr, String chatroomTitle){
+        this.chatroomTitle = chatroomTitle;
         this.idNbr = idNbr;
         chatroomUsers = new ArrayList<Session>();
     }

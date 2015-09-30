@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Kristoffer on 2015-09-29.
@@ -21,6 +23,7 @@ public class BusTalkServer {
     private final Map<Integer, Chatroom> idToChatroom;
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
+    private final Logger LOGGER;
 
 
     public BusTalkServer(){
@@ -30,6 +33,8 @@ public class BusTalkServer {
         disallowedNames = new ArrayList<String>();
 
         disallowedNames.add("Alexander Kloutschek"); //TIHI
+        LOGGER = Logger.getLogger(BusTalkServer.class.getName());
+
     }
 
     @OnMessage
@@ -39,7 +44,7 @@ public class BusTalkServer {
 
     @OnOpen
     public void onOpen(Session session){
-
+        LOGGER.log(Level.INFO, session.getId() + " has conntected");
     }
 
     @OnError
@@ -114,6 +119,7 @@ public class BusTalkServer {
                     if(!userToSession.containsValue(session)) {
                         User user = new User(newNickName, newInterest);
                         addUser(user, session);
+                        LOGGER.log(Level.INFO, "A user named " + user.getName() + " has been created for session with ID: " + session.getId());
 
                     //THE USER EXIST - DO THIS
                     //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
@@ -128,6 +134,9 @@ public class BusTalkServer {
                         user.setName(newNickName);
                         user.setInterests(newInterest);
                         addDisallowedName(newNickName);
+
+                        LOGGER.log(Level.INFO, session.getId() + ": changed name from " + oldName + "to " + newNickName
+                                    + " and interest to " + newInterest);
 
                     }
                     /*
