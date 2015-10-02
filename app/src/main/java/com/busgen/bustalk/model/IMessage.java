@@ -10,6 +10,5 @@ public interface IMessage {
     int getChatID();
     IUser getUser();
     String toString();
-    void parse();
 
 }
