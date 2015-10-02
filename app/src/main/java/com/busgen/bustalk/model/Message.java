@@ -37,34 +37,29 @@ public class Message implements IMessage {
         this.user = user;
     }
 
-
+    @Override
     public String getType(){
         return this.type;
     }
 
+    @Override
     public String getMessage(){
         return this.message;
     }
 
+    @Override
     public int getChatID(){
         return this.chatID;
     }
 
+    @Override
     public IUser getUser(){
         return this.user;
     }
 
+    @Override
     public String toString(){
         return ("User: " + user + " Type: " + type + " Message: " + message + " ID:" +  Integer.toString(chatID));
     } //Skriver den ut null om någon variabel är null?
-
-    /*
-    sends message to JSON parser. Could be named 'send'?
-     */
-    public void parse(){
-        /* Nåt i den stilen
-        JSONParser.parse(this);
-         */
-    }
 
 }
