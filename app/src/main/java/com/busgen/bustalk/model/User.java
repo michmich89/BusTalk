@@ -13,22 +13,27 @@ public class User implements IUser{
         this.interests = interests;
     }
 
+    @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    @Override
     public void setInterests(String[] interests) {
         this.interests = interests;
     }
 
+    @Override
     public String getNickname() {
         return nickname;
     }
 
+    @Override
     public String[] getInterests() {
         return interests;
     }
 
+    @Override
     public int getNbrOfInterests() {
         return interests.length;
     }
