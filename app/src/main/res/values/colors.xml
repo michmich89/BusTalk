@@ -1,0 +1,4 @@
+<resources>
+    <color name="button_color">#F44336</color>
+    <color name="button_text_color">#FFFFFF</color>
+</resources>

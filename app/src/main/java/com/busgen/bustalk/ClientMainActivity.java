@@ -1,5 +1,6 @@
 package com.busgen.bustalk;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,8 @@ public class ClientMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_main);
+        Intent intent = new Intent(this, MainChatActivity.class);
+        startActivity(intent);
     }
 
     @Override
