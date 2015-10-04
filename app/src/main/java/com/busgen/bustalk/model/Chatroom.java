@@ -13,12 +13,13 @@ public class Chatroom implements IChatroom {
     private String title;
     private Collection<IUser> users;
     private Collection<IMessage> messages;
+    private int maxUsers;
 
-    public Chatroom(String chatID, String type, String title){
+    public Chatroom(String chatID, String type, String title, int maxUsers){
         this.chatID = chatID;
         this.type = type;
         this.title = title;
-
+        this.maxUsers = maxUsers;
         users = new ArrayList<IUser>();
         messages = new ArrayList<IMessage>();
 
@@ -70,6 +71,31 @@ public class Chatroom implements IChatroom {
     }
 
     @Override
+    public int getNbrOfUsers() {
+        return users.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return (users.size() == 0);
+    }
+
+    @Override
+    public boolean isFull() {
+        return (users.size() >= maxUsers);
+    }
+
+    @Override
+    public void setMaxUsers(int maxUsers) {
+        this.maxUsers = maxUsers;
+    }
+
+    @Override
+    public int getMaxUsers() {
+        return maxUsers;
+    }
+
+    @Override
     public Collection<IUser> getUsers() {
         return users;
     }
@@ -81,6 +107,5 @@ public class Chatroom implements IChatroom {
 
     @Override
     public void terminate() {
-        //@TODO
     }
 }

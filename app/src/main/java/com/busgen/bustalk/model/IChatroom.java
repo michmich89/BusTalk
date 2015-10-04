@@ -25,6 +25,16 @@ public interface IChatroom {
 
     public boolean containsUser(IUser user);
 
+    public int getNbrOfUsers();
+
+    public boolean isEmpty();
+
+    public boolean isFull();
+
+    public void setMaxUsers(int maxUsers);
+
+    public int getMaxUsers();
+
     public Collection<IUser> getUsers();
 
     public Collection<IMessage> getMessages();
