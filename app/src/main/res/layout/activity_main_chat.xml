@@ -7,12 +7,11 @@
     tools:context="com.busgen.bustalk.MainChatActivity">
     
     <RelativeLayout
-        android:id="@+id/top_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/message_edit"
+            android:id="@+id/message_input_line"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -31,13 +30,13 @@
             android:textColor="@color/button_text_color"/>
 
         <ListView
-            android:id="@+id/messages_container"
+            android:id="@+id/message_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="false"
             android:layout_alignParentTop="false"
             android:layout_marginBottom="20dp"
-            android:layout_above="@+id/message_edit"
+            android:layout_above="@+id/message_input_line"
             android:layout_marginTop="10dp"
             android:transcriptMode="alwaysScroll"
             android:divider="@null" />

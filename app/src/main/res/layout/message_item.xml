@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/top_content"
+        android:id="@+id/message_top_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -19,7 +19,7 @@
             android:textColor="@android:color/darker_gray"/>
 
         <LinearLayout
-            android:id="@+id/message_text_content"
+            android:id="@+id/message_text_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
