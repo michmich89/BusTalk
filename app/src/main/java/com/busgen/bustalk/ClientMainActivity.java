@@ -12,6 +12,8 @@ public class ClientMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_main);
+
+        //Temporary, added this so that when the app starts; MainChatActivity gets launched
         Intent intent = new Intent(this, MainChatActivity.class);
         startActivity(intent);
     }

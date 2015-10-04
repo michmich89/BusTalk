@@ -2,6 +2,7 @@ package com.busgen.bustalk;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,15 @@ public class MessageAdapter extends BaseAdapter{
     public MessageAdapter(Activity context, List<TempMessage> messages){
         this.context = context;
         this.messages = messages;
-
     }
+
+	public void add(TempMessage message){
+		messages.add(message);
+	}
+
+	public void add(List<TempMessage> messages){
+		this.messages.addAll(messages);
+	}
 
     @Override
     public int getCount(){
@@ -49,6 +57,7 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+		Log.d("myTag", "Inside getView");
         ViewHolder holder;
         TempMessage message = getItem(position);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -65,76 +74,82 @@ public class MessageAdapter extends BaseAdapter{
 
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
-        holder.messageDate.setText(message.getMessage());
+        holder.messageDate.setText(message.getDate());
 
         return convertView;
     }
 
-    public void add(TempMessage message){
-        messages.add(message);
-    }
-
-    public void add(List<TempMessage> messages){
-        this.messages.addAll(messages);
-    }
-
+	//Sets the layout of a message item (Which includes 2 TextViews: Message date and the
+	//actual message text) in the ListView depending on who sent the message
     private void setAlignment(ViewHolder holder, boolean isMe){
         if (!isMe) {
-            holder.messageTextContent.setBackgroundResource(R.drawable.bubble_white_normal);
+			//Sets a 9-patch image of a white chat bubble as background for message text
+            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
 
+			//Aligns the message text and its corresponding bubble to the right in message item
             LinearLayout.LayoutParams layoutParams =
-                    (LinearLayout.LayoutParams) holder.messageTextContent.getLayoutParams();
+                    (LinearLayout.LayoutParams) holder.messageTextContainer.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
-            holder.messageTextContent.setLayoutParams(layoutParams);
+            holder.messageTextContainer.setLayoutParams(layoutParams);
 
+			//Aligns message item to the right in the ListView
             RelativeLayout.LayoutParams lp =
-                    (RelativeLayout.LayoutParams) holder.topContent.getLayoutParams();
+                    (RelativeLayout.LayoutParams) holder.messageTopContainer.getLayoutParams();
             lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
             lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            holder.topContent.setLayoutParams(lp);
-            layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            holder.messageText.setLayoutParams(layoutParams);
+            holder.messageTopContainer.setLayoutParams(lp);
 
+			//Aligns the message date to the right in the message item
             layoutParams = (LinearLayout.LayoutParams) holder.messageDate.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
             holder.messageDate.setLayoutParams(layoutParams);
+
+			//This could be redundant
+			layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
+			layoutParams.gravity = Gravity.RIGHT;
+			holder.messageText.setLayoutParams(layoutParams);
         } else {
-            holder.messageTextContent.setBackgroundResource(R.drawable.bubble_white_normal);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
 
             LinearLayout.LayoutParams layoutParams =
-                    (LinearLayout.LayoutParams) holder.messageTextContent.getLayoutParams();
+                    (LinearLayout.LayoutParams) holder.messageTextContainer.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
-            holder.messageTextContent.setLayoutParams(layoutParams);
+            holder.messageTextContainer.setLayoutParams(layoutParams);
 
             RelativeLayout.LayoutParams lp =
-                    (RelativeLayout.LayoutParams) holder.topContent.getLayoutParams();
+                    (RelativeLayout.LayoutParams) holder.messageTopContainer.getLayoutParams();
             lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
             lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            holder.topContent.setLayoutParams(lp);
+            holder.messageTopContainer.setLayoutParams(lp);
+
+			layoutParams = (LinearLayout.LayoutParams) holder.messageDate.getLayoutParams();
+			layoutParams.gravity = Gravity.LEFT;
+			holder.messageDate.setLayoutParams(layoutParams);
+
+			//This could be redundant
             layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
             holder.messageText.setLayoutParams(layoutParams);
-
-            layoutParams = (LinearLayout.LayoutParams) holder.messageDate.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
-            holder.messageDate.setLayoutParams(layoutParams);
         }
     }
 
+	//ViewHolder class used for the ViewHolder Design Pattern
+	private static class ViewHolder{
+		public TextView messageText;
+		public TextView messageDate;
+		public LinearLayout messageTopContainer;
+		public LinearLayout messageTextContainer;
+	}
+
+	//Returns a ViewHolder corresponding to the View that is sent in as a parameter
     private ViewHolder createViewHolder(View v){
         ViewHolder holder = new ViewHolder();
         holder.messageDate = (TextView) v.findViewById(R.id.message_date);
         holder.messageText = (TextView) v.findViewById(R.id.message_text);
-        holder.topContent = (LinearLayout) v.findViewById(R.id.top_content);
-        holder.messageTextContent = (LinearLayout) v.findViewById(R.id.message_text_content);
+        holder.messageTopContainer = (LinearLayout) v.findViewById(R.id.message_top_container);
+        holder.messageTextContainer = (LinearLayout) v.findViewById(R.id.message_text_container);
         return holder;
     }
 
-    private static class ViewHolder{
-        public TextView messageText;
-        public TextView messageDate;
-        public LinearLayout topContent;
-        public LinearLayout messageTextContent;
-    }
+
 }
