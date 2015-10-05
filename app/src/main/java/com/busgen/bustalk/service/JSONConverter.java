@@ -66,6 +66,7 @@ public class JSONConverter {
             if(message instanceof MsgChatMessage){
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
+                //todo fixa bättre metodnamn i chat message klassen
                 object.put("chatID", chatMessage.chatID());
                 object.put("nickname", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
@@ -73,13 +74,26 @@ public class JSONConverter {
                 //// TODO: 05/10/2015 Implementera metoder(if-satser nedanför
 
             }else if(message instanceof MsgJoinRoom){
+                MsgJoinRoom joinMessage = (MsgJoinRoom)message;
+                object.put("type", "JoinRoom");
+                object.put("chatID",joinMessage.getChatID());
 
             }else if(message instanceof MsgCreateRoom){
+                MsgCreateRoom createMessage = (MsgCreateRoom)message;
+                object.put("type","CreateRoom");
+                object.put("chatID"createMessage.getChatID());
 
             }else if(message instanceof MsgLeaveRoom){
+                MsgLeaveRoom leaveMessage = (MsgLeaveRoom)message;
+                object.put("type", "LeaveRoom");
+                object.put("chatID", leaveMessage.getChatID());
 
             }else if(message instanceof MsgChooseNickname){
-
+                MsgChooseNickname nickMessage = (MsgChooseNickname)message;
+                object.put("type", "ChooseNickname");
+                object.put("nickname", nickMessage.getNickname());
+            }else{
+                //todo error
             }
         }catch(JSONException e){
             e.printStackTrace();
