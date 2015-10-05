@@ -6,9 +6,9 @@ package com.busgen.bustalk.model;
 public class User implements IUser{
 
     private String nickname;
-    private String[] interests;
+    private String interests;
 
-    public User(String nickname, String[] interests){
+    public User(String nickname, String interests){
         this.nickname = nickname;
         this.interests = interests;
     }
@@ -19,7 +19,7 @@ public class User implements IUser{
     }
 
     @Override
-    public void setInterests(String[] interests) {
+    public void setInterests(String interests) {
         this.interests = interests;
     }
 
@@ -29,12 +29,8 @@ public class User implements IUser{
     }
 
     @Override
-    public String[] getInterests() {
+    public String getInterests() {
         return interests;
     }
 
-    @Override
-    public int getNbrOfInterests() {
-        return interests.length;
-    }
 }
