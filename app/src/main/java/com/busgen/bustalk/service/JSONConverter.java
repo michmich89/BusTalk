@@ -1,42 +1,62 @@
 package com.busgen.bustalk.service;
 
-import com.busgen.bustalk.model.IMessage;
+import android.os.Message;
+
+import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
-import com.busgen.bustalk.model.Message;
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
+import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
+import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
+import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
+import com.busgen.bustalk.model.ServerMessages.MsgLeaveRoom;
+import com.busgen.bustalk.model.ServerMessages.MsgLostChatRoom;
+import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
+import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
+import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Date;
 
 /**
  * Class used to convert JSON objects from our Server and the Innovation platform to appropriate data types.
  */
 public class JSONConverter {
 
-    public IMessage decodeServerMessage(JSONObject object){
-        Message message;
+    public IServerMessage decodeServerMessage(JSONObject object){
+        IServerMessage message;
         try{
             String type = object.getString("type");
             if(type.equals("chatmessage"))){
-                //IUser user = new User(object.getString("nick"), object.getString("interest"));
-                message = new Message(type, object.getString("nickname") object.getInt("chatID"), object.getString("message"), object.getString("timestamp")));
+                String dateString = object.getString("timestamp");
+                Date testDate = new Date();
+                //needs to convert timestamp to date?
+                message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate));
             }else if(type.equals("NewChatRoom")){
-                message = new Message(type, object.getInt("chatID"));
+                message = new MsgNewChatRoom(object.getInt("chatID"));
             }else if(type.equals("LostChatRoom")){
-                message = new Message(type, object.getInt("chatID"));
-            }else if(type.equals("NickAvailable")){
-                message = new Message(type, object.getBoolean("availability"));
+                message = new MsgLostChatRoom(object.getInt("chatID"));
+            }else if(type.equals("NicknameAvailable")){
+                message = new MsgNicknameAvailable(object.getBoolean("availability"));
             }else if(type.equals("UserList")){
                 //logik för att skapa user meddelanden
             }else if(type.equals("NewUserInChat")){
+                IUser = new User()
+                message = new MsgNewUserInChat()
                 //Samma implementation som ovan utan loop genom lista typ.
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
+        if(message == null){
+            throw new NullPointerException("JSON object could not be converted to message");
+        }
+        return message;
     }
 
-    public JSONObject encodeServerMessage(IMessage message){
+    public JSONObject encodeServerMessage(IServerMessage message){
         if(message == null){
             throw new NullPointerException("The message was null and could therefore not be converted to a JSON object");
         }
@@ -56,7 +76,7 @@ public class JSONConverter {
 
             }else if(message instanceof MsgLeaveRoom){
 
-            }else if(message instanceof MsgChooseNick){
+            }else if(message instanceof MsgChooseNickname){
 
             }
         }catch(JSONException e){
