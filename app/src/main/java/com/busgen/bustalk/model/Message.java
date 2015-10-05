@@ -1,19 +1,22 @@
 package com.busgen.bustalk.model;
 
+import java.util.Date;
+
 /**
  * Created by Johan on 2015-10-01.
  */
-public class Message implements IMessage {
+public class Message implements IServerMessage {
 
     private String type;
     private String message;
     private int chatID;
     private IUser user;
+    private Date timestamp;
 
     /*
     creates a chat message
      */
-    public Message(String type, String message, int chatID, IUser user){
+    public Message(String type, String message, int chatID, IUser user, Date timestamp){
         this.type = type;
         this.message = message;
         this.chatID = chatID;
@@ -21,7 +24,7 @@ public class Message implements IMessage {
     }
 
     /*
-    creates a command message
+    creates a newUserInChat/lostUserInChat message
      */
     public Message(String type, int chatID, IUser user){
         this.type = type;
@@ -30,11 +33,11 @@ public class Message implements IMessage {
     }
 
     /*
-    creates a command message
+    creates a joinRoom/leaveRoom message
      */
-    public Message(String type, IUser user) {
+    public Message(String type, int chatID) {
         this.type = type;
-        this.user = user;
+        this.chatID = chatID;
     }
 
     @Override
@@ -42,20 +45,6 @@ public class Message implements IMessage {
         return this.type;
     }
 
-    @Override
-    public String getMessage(){
-        return this.message;
-    }
-
-    @Override
-    public int getChatID(){
-        return this.chatID;
-    }
-
-    @Override
-    public IUser getUser(){
-        return this.user;
-    }
 
     @Override
     public String toString(){
