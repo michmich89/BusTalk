@@ -7,13 +7,13 @@ import com.busgen.bustalk.model.IServerMessage;
  */
 public class MsgNicknameAvailable implements IServerMessage {
 
-    private String nickname;
+    private boolean availability;
 
-    public MsgNicknameAvailable(String nickname){
-        this.nickname = nickname;
+    public MsgNicknameAvailable(boolean availability){
+        this.availability = availability;
     }
 
-    public String getNickname(){
-        return nickname;
+    public boolean getAvailability(){
+        return availability;
     }
 }
