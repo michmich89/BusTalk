@@ -25,7 +25,7 @@ public class MsgChatMessage implements IServerMessage {
         return message;
     }
 
-    public int chatID(){
+    public int getChatID(){
         return chatID;
     }
 
