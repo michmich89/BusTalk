@@ -12,4 +12,8 @@ public class MsgChooseNickname implements IServerMessage {
     public MsgChooseNickname(String nickname){
         this.nickname = nickname;
     }
+
+    public String getNickname(){
+        return nickname;
+    }
 }

@@ -10,14 +10,30 @@ import java.util.Date;
 public class MsgChatMessage implements IServerMessage {
 
     private String message;
-    private String chatID;
+    private int chatID;
     private String nickname;
     private Date timestamp;
 
-    public MsgChatMessage(String message, String chatID, String nickname, Date timestamp){
+    public MsgChatMessage(String message, int chatID, String nickname, Date timestamp){
         this.message = message;
         this.chatID = chatID;
         this.nickname = nickname;
         this.timestamp = timestamp;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public int chatID(){
+        return chatID;
+    }
+
+    public String getNickname(){
+        return nickname;
+    }
+
+    public Date getTimestamp(){
+        return timestamp;
     }
 }
