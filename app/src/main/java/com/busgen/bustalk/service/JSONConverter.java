@@ -29,10 +29,10 @@ public class JSONConverter {
         IServerMessage message;
         try{
             String type = object.getString("type");
-            if(type.equals("chatmessage"))){
+            if(type.equals("chatmessage")){
                 String dateString = object.getString("timestamp");
                 Date testDate = new Date();
-                //needs to convert timestamp to date?
+                //todo needs to convert timestamp to date?
                 message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate));
             }else if(type.equals("NewChatRoom")){
                 message = new MsgNewChatRoom(object.getInt("chatID"));
@@ -41,18 +41,19 @@ public class JSONConverter {
             }else if(type.equals("NicknameAvailable")){
                 message = new MsgNicknameAvailable(object.getBoolean("availability"));
             }else if(type.equals("UserList")){
-                //logik för att skapa user meddelanden
+                //todo logik för att skapa user meddelanden, behöver se JSON objektet för att implementera
             }else if(type.equals("NewUserInChat")){
-                IUser = new User()
-                message = new MsgNewUserInChat()
-                //Samma implementation som ovan utan loop genom lista typ.
+                IUser user = new User(object.getString("nickname"), object.getString("interests"));
+                message = new MsgNewUserInChat(user, object.getInt("chatID"));
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
+        /*
+        Kanske onödig
         if(message == null){
             throw new NullPointerException("JSON object could not be converted to message");
-        }
+        }*/
         return message;
     }
 
@@ -60,15 +61,16 @@ public class JSONConverter {
         if(message == null){
             throw new NullPointerException("The message was null and could therefore not be converted to a JSON object");
         }
-        JSONObject object;
+        JSONObject object = new JSONObject();
         try{
             if(message instanceof MsgChatMessage){
-                chatMessage = (MsgChatMessage) message;
+                MsgChatMessage chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
-                object.put("chatID", chatMessage.getChatID());
-                object.put("nickname", chatMessage.getUser().getNickname());
+                object.put("chatID", chatMessage.chatID());
+                object.put("nickname", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
                 object.put("timestamp", chatMessage.getTimestamp());
+                //// TODO: 05/10/2015 Implementera metoder(if-satser nedanför
 
             }else if(message instanceof MsgJoinRoom){
 
@@ -82,6 +84,7 @@ public class JSONConverter {
         }catch(JSONException e){
             e.printStackTrace();
         }
+        return object;
     }
 
     public String decodePlatformObject(JSONObject object){
