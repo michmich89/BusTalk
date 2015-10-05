@@ -37,7 +37,7 @@ public interface IChatroom {
 
     public Collection<IUser> getUsers();
 
-    public Collection<IMessage> getMessages();
+    public Collection<IServerMessage> getMessages();
 
     public void terminate();
 
