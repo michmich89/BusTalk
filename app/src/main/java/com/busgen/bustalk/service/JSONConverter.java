@@ -19,8 +19,10 @@ public class JSONConverter {
             String type = object.getString("type");
             if(type.equals("chatmessage"))){
                 //IUser user = new User(object.getString("nick"), object.getString("interest"));
-                message = new Message(type, object.getString("nick") object.getInt("chatID"), object.getString("message"), object.getString("timestamp")));
-            }else if(type.equals("NewChatRoom")||type.equals("LostChatRoom")){
+                message = new Message(type, object.getString("nickname") object.getInt("chatID"), object.getString("message"), object.getString("timestamp")));
+            }else if(type.equals("NewChatRoom")){
+                message = new Message(type, object.getInt("chatID"));
+            }else if(type.equals("LostChatRoom")){
                 message = new Message(type, object.getInt("chatID"));
             }else if(type.equals("NickAvailable")){
                 message = new Message(type, object.getBoolean("availability"));
@@ -43,7 +45,10 @@ public class JSONConverter {
             if(message instanceof MsgChatMessage){
                 chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
-                object.put("", message.)
+                object.put("chatID", chatMessage.getChatID());
+                object.put("nickname", chatMessage.getUser().getNickname());
+                object.put("message", chatMessage.getMessage());
+                object.put("timestamp", chatMessage.getTimestamp());
 
             }else if(message instanceof MsgJoinRoom){
 
