@@ -7,14 +7,9 @@ import com.busgen.bustalk.model.IServerMessage;
  */
 public class MsgChooseNickname implements IServerMessage {
 
-    private String message;
-    private String chatID;
     private String nickname;
 
-    public MsgChatMessage(String message, String chatID, String nickname, Date timestamp){
-        this.message = message;
-        this.chatID = chatID;
+    public MsgChooseNickname(String nickname){
         this.nickname = nickname;
-        this.timestamp = timestamp;
     }
 }
