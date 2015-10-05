@@ -7,9 +7,13 @@ import com.busgen.bustalk.model.IServerMessage;
  */
 public class MsgJoinRoom implements IServerMessage {
 
-    private String chatID;
+    private int chatID;
 
-    public MsgJoinRoom(String chatID){
+    public MsgJoinRoom(int chatID){
         this.chatID = chatID;
+    }
+
+    public int getChatID(){
+        return chatID;
     }
 }

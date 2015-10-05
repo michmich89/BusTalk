@@ -8,11 +8,19 @@ import com.busgen.bustalk.model.IUser;
  */
 public class MsgLostUserInChat implements IServerMessage {
 
-    private String chatID;
+    private int chatID;
     private IUser user;
 
-    public MsgLostUserInChat(String chatID, IUser user){
+    public MsgLostUserInChat(int chatID, IUser user){
         this.chatID = chatID;
         this.user = user;
+    }
+
+    public int getChatID(){
+        return chatID;
+    }
+
+    public IUser getUser(){
+        return user;
     }
 }

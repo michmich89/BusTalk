@@ -8,10 +8,14 @@ import com.busgen.bustalk.model.IUser;
  */
 public class MsgNewUserInChat implements IServerMessage {
     private IUser user;
-    private String chatID;
+    private int chatID;
 
-    public MsgNewUserInChat(IUser user, String chatID){
+    public MsgNewUserInChat(IUser user, int chatID){
         this.user = user;
         this.chatID = chatID;
+    }
+
+    public int getChatID(){
+        return chatID;
     }
 }

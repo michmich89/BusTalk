@@ -12,4 +12,8 @@ public class MsgNicknameAvailable implements IServerMessage {
     public MsgNicknameAvailable(String nickname){
         this.nickname = nickname;
     }
+
+    public String getNickname(){
+        return nickname;
+    }
 }
