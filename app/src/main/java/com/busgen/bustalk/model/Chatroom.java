@@ -12,7 +12,7 @@ public class Chatroom implements IChatroom {
     private String type;
     private String title;
     private Collection<IUser> users;
-    private Collection<IMessage> messages;
+    private Collection<IServerMessage> messages;
     private int maxUsers;
 
     public Chatroom(String chatID, String type, String title, int maxUsers){
@@ -21,7 +21,7 @@ public class Chatroom implements IChatroom {
         this.title = title;
         this.maxUsers = maxUsers;
         users = new ArrayList<IUser>();
-        messages = new ArrayList<IMessage>();
+        messages = new ArrayList<IServerMessage>();
 
     }
 
@@ -101,7 +101,7 @@ public class Chatroom implements IChatroom {
     }
 
     @Override
-    public Collection<IMessage> getMessages() {
+    public Collection<IServerMessage> getMessages() {
         return messages;
     }
 
