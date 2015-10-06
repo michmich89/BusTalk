@@ -80,7 +80,7 @@ public class BusTalkServer {
 
     @OnOpen
     public void onOpen(Session session){
-        LOGGER.log(Level.INFO, session.getId() + " has conntected");
+        LOGGER.log(Level.INFO, String.format("[{0}] Connected to server.", session.getId()));
     }
 
     @OnError
@@ -91,7 +91,7 @@ public class BusTalkServer {
 
     @OnClose
     public void onClose(Session session){
-
+        LOGGER.log(Level.INFO, String.format("[{0}] Disconnected from server."));
     }
 
 
@@ -110,6 +110,8 @@ public class BusTalkServer {
                     String nameOfRoom = userMessage.getString("chatName");
                     Chatroom chatroom = chatroomFactory.createChatroom(nameOfRoom);
                     int chatId = chatroom.getIdNbr();
+
+                    LOGGER.log(Level.INFO, String.format("[{0}] Created chat {1} with id {2}", new Object[]{session.getId(), nameOfRoom, chatId}));
 
                     idToChatroom.put(chatId, chatroom);
                     chatroom.subscribeToRoom(userToSession.inverse().get(session));
@@ -130,6 +132,8 @@ public class BusTalkServer {
                     Chatroom chatRoom = idToChatroom.get(chatId);
                     chatRoom.subscribeToRoom(userToSession.inverse().get(session));
 
+                    LOGGER.log(Level.INFO, String.format("[{0}] Joined room {1} ({2})"), new Object[]{session.getId(), chatRoom.getTitle(), chatId});
+
                     newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
                 }
                     break;
@@ -146,8 +150,12 @@ public class BusTalkServer {
 
                     chatroom.unsubscribeToRoom(userToSession.inverse().get(session));
 
+                    LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"), new Object[]{session.getId(), chatroom.getTitle(), chatId});
+
                     if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > 100){
                         idToChatroom.remove(chatId);
+
+                        LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
 
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("type", ROOM_DELETED_NOTIFICATION);
@@ -189,23 +197,27 @@ public class BusTalkServer {
     private void addDisallowedName(String name){
         if(!disallowedNames.contains(name)) {
             disallowedNames.add(name);
+            LOGGER.log(Level.INFO, String.format("Added \"{0}\" to list of disallowed names", name));
         }
     }
 
     private void removeDisallowedName(String name){
         //if(disallowedNames.contains(name)){
             disallowedNames.remove(name);
+            LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names", name));
         //}
     }
 
     private void addUser(User user, Session session){
         userToSession.put(user, session);
+        LOGGER.log(Level.INFO, String.format("[{0}] \"{1}\" added to user list"), new Object[]{session.getId(), user.getName()});
         disallowedNames.add(user.getName());
     }
 
     private void removeUser(User user){
         disallowedNames.remove(user.getName());
         userToSession.remove(user);
+        LOGGER.log(Level.INFO, String.format("[{0}] \"{1}\" removed from user list"), new Object[]{userToSession.get(user).getId(), user.getName()});
     }
 
     private void sendChatMessage(UserMessage userMessage, Session session) {
@@ -275,6 +287,7 @@ public class BusTalkServer {
             User user = userToSession.inverse().get(session);
             //BEGONE WITH THE OLD
             String oldName = user.getName();
+            String oldInterests = user.getInterests();
             removeDisallowedName(oldName);
 
             //...IN WITH THE NEW
@@ -283,6 +296,8 @@ public class BusTalkServer {
             addDisallowedName(newNickName);
 
             status = 1;
+            LOGGER.log(Level.INFO, "[" + session.getId() + "] Name changed" + oldName + " -> " + newNickName
+                    + " and interest " + oldInterests + " -> " + newInterest);
         }
 
         JSONObject jsonObject = new JSONObject();
