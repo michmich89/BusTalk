@@ -251,7 +251,7 @@ public class BusTalkServer {
             if(!userToSession.containsValue(session)) {
                 User user = new User(newNickName, newInterest);
                 addUser(user, session);
-                LOGGER.log(Level.INFO, "[" + session.getId() + "]" + "User \"" + user.getName() + "created with interests \"" + newInterest + "\"");
+                LOGGER.log(Level.INFO, "[" + session.getId() + "]" + "User \"" + user.getName() + "\" created with interests \"" + newInterest + "\"");
 
                 //THE USER EXIST - DO THIS
                 //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
@@ -348,7 +348,7 @@ public class BusTalkServer {
         objectToSend.put("type", NEW_USER_IN_CHAT_NOTIFICATION); //What notification should be sent back?
         objectToSend.put("chatId", chatroom.getIdNbr());
         objectToSend.put("user", user.getName());
-        objectToSend.put("interest", user.getInterests());
+        objectToSend.put("interests", user.getInterests());
 
         for (User u : chatroom.getChatroomUsers()) {
             Session s = userToSession.get(u);
