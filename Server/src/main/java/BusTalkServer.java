@@ -1,5 +1,6 @@
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.websocket.*;
@@ -61,7 +62,6 @@ public class BusTalkServer {
     private void handleInput(UserMessage userMessage, Session session){
         //Du va när den sist - ditt ansvar!
         try {
-            User sender = new User();
             int type = userMessage.getInt("type");
 
             /* The UserMessage is telling the program that it's a...
@@ -82,7 +82,8 @@ public class BusTalkServer {
              */
 
             switch(type){
-                case 11:
+                case 11: // Send chat message
+                    sendChatMessage(userMessage, session);
                     break;
 
                 case 21: // Join room
@@ -97,17 +98,20 @@ public class BusTalkServer {
                     break;
                 case 22:
                     break;
-                case 23:
+                case 23: // List of users in room request
+                    sendListOfUsersInChat(userMessage, session);
                     break;
                 case 24:
                     break;
                 case 25:
                     break;
                 case 26:
+                    sendListOfChatrooms(userMessage, session);
                     break;
                 case 29:
                     break;
                 case 31:
+                    changeNickOrInterest(userMessage, session);
                     break;
                 case 32:
                     break;
@@ -122,21 +126,7 @@ public class BusTalkServer {
             }
 
             if (type.equals("chat message")) {
-                int chatId = userMessage.getInt("chatId");
-                Chatroom chatRoom = idToChatroom.get(chatId);
-                String message = userMessage.getString("message");
 
-                for (Session s : chatRoom.getChatroomUsers()) {
-                    //TODO: Vad ska skickas tillbaka?
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("type", 1);
-                    jsonObject.put("chatId", chatId);
-                    jsonObject.put("sender", sender.getName());
-                    jsonObject.put("message", message);
-                    jsonObject.put("time", new Date().toString());
-
-                    s.getAsyncRemote().sendObject(jsonObject);
-                }
 
             } else if (type.equals("join room")) {
             } else if (type.equals("leave room")) {
@@ -153,67 +143,9 @@ public class BusTalkServer {
 
 
             } else if (type.equals("get users in room")) {
-                int chatId = userMessage.getInt("chatId");
-                Chatroom chatRoom = idToChatroom.get(chatId);
-                chatRoom.getChatroomUsers();
-
-                /*
-                TODO: Vad ska skickas tillbaka?
-                 */
-
 
             } else if (type.equals("set credentials")) {
-                String newNickName = userMessage.getString("name");
-                String newInterest = userMessage.getString("interests");
 
-                if (!disallowedNames.contains(newNickName)){
-
-                    //DOES THE USER EXIST? IF NOT - DO THIS
-                    if(!userToSession.containsValue(session)) {
-                        User user = new User(newNickName, newInterest);
-                        addUser(user, session);
-                        LOGGER.log(Level.INFO, "A user named " + user.getName() + " has been created for session with ID: " + session.getId());
-
-                    //THE USER EXIST - DO THIS
-                    //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
-                    }else{
-                        User user = userToSession.inverse().get(session);
-
-                        //BEGONE WITH THE OLD
-                        String oldName = user.getName();
-                        removeDisallowedName(oldName);
-
-                        //...IN WITH THE NEW
-                        user.setName(newNickName);
-                        user.setInterests(newInterest);
-                        addDisallowedName(newNickName);
-
-                        LOGGER.log(Level.INFO, session.getId() + ": changed name from " + oldName + "to " + newNickName
-                                    + " and interest to " + newInterest);
-
-                    }
-                    /*
-                    TODO: Se till att två användare inte kan ha samma namn, och meddela användaren om det valt ett
-                    namn som är upptaget. Vad händer om en användare försöker byta till samma nick?
-                     */
-                /*
-                Här tar vi hand om situationen då en användare försöker byta till samma namn
-                Vi plockar ut användaren
-                Kollar om denna användares namn överensstämmer med det nya smeknamnet, till exempel då han vill ha en
-                stor bokstav i mitten som en jävla chef, eller helt enkelt vill ha kvar namnet och enbart byta intressen
-
-                 */
-                }else if(userToSession.inverse().get(session).getName().equalsIgnoreCase(newNickName)){ //Urgh
-                    User user = userToSession.inverse().get(session);
-                    //BEGONE WITH THE OLD
-                    String oldName = user.getName();
-                    removeDisallowedName(oldName);
-
-                    //...IN WITH THE NEW
-                    user.setName(newNickName);
-                    user.setInterests(newInterest);
-                    addDisallowedName(newNickName);
-                }
             }
         }catch(IllegalArgumentException e){
             //TODO: Vi ska skicka tillbaka information om Vad som gick fel
@@ -241,5 +173,122 @@ public class BusTalkServer {
     private void removeUser(User user){
         disallowedNames.remove(user.getName());
         userToSession.remove(user);
+    }
+
+    private void sendChatMessage(UserMessage userMessage, Session session) {
+        User sender = userToSession.inverse().get(session);
+
+        int chatId = userMessage.getInt("chatId");
+        Chatroom chatRoom = idToChatroom.get(chatId);
+        String message = userMessage.getString("message");
+
+        for (Session s : chatRoom.getChatroomUsers()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", 1);
+            jsonObject.put("chatId", chatId);
+            jsonObject.put("sender", sender.getName());
+            jsonObject.put("message", message);
+            jsonObject.put("time", new Date().toString());
+
+            s.getAsyncRemote().sendObject(jsonObject);
+        }
+    }
+
+    private void changeNickOrInterest(UserMessage userMessage, Session session) {
+        String newNickName = userMessage.getString("name");
+        String newInterest = userMessage.getString("interests");
+        int status = 0;
+
+        if (!disallowedNames.contains(newNickName)){
+
+            //DOES THE USER EXIST? IF NOT - DO THIS
+            if(!userToSession.containsValue(session)) {
+                User user = new User(newNickName, newInterest);
+                addUser(user, session);
+                LOGGER.log(Level.INFO, "A user named " + user.getName() + " has been created for session with ID: " + session.getId());
+
+                //THE USER EXIST - DO THIS
+                //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
+            }else{
+                User user = userToSession.inverse().get(session);
+
+                //BEGONE WITH THE OLD
+                String oldName = user.getName();
+                removeDisallowedName(oldName);
+
+                //...IN WITH THE NEW
+                user.setName(newNickName);
+                user.setInterests(newInterest);
+                addDisallowedName(newNickName);
+
+                LOGGER.log(Level.INFO, session.getId() + ": changed name from " + oldName + "to " + newNickName
+                        + " and interest to " + newInterest);
+            }
+            status = 1;
+        /*
+        TODO: Se till att två användare inte kan ha samma namn, och meddela användaren om det valt ett
+        namn som är upptaget. Vad händer om en användare försöker byta till samma nick?
+         */
+        /*
+        Här tar vi hand om situationen då en användare försöker byta till samma namn
+        Vi plockar ut användaren
+        Kollar om denna användares namn överensstämmer med det nya smeknamnet, till exempel då han vill ha en
+        stor bokstav i mitten som en jävla chef, eller helt enkelt vill ha kvar namnet och enbart byta intressen
+
+         */
+        } else if (userToSession.inverse().get(session).getName().equalsIgnoreCase(newNickName)){ //Urgh
+            User user = userToSession.inverse().get(session);
+            //BEGONE WITH THE OLD
+            String oldName = user.getName();
+            removeDisallowedName(oldName);
+
+            //...IN WITH THE NEW
+            user.setName(newNickName);
+            user.setInterests(newInterest);
+            addDisallowedName(newNickName);
+
+            status = 1;
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 4);
+        jsonObject.put("status", status);
+        session.getAsyncRemote().sendObject(jsonObject);
+    }
+
+    private void sendListOfUsersInChat(UserMessage userMessage, Session session) {
+        int chatId = userMessage.getInt("chatId");
+        Chatroom chatRoom = idToChatroom.get(chatId);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 3);
+        for (Session s : chatRoom.getChatroomUsers()) {
+            User user = userToSession.inverse().get(session);
+
+            JSONObject jsonUser = new JSONObject();
+            jsonUser.put("name", user.getName());
+            jsonUser.put("interests", user.getInterests());
+
+            jsonObject.append("users", user);
+        }
+
+        session.getAsyncRemote().sendObject(jsonObject);
+    }
+
+    private void sendListOfChatrooms(UserMessage userMessage, Session session) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 5);
+
+        Iterator iterator = idToChatroom.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry pair = (Map.Entry)iterator.next();
+            Chatroom chatroom = (Chatroom)pair.getValue();
+            JSONObject jsonChatroom = new JSONObject();
+            jsonChatroom.put("id", chatroom.getIdNbr());
+            jsonChatroom.put("name", "PLACEHOLDER");
+            jsonObject.append("chatrooms", jsonChatroom);
+        }
+
+        session.getAsyncRemote().sendObject(jsonObject);
     }
 }
