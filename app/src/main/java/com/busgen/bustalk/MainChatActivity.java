@@ -44,7 +44,8 @@ public class MainChatActivity extends AppCompatActivity {
                 }
 
                 TempMessage message = new TempMessage();
-                message.setId(111);
+                message.setUserName("Nisse Hult");
+                message.setId(123);
                 message.setMessage(messageText);
                 message.setDate(DateFormat.getDateTimeInstance().format(new Date()));
                 message.setMe(true);
@@ -66,12 +67,14 @@ public class MainChatActivity extends AppCompatActivity {
 
         TempMessage dummyMessage1 = new TempMessage();
         dummyMessage1.setId(1);
+        dummyMessage1.setUserName("Börje Plåt");
         dummyMessage1.setMe(false);
-        dummyMessage1.setMessage("YO! bla bla bla bla bla bla bla bla bla bla bla");
+        dummyMessage1.setMessage("YO! bla bla bla bla bla bla bla bla bla bla blabla bla bla");
         dummyMessage1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
         messageHistory.add(dummyMessage1);
         TempMessage dummyMessage2 = new TempMessage();
         dummyMessage2.setId(2);
+        dummyMessage2.setUserName("Nisse Hult");
         dummyMessage2.setMe(true);
         dummyMessage2.setMessage("Wadup bro");
         dummyMessage2.setDate(DateFormat.getDateTimeInstance().format(new Date()));
