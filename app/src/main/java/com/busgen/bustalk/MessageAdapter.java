@@ -82,9 +82,9 @@ public class MessageAdapter extends BaseAdapter{
 	//Sets the layout of a message item (Which includes 2 TextViews: Message date and the
 	//actual message text) in the ListView depending on who sent the message
     private void setAlignment(ViewHolder holder, boolean isMe){
-        if (!isMe) {
+        if (isMe) {
 			//Sets a 9-patch image of a white chat bubble as background for message text
-            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.speech_bubble_green);
 
 			//Aligns the message text and its corresponding bubble to the right in message item
             LinearLayout.LayoutParams layoutParams =
@@ -109,7 +109,7 @@ public class MessageAdapter extends BaseAdapter{
 			layoutParams.gravity = Gravity.RIGHT;
 			holder.messageText.setLayoutParams(layoutParams);
         } else {
-            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.speech_bubble_orange);
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.messageTextContainer.getLayoutParams();
