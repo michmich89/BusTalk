@@ -122,6 +122,14 @@ public class BusTalkServer {
                     idToChatroom.put(chatId, chatroom);
                     chatroom.subscribeToRoom(session);
 
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("type", 5);
+                    jsonObject.put("title", nameOfRoom);
+                    jsonObject.put("id", chatId);
+                    for (Session s : userToSession.values()) {
+                        s.getAsyncRemote().sendObject(jsonObject);
+                    }
+
                 }
                     break;
                 case JOIN_ROOM_REQUEST:
@@ -145,8 +153,27 @@ public class BusTalkServer {
                     Chatroom chatroom = idToChatroom.get(chatId);
 
                     chatroom.unsubscribeToRoom(session);
+
                     if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > 100){
                         idToChatroom.remove(chatId);
+
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("type", 7);
+                        jsonObject.put("chatId", chatId);
+
+                        for (Session s : userToSession.values()) {
+                            s.getAsyncRemote().sendObject(jsonObject);
+                        }
+                    } else {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("type", 8);
+                        jsonObject.put("chatId", chatId);
+                        User user = userToSession.inverse().get(session);
+                        jsonObject.put("name", user.getName());
+
+                        for (Session s : chatroom.getChatroomUsers()) {
+                            s.getAsyncRemote().sendObject(jsonObject);
+                        }
                     }
                 }
 
@@ -298,7 +325,7 @@ public class BusTalkServer {
             Chatroom chatroom = (Chatroom)pair.getValue();
             JSONObject jsonChatroom = new JSONObject();
             jsonChatroom.put("id", chatroom.getIdNbr());
-            jsonChatroom.put("name", "PLACEHOLDER");
+            jsonChatroom.put("name", chatroom.getTitle());
             jsonObject.append("chatrooms", jsonChatroom);
         }
 

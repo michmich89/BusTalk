@@ -33,6 +33,10 @@ public class Chatroom {
         return this.idNbr;
     }
 
+    public String getTitle () {
+        return this.chatroomTitle;
+    }
+
     public List<Session> getChatroomUsers(){
         return new ArrayList<Session>(chatroomUsers);
     }
