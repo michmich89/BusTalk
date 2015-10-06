@@ -31,18 +31,25 @@ public class BusTalkServer {
     private final int CHOOSE_NICKNAME_REQUEST = 31;
     private final int NICKNAME_AVAILABLE_CHECK = 32;
 
+    //Notification number that's being sent back
+    private final int NEW_USER_IN_CHAT_NOTIFICATION = 101;
+    private final int LIST_OF_CHATROOMS_NOTIFICATION = 102;
+    private final int LIST_OF_USERS_IN_CHAT_NOTIFICATION = 103;
+    private final int CREDENTIAL_CHANGE_NOTIFICATION = 104;
+    private final int CHAT_MESSAGE_NOTIFICATION = 105;
+    private final int USER_LEFT_ROOM_NOTIFICATION = 106;
+    private final int ROOM_DELETED_NOTIFICATION = 107;
+    private final int ROOM_CREATED_NOTIFICATION = 108;
+    //TODO: Rensa och snygga upp bland dessa?
 
-
-    //private InputHandler inputHandler;
     private final Map<Integer, Chatroom> idToChatroom;
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
     private final Logger LOGGER;
     private final ChatroomFactory chatroomFactory;
-
-
+    
     public BusTalkServer(){
-    //    inputHandler = new InputHandler();
+
         idToChatroom = new HashMap<Integer, Chatroom>();
         userToSession = HashBiMap.create();
         disallowedNames = new ArrayList<String>();
@@ -89,24 +96,10 @@ public class BusTalkServer {
     }
 
 
-    //Öppna på egen risk...
+
     private void handleInput(UserMessage userMessage, Session session){
-        //Du va när den sist - ditt ansvar!
         try {
             int type = userMessage.getInt("type");
-
-            /* The UserMessage is telling the program that it's a...
-            11 - Chat message
-
-            21 - Create Room request
-            22 - Join Room request
-            23 - List of user in room request
-            26 - Get all chat rooms
-            29 - Leave Room request
-
-            31 - Choose Nick request
-            32 - Nick Available check
-             */
 
             switch(type){
                 case CHAT_MESSAGE:
@@ -123,7 +116,7 @@ public class BusTalkServer {
                     chatroom.subscribeToRoom(session);
 
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("type", 5);
+                    jsonObject.put("type", ROOM_CREATED_NOTIFICATION);
                     jsonObject.put("title", nameOfRoom);
                     jsonObject.put("id", chatId);
                     for (Session s : userToSession.values()) {
@@ -158,7 +151,7 @@ public class BusTalkServer {
                         idToChatroom.remove(chatId);
 
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("type", 7);
+                        jsonObject.put("type", ROOM_DELETED_NOTIFICATION);
                         jsonObject.put("chatId", chatId);
 
                         for (Session s : userToSession.values()) {
@@ -166,7 +159,7 @@ public class BusTalkServer {
                         }
                     } else {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("type", 8);
+                        jsonObject.put("type", USER_LEFT_ROOM_NOTIFICATION);
                         jsonObject.put("chatId", chatId);
                         User user = userToSession.inverse().get(session);
                         jsonObject.put("name", user.getName());
@@ -224,7 +217,7 @@ public class BusTalkServer {
 
         for (Session s : chatRoom.getChatroomUsers()) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", 1);
+            jsonObject.put("type", CHAT_MESSAGE_NOTIFICATION);
             jsonObject.put("chatId", chatId);
             jsonObject.put("sender", sender.getName());
             jsonObject.put("message", message);
@@ -291,7 +284,7 @@ public class BusTalkServer {
         }
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", 4);
+        jsonObject.put("type", CREDENTIAL_CHANGE_NOTIFICATION);
         jsonObject.put("status", status);
         session.getAsyncRemote().sendObject(jsonObject);
     }
@@ -301,7 +294,7 @@ public class BusTalkServer {
         Chatroom chatRoom = idToChatroom.get(chatId);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", 3);
+        jsonObject.put("type", LIST_OF_USERS_IN_CHAT_NOTIFICATION);
         for (Session s : chatRoom.getChatroomUsers()) {
             User user = userToSession.inverse().get(session);
 
@@ -317,7 +310,7 @@ public class BusTalkServer {
 
     private void sendListOfChatrooms(UserMessage userMessage, Session session) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", 5);
+        jsonObject.put("type", LIST_OF_CHATROOMS_NOTIFICATION);
 
         Iterator iterator = idToChatroom.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -334,7 +327,7 @@ public class BusTalkServer {
 
     private void newUserInChatNotification(Chatroom chatroom, User user) {
         JSONObject objectToSend = new JSONObject();
-        objectToSend.put("type", 123); //What notification should be sent back?
+        objectToSend.put("type", NEW_USER_IN_CHAT_NOTIFICATION); //What notification should be sent back?
         objectToSend.put("chatId", chatroom.getIdNbr());
         objectToSend.put("user", user.getName());
         objectToSend.put("interest", user.getInterests());
