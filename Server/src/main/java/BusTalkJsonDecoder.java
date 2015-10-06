@@ -11,6 +11,7 @@ import javax.websocket.EndpointConfig;
 public class BusTalkJsonDecoder implements Decoder.Text<UserMessage> {
 
     JSONObject jsonObject;
+
     @Override
     public UserMessage decode(String s) throws DecodeException {
         return new UserMessage(jsonObject);
