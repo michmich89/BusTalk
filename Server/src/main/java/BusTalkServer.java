@@ -22,6 +22,7 @@ public class BusTalkServer {
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
     private final Logger LOGGER;
+    private final ChatroomFactory chatroomFactory;
 
 
     public BusTalkServer(){
@@ -32,6 +33,21 @@ public class BusTalkServer {
 
         disallowedNames.add("Alexander Kloutschek"); //TIHI
         LOGGER = Logger.getLogger(BusTalkServer.class.getName());
+        chatroomFactory = ChatroomFactory.getFactory();
+
+        //TEST ROOMS
+
+        Chatroom testRoom1 = new Chatroom(1, "test1");
+        Chatroom testRoom2 = new Chatroom(2, "test1");
+        Chatroom testRoom3 = new Chatroom(3, "test1");
+        Chatroom testRoom4 = new Chatroom(4, "test1");
+        Chatroom testRoom5 = new Chatroom(5, "test1");
+
+        idToChatroom.put(1, testRoom1);
+        idToChatroom.put(2, testRoom2);
+        idToChatroom.put(3, testRoom3);
+        idToChatroom.put(4, testRoom4);
+        idToChatroom.put(5, testRoom5);
 
     }
 
@@ -70,88 +86,68 @@ public class BusTalkServer {
             21 - Create Room request
             22 - Join Room request
             23 - List of user in room request
-            24 - New chat room on server notification
-            25 - Chat room removed on server notification
             26 - Get all chat rooms
             29 - Leave Room request
 
             31 - Choose Nick request
             32 - Nick Available check
-            33 - New user in chat notification
-            34 - User left a chat notification
              */
 
             switch(type){
                 case 11:
                     break;
 
-                case 21: // Join room
+                case 21: // Create room
+                {
+                    String nameOfRoom = userMessage.getString("chatName");
+                    Chatroom chatroom = chatroomFactory.createChatroom(nameOfRoom);
+                    int chatId = chatroom.getIdNbr();
+
+                    idToChatroom.put(chatId, chatroom);
+                    chatroom.subscribeToRoom(session);
+
+                }
+                    break;
+                case 22: // Join room
+                {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatRoom = idToChatroom.get(chatId);
                     chatRoom.subscribeToRoom(session);
 
                     for (Session s : chatRoom.getChatroomUsers()) {
-                        //TODO: Vad ska skickas tillbaka?
+                        //TODO: Vad ska skickas tillbaka? Anrop för att meddela berörda användare
                     }
-
-                    break;
-                case 22:
+                }
                     break;
                 case 23:
                     break;
-                case 24:
-                    break;
-                case 25:
-                    break;
                 case 26:
                     break;
-                case 29:
+                case 29: // Leave room
+                {
+                    int chatId = userMessage.getInt("chatId");
+                    Chatroom chatroom = idToChatroom.get(chatId);
+
+                    chatroom.unsubscribeToRoom(session);
+                    if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > 100){
+                        idToChatroom.remove(chatId);
+                    }
+                }
+
                     break;
                 case 31:
                     break;
                 case 32:
                     break;
-                case 33:
-                    break;
-                case 34:
-                    break;
-
 
                 default:
 
             }
 
             if (type.equals("chat message")) {
-                int chatId = userMessage.getInt("chatId");
-                Chatroom chatRoom = idToChatroom.get(chatId);
-                String message = userMessage.getString("message");
-
-                for (Session s : chatRoom.getChatroomUsers()) {
-                    //TODO: Vad ska skickas tillbaka?
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("type", 1);
-                    jsonObject.put("chatId", chatId);
-                    jsonObject.put("sender", sender.getName());
-                    jsonObject.put("message", message);
-                    jsonObject.put("time", new Date().toString());
-
-                    s.getAsyncRemote().sendObject(jsonObject);
-                }
-
             } else if (type.equals("join room")) {
             } else if (type.equals("leave room")) {
-                int chatId = userMessage.getInt("chatId");
-                Chatroom chatRoom = idToChatroom.get(chatId);
-                chatRoom.unsubscribeToRoom(session);
-
-
             } else if (type.equals("create room")) {
-                /*
-                TODO: ChatroomFactory, se till att rum skapas, vad ska skickas tillbaka, se till att "skaparen"
-                kommer med i rummet och att andra användare som Bör kunna se rummet får möjlighet till det
-                 */
-
-
             } else if (type.equals("get users in room")) {
                 int chatId = userMessage.getInt("chatId");
                 Chatroom chatRoom = idToChatroom.get(chatId);
@@ -241,5 +237,13 @@ public class BusTalkServer {
     private void removeUser(User user){
         disallowedNames.remove(user.getName());
         userToSession.remove(user);
+    }
+
+    private void newUserInChat(){
+        JSONObject objectToSend = new JSONObject();
+        objectToSend.put("type", 123456789);
+        objectToSend.put("chatId", );
+        objectToSend.put("user", );
+        objectToSend.put("interest",);
     }
 }

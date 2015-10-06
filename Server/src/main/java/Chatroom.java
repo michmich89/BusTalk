@@ -11,6 +11,10 @@ public class Chatroom {
     private final int idNbr;
     private final List<Session> chatroomUsers;
 
+    /*
+    TODO: (un)subscribe should not use Session as parameter, as that ties our server to this specific server solution
+     */
+
     public Chatroom(int idNbr, String chatroomTitle){
         this.chatroomTitle = chatroomTitle;
         this.idNbr = idNbr;

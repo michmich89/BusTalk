@@ -8,6 +8,8 @@
  * singleton aswell, as the one instantiation of the class will take care of assigning a unique ID-number to a
  * chatroom.
  *
+ * The first 100 id numbers are reserved for rooms that should never be removed, for example a main room for a bus
+ *
  * TODO: Hantera ID-nummer på ett hållbart sett (Hållbarare...)
  */
 public class ChatroomFactory {
@@ -23,7 +25,7 @@ public class ChatroomFactory {
     }
 
     private ChatroomFactory(){
-        idNbr = 0;
+        idNbr = 101;
     }
 
     public Chatroom createChatroom(String chatroomSubject){
