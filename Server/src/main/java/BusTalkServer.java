@@ -85,7 +85,7 @@ public class BusTalkServer {
     }
 
     @OnError
-    public void onError(){
+    public void onError(Throwable exception, Session session){
 
     }
 
@@ -238,7 +238,7 @@ public class BusTalkServer {
             if(!userToSession.containsValue(session)) {
                 User user = new User(newNickName, newInterest);
                 addUser(user, session);
-                LOGGER.log(Level.INFO, "A user named " + user.getName() + " has been created for session with ID: " + session.getId());
+                LOGGER.log(Level.INFO, "[" + session.getId() + "]" + "User \"" + user.getName() + "created with interests \"" + newInterest + "\"");
 
                 //THE USER EXIST - DO THIS
                 //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
@@ -247,6 +247,7 @@ public class BusTalkServer {
 
                 //BEGONE WITH THE OLD
                 String oldName = user.getName();
+                String oldInterests = user.getInterests();
                 removeDisallowedName(oldName);
 
                 //...IN WITH THE NEW
@@ -254,8 +255,8 @@ public class BusTalkServer {
                 user.setInterests(newInterest);
                 addDisallowedName(newNickName);
 
-                LOGGER.log(Level.INFO, session.getId() + ": changed name from " + oldName + "to " + newNickName
-                        + " and interest to " + newInterest);
+                LOGGER.log(Level.INFO, "[" + session.getId() + "] Name changed" + oldName + " -> " + newNickName
+                        + " and interest " + oldInterests + " -> " + newInterest);
             }
             status = 1;
         /*
