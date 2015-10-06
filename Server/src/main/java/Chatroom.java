@@ -9,7 +9,7 @@ public class Chatroom {
 
     private String chatroomTitle;
     private final int idNbr;
-    private final List<Session> chatroomUsers;
+    private final List<User> chatroomUsers;
 
     /*
     TODO: (un)subscribe should not use Session as parameter, as that ties our server to this specific server solution
@@ -18,15 +18,15 @@ public class Chatroom {
     public Chatroom(int idNbr, String chatroomTitle){
         this.chatroomTitle = chatroomTitle;
         this.idNbr = idNbr;
-        chatroomUsers = new ArrayList<Session>();
+        chatroomUsers = new ArrayList<User>();
     }
 
-    public void subscribeToRoom(Session userSession){
-        chatroomUsers.add(userSession);
+    public void subscribeToRoom(User user){
+        chatroomUsers.add(user);
     }
 
-    public void unsubscribeToRoom(Session userSession){
-        chatroomUsers.remove(userSession);
+    public void unsubscribeToRoom(User user){
+        chatroomUsers.remove(user);
     }
 
     public int getIdNbr(){
@@ -37,8 +37,8 @@ public class Chatroom {
         return this.chatroomTitle;
     }
 
-    public List<Session> getChatroomUsers(){
-        return new ArrayList<Session>(chatroomUsers);
+    public List<User> getChatroomUsers(){
+        return new ArrayList<User>(chatroomUsers);
     }
 
 

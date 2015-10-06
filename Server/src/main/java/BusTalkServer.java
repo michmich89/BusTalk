@@ -1,6 +1,5 @@
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.websocket.*;
@@ -113,7 +112,7 @@ public class BusTalkServer {
                     int chatId = chatroom.getIdNbr();
 
                     idToChatroom.put(chatId, chatroom);
-                    chatroom.subscribeToRoom(session);
+                    chatroom.subscribeToRoom(userToSession.inverse().get(session));
 
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("type", ROOM_CREATED_NOTIFICATION);
@@ -129,7 +128,7 @@ public class BusTalkServer {
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatRoom = idToChatroom.get(chatId);
-                    chatRoom.subscribeToRoom(session);
+                    chatRoom.subscribeToRoom(userToSession.inverse().get(session));
 
                     newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
                 }
@@ -145,7 +144,7 @@ public class BusTalkServer {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatroom = idToChatroom.get(chatId);
 
-                    chatroom.unsubscribeToRoom(session);
+                    chatroom.unsubscribeToRoom(userToSession.inverse().get(session));
 
                     if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > 100){
                         idToChatroom.remove(chatId);
@@ -164,7 +163,8 @@ public class BusTalkServer {
                         User user = userToSession.inverse().get(session);
                         jsonObject.put("name", user.getName());
 
-                        for (Session s : chatroom.getChatroomUsers()) {
+                        for (User u : chatroom.getChatroomUsers()) {
+                            Session s = userToSession.get(u);
                             s.getAsyncRemote().sendObject(jsonObject);
                         }
                     }
@@ -215,7 +215,8 @@ public class BusTalkServer {
         Chatroom chatRoom = idToChatroom.get(chatId);
         String message = userMessage.getString("message");
 
-        for (Session s : chatRoom.getChatroomUsers()) {
+        for (User u : chatRoom.getChatroomUsers()) {
+            Session s = userToSession.get(u);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", CHAT_MESSAGE_NOTIFICATION);
             jsonObject.put("chatId", chatId);
@@ -296,7 +297,8 @@ public class BusTalkServer {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", LIST_OF_USERS_IN_CHAT_NOTIFICATION);
-        for (Session s : chatRoom.getChatroomUsers()) {
+        for (User u : chatRoom.getChatroomUsers()) {
+            Session s = userToSession.get(u);
             User user = userToSession.inverse().get(session);
 
             JSONObject jsonUser = new JSONObject();
@@ -333,7 +335,8 @@ public class BusTalkServer {
         objectToSend.put("user", user.getName());
         objectToSend.put("interest", user.getInterests());
 
-        for (Session s : chatroom.getChatroomUsers()) {
+        for (User u : chatroom.getChatroomUsers()) {
+            Session s = userToSession.get(u);
             s.getAsyncRemote().sendObject(objectToSend);
         }
     }
