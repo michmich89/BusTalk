@@ -18,6 +18,21 @@ import java.util.logging.Logger;
 @ServerEndpoint(value = "/chat", encoders = BusTalkJsonEncoder.class, decoders = BusTalkJsonDecoder.class)
 public class BusTalkServer {
 
+    // Message type constants
+
+    private final int CHAT_MESSAGE = 11;
+
+    private final int CREATE_ROOM_REQUEST = 21;
+    private final int JOIN_ROOM_REQUEST = 22;
+    private final int LIST_OF_USERS_IN_ROOM_REQUEST = 23;
+    private final int LIST_OF_ALL_CHATROOMS_REQUEST = 26;
+    private final int LEAVE_ROOM_REQUEST = 29;
+
+    private final int CHOOSE_NICKNAME_REQUEST = 31;
+    private final int NICKNAME_AVAILABLE_CHECK = 32;
+
+
+
     //private InputHandler inputHandler;
     private final Map<Integer, Chatroom> idToChatroom;
     private final BiMap<User, Session> userToSession;
@@ -94,11 +109,11 @@ public class BusTalkServer {
              */
 
             switch(type){
-                case 11: // Send chat message
+                case CHAT_MESSAGE:
                     sendChatMessage(userMessage, session);
                     break;
 
-                case 21: // Create room
+                case CREATE_ROOM_REQUEST:
                 {
                     String nameOfRoom = userMessage.getString("chatName");
                     Chatroom chatroom = chatroomFactory.createChatroom(nameOfRoom);
@@ -109,24 +124,22 @@ public class BusTalkServer {
 
                 }
                     break;
-                case 22: // Join room
+                case JOIN_ROOM_REQUEST:
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatRoom = idToChatroom.get(chatId);
                     chatRoom.subscribeToRoom(session);
 
-                    for (Session s : chatRoom.getChatroomUsers()) {
-                        //TODO: Vad ska skickas tillbaka? Anrop för att meddela berörda användare
-                    }
+                    newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
                 }
                     break;
-                case 23: // List of users in room request
+                case LIST_OF_USERS_IN_ROOM_REQUEST:
                     sendListOfUsersInChat(userMessage, session);
                     break;
-                case 26:
+                case LIST_OF_ALL_CHATROOMS_REQUEST:
                     sendListOfChatrooms(userMessage, session);
                     break;
-                case 29: // Leave room
+                case LEAVE_ROOM_REQUEST: // Leave room
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatroom = idToChatroom.get(chatId);
@@ -138,23 +151,13 @@ public class BusTalkServer {
                 }
 
                     break;
-                case 31:
+                case CHOOSE_NICKNAME_REQUEST:
                     changeNickOrInterest(userMessage, session);
                     break;
-                case 32:
+                case NICKNAME_AVAILABLE_CHECK:
                     break;
 
                 default:
-
-            }
-
-            if (type.equals("chat message")) {
-            } else if (type.equals("join room")) {
-            } else if (type.equals("leave room")) {
-            } else if (type.equals("create room")) {
-            } else if (type.equals("get users in room")) {
-
-            } else if (type.equals("set credentials")) {
 
             }
         }catch(IllegalArgumentException e){
@@ -302,11 +305,15 @@ public class BusTalkServer {
         session.getAsyncRemote().sendObject(jsonObject);
     }
 
-    private void newUserInChat() {
+    private void newUserInChatNotification(Chatroom chatroom, User user) {
         JSONObject objectToSend = new JSONObject();
-        objectToSend.put("type", 123456789);
-        objectToSend.put("chatId", );
-        objectToSend.put("user", );
-        objectToSend.put("interest", );
+        objectToSend.put("type", 123); //What notification should be sent back?
+        objectToSend.put("chatId", chatroom.getIdNbr());
+        objectToSend.put("user", user.getName());
+        objectToSend.put("interest", user.getInterests());
+
+        for (Session s : chatroom.getChatroomUsers()) {
+            s.getAsyncRemote().sendObject(objectToSend);
+        }
     }
 }
