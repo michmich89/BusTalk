@@ -11,6 +11,16 @@ public class TempMessage {
     private String date;
     private String userName;
 
+    public TempMessage() {
+    }
+
+    public TempMessage(boolean isMe, String message, String date, String userName) {
+        this.isMe = isMe;
+        this.message = message;
+        this.date = date;
+        this.userName = userName;
+    }
+
     public String getUserName() {
         return userName;
     }

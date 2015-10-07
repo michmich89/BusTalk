@@ -30,7 +30,7 @@ public class MainChatActivity extends AppCompatActivity {
         sendButton = (Button) findViewById(R.id.send_button);
 
         //Initialize adapter and ListView
-        messageAdapter = new MessageAdapter(MainChatActivity.this, new ArrayList<TempMessage>());
+        messageAdapter = new MessageAdapter(this, new ArrayList<TempMessage>());
         messageListView.setAdapter(messageAdapter);
 
         loadDummyHistory();
@@ -42,13 +42,8 @@ public class MainChatActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(messageText)) {
                     return;
                 }
-
-                TempMessage message = new TempMessage();
-                message.setUserName("Nisse Hult");
-                message.setId(123);
-                message.setMessage(messageText);
-                message.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                message.setMe(true);
+                String date = DateFormat.getDateTimeInstance().format(new Date());
+                TempMessage message = new TempMessage(true, messageText, date, "Nisse Hult");
 
                 messageInputLine.setText("");
                 displayMessage(message);
@@ -65,19 +60,14 @@ public class MainChatActivity extends AppCompatActivity {
     private void loadDummyHistory(){
         messageHistory = new ArrayList<TempMessage>();
 
-        TempMessage dummyMessage1 = new TempMessage();
-        dummyMessage1.setId(1);
-        dummyMessage1.setUserName("Börje Plåt");
-        dummyMessage1.setMe(false);
-        dummyMessage1.setMessage("YO! bla bla bla bla bla bla bla bla bla bla blabla bla bla");
-        dummyMessage1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        String messageText1 = "YO! bla bla bla bla bla bla bla bla bla bla blabla bla bla";
+        String date1 = DateFormat.getDateTimeInstance().format(new Date());
+        TempMessage dummyMessage1 = new TempMessage(false, messageText1, date1, "Börje Plåt");
         messageHistory.add(dummyMessage1);
-        TempMessage dummyMessage2 = new TempMessage();
-        dummyMessage2.setId(2);
-        dummyMessage2.setUserName("Nisse Hult");
-        dummyMessage2.setMe(true);
-        dummyMessage2.setMessage("Wadup bro");
-        dummyMessage2.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+
+        String messageText2 = "Wadup bro!";
+        String date2 = DateFormat.getDateTimeInstance().format(new Date());
+        TempMessage dummyMessage2 = new TempMessage(true, messageText2, date2, "Nisse Hult");
         messageHistory.add(dummyMessage2);
 
         for(int i=0; i<messageHistory.size(); i++){

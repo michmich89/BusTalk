@@ -58,10 +58,10 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-		Log.d("myTag", "Inside getView");
         ViewHolder holder;
         TempMessage message = getItem(position);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 
         if(convertView == null){
             convertView = inflater.inflate(R.layout.message_item, null);
