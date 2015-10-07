@@ -10,7 +10,13 @@ import java.util.Collection;
 public interface IClient {
 
     IUser getUser();
+    String getNickname();
+    String getInterests();
     Collection<IChatroom> getChatrooms();
+
+    void setUser(IUser user);
+    void setNickname(String nickname);
+    void setInterests(String interests);
 
     Collection<IServerMessage> recieveMessages();
     void sendMessage(IServerMessage serverMessage);

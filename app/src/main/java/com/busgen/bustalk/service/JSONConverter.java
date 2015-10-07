@@ -26,14 +26,14 @@ import java.util.Date;
 public class JSONConverter {
 
     public IServerMessage decodeServerMessage(JSONObject object){
-        IServerMessage message;
+        IServerMessage message = null;
         try{
             String type = object.getString("type");
             if(type.equals("chatmessage")){
                 String dateString = object.getString("timestamp");
                 Date testDate = new Date();
                 //todo needs to convert timestamp to date?
-                message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate));
+                message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate);
             }else if(type.equals("NewChatRoom")){
                 message = new MsgNewChatRoom(object.getInt("chatID"));
             }else if(type.equals("LostChatRoom")){
@@ -42,18 +42,18 @@ public class JSONConverter {
                 message = new MsgNicknameAvailable(object.getBoolean("availability"));
             }else if(type.equals("UserList")){
                 //todo logik för att skapa user meddelanden, behöver se JSON objektet för att implementera
-            }else if(type.equals("NewUserInChat")){
+            }else if(type.equals("NewUserInChat")) {
                 IUser user = new User(object.getString("nickname"), object.getString("interests"));
                 message = new MsgNewUserInChat(user, object.getInt("chatID"));
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
-        /*
-        Kanske onödig
+
+        //Kanske onödig
         if(message == null){
             throw new NullPointerException("JSON object could not be converted to message");
-        }*/
+        }
         return message;
     }
 
@@ -67,7 +67,7 @@ public class JSONConverter {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
                 //todo fixa bättre metodnamn i chat message klassen
-                object.put("chatID", chatMessage.chatID());
+                object.put("chatID", chatMessage.getChatID());
                 object.put("nickname", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
                 object.put("timestamp", chatMessage.getTimestamp());
@@ -81,7 +81,7 @@ public class JSONConverter {
             }else if(message instanceof MsgCreateRoom){
                 MsgCreateRoom createMessage = (MsgCreateRoom)message;
                 object.put("type","CreateRoom");
-                object.put("chatID"createMessage.getChatID());
+                object.put("chatID", createMessage.getChatID());
 
             }else if(message instanceof MsgLeaveRoom){
                 MsgLeaveRoom leaveMessage = (MsgLeaveRoom)message;
@@ -102,11 +102,12 @@ public class JSONConverter {
     }
 
     public String decodePlatformObject(JSONObject object){
-        String decodedData;
-        try{
+        String decodedData = new String();
+       /* try{
 
         }catch(JSONException e){
             e.printStackTrace();
-        }
+        }*/
+        return decodedData;
     }
 }
