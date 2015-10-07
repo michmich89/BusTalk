@@ -33,7 +33,7 @@ public class JSONConverter {
                 String dateString = object.getString("timestamp");
                 Date testDate = new Date();
                 //todo needs to convert timestamp to date?
-                message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate));
+                message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate);
             }else if(type.equals("NewChatRoom")){
                 message = new MsgNewChatRoom(object.getInt("chatID"));
             }else if(type.equals("LostChatRoom")){
