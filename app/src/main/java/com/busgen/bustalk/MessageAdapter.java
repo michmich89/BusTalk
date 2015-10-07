@@ -19,10 +19,12 @@ public class MessageAdapter extends BaseAdapter{
 
     private final List<TempMessage> messages;
     private Activity context;
+    private LayoutInflater inflater;
 
     public MessageAdapter(Activity context, List<TempMessage> messages){
         this.context = context;
         this.messages = messages;
+        this.inflater = LayoutInflater.from(context);
     }
 
 	public void add(TempMessage message){
@@ -62,7 +64,6 @@ public class MessageAdapter extends BaseAdapter{
         //ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
         ViewHolder holder;
         TempMessage message = getItem(position);
-        LayoutInflater inflater = LayoutInflater.from(context);
 
         //Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
         //future reuse
