@@ -58,16 +58,20 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        //ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
         ViewHolder holder;
         TempMessage message = getItem(position);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = LayoutInflater.from(context);
 
-
+        //Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
+        //future reuse
         if(convertView == null){
             convertView = inflater.inflate(R.layout.message_item, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        }//Reuses the holder set as tag to convertView, eliminates the need to call findViewById
+        else{
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -84,8 +88,7 @@ public class MessageAdapter extends BaseAdapter{
         return convertView;
     }
 
-	//Sets the layout of a message item (Which includes 2 TextViews: Message date and the
-	//actual message text) in the ListView depending on who sent the message
+	//Sets the layout of a message item in the ListView depending on who sent the message
     private void setAlignment(ViewHolder holder, boolean isMe){
         if (isMe) {
 			//Sets a 9-patch image of a white chat bubble as background for message text
@@ -138,7 +141,7 @@ public class MessageAdapter extends BaseAdapter{
         }
     }
 
-	//ViewHolder class used for the ViewHolder Design Pattern
+	//ViewHolder class used for the ViewHolder design pattern
 	private static class ViewHolder{
 		public TextView messageText;
 		public TextView messageDate;
@@ -157,6 +160,4 @@ public class MessageAdapter extends BaseAdapter{
         holder.userName = (TextView) v.findViewById(R.id.user_name);
         return holder;
     }
-
-
 }

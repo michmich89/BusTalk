@@ -30,7 +30,7 @@ public class MainChatActivity extends AppCompatActivity {
         sendButton = (Button) findViewById(R.id.send_button);
 
         //Initialize adapter and ListView
-        messageAdapter = new MessageAdapter(this, new ArrayList<TempMessage>());
+        messageAdapter = new MessageAdapter(MainChatActivity.this, new ArrayList<TempMessage>());
         messageListView.setAdapter(messageAdapter);
 
         loadDummyHistory();
