@@ -8,4 +8,8 @@
     <string name="message_edit_hint">Type message</string>
     <string name="button_text">Send</string>
     <string name="arbitrary_date">Oct 6, 2015 1:10:07 PM</string>
+    <string name="arbitrary_user_name">Erik Larsson:</string>
+    <string name="login_user_name_hint">Nickname</string>
+    <string name="login_interest_hint">Interest (optional)</string>
+    <string name="login_button_text">Log in</string>
 </resources>
