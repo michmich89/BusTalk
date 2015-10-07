@@ -28,7 +28,7 @@
             android:paddingBottom="10dp"
             android:orientation="vertical">
             <TextView
-                android:textStyle="normal"
+                android:textStyle="bold"
                 android:id="@+id/user_name"
                 android:text="Erik Larsson:"
                 android:layout_width="wrap_content"
