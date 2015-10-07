@@ -7,4 +7,5 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="message_edit_hint">Type message</string>
     <string name="button_text">Send</string>
+    <string name="arbitrary_date">Oct 6, 2015 1:10:07 PM</string>
 </resources>

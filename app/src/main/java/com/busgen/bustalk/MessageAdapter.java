@@ -2,6 +2,7 @@ package com.busgen.bustalk;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -75,6 +76,10 @@ public class MessageAdapter extends BaseAdapter{
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
+        holder.userName.setText(message.getUserName() + ":");
+
+        //Underlines the username text, not applied at the moment
+        //holder.userName.setPaintFlags(holder.userName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         return convertView;
     }
@@ -82,9 +87,9 @@ public class MessageAdapter extends BaseAdapter{
 	//Sets the layout of a message item (Which includes 2 TextViews: Message date and the
 	//actual message text) in the ListView depending on who sent the message
     private void setAlignment(ViewHolder holder, boolean isMe){
-        if (!isMe) {
+        if (isMe) {
 			//Sets a 9-patch image of a white chat bubble as background for message text
-            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.speech_bubble_green);
 
 			//Aligns the message text and its corresponding bubble to the right in message item
             LinearLayout.LayoutParams layoutParams =
@@ -109,7 +114,7 @@ public class MessageAdapter extends BaseAdapter{
 			layoutParams.gravity = Gravity.RIGHT;
 			holder.messageText.setLayoutParams(layoutParams);
         } else {
-            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.speech_bubble_orange);
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.messageTextContainer.getLayoutParams();
@@ -139,6 +144,7 @@ public class MessageAdapter extends BaseAdapter{
 		public TextView messageDate;
 		public LinearLayout messageTopContainer;
 		public LinearLayout messageTextContainer;
+        public TextView userName;
 	}
 
 	//Returns a ViewHolder corresponding to the View that is sent in as a parameter
@@ -148,6 +154,7 @@ public class MessageAdapter extends BaseAdapter{
         holder.messageText = (TextView) v.findViewById(R.id.message_text);
         holder.messageTopContainer = (LinearLayout) v.findViewById(R.id.message_top_container);
         holder.messageTextContainer = (LinearLayout) v.findViewById(R.id.message_text_container);
+        holder.userName = (TextView) v.findViewById(R.id.user_name);
         return holder;
     }
 

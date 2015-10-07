@@ -9,6 +9,15 @@ public class TempMessage {
     private String message;
     private int userId;
     private String date;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public int getId() {
         return id;
