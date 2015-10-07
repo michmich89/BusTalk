@@ -26,7 +26,7 @@ import java.util.Date;
 public class JSONConverter {
 
     public IServerMessage decodeServerMessage(JSONObject object){
-        IServerMessage message;
+        IServerMessage message = null;
         try{
             String type = object.getString("type");
             if(type.equals("chatmessage")){
@@ -42,18 +42,18 @@ public class JSONConverter {
                 message = new MsgNicknameAvailable(object.getBoolean("availability"));
             }else if(type.equals("UserList")){
                 //todo logik för att skapa user meddelanden, behöver se JSON objektet för att implementera
-            }else if(type.equals("NewUserInChat")){
+            }else if(type.equals("NewUserInChat")) {
                 IUser user = new User(object.getString("nickname"), object.getString("interests"));
                 message = new MsgNewUserInChat(user, object.getInt("chatID"));
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
-        /*
-        Kanske onödig
+
+        //Kanske onödig
         if(message == null){
             throw new NullPointerException("JSON object could not be converted to message");
-        }*/
+        }
         return message;
     }
 
