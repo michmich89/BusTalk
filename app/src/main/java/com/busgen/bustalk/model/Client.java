@@ -10,25 +10,36 @@ public class Client implements IClient{
 
     private IUser user;
     private Collection<IChatroom> chatrooms;
-    private volatile static Client instance;
 
     private Client (IUser user){
         this.user = user;
         chatrooms = new ArrayList<IChatroom>();
     }
 
-    public static Client getInstance(IUser user){
-
-        if (instance == null){
-            synchronized (Client.class) {
-                if (instance == null) {
-                    instance = new Client(user);
-                }
-            }
-        }
-        return instance;
+    @Override
+    public String getNickname() {
+        return user.getNickname();
     }
 
+    @Override
+    public String getInterests() {
+        return user.getInterests();
+    }
+
+    @Override
+    public void setUser(IUser user) {
+        this.user = user;
+    }
+
+    @Override
+    public void setNickname(String nickname) {
+        user.setNickname(nickname);
+    }
+
+    @Override
+    public void setInterests(String interests) {
+        user.setInterests(interests);
+    }
 
     @Override
     public IUser getUser() {
