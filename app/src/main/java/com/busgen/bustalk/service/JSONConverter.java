@@ -67,7 +67,7 @@ public class JSONConverter {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
                 //todo fixa bättre metodnamn i chat message klassen
-                object.put("chatID", chatMessage.chatID());
+                object.put("chatID", chatMessage.getChatID());
                 object.put("nickname", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
                 object.put("timestamp", chatMessage.getTimestamp());
@@ -81,7 +81,7 @@ public class JSONConverter {
             }else if(message instanceof MsgCreateRoom){
                 MsgCreateRoom createMessage = (MsgCreateRoom)message;
                 object.put("type","CreateRoom");
-                object.put("chatID"createMessage.getChatID());
+                object.put("chatID", createMessage.getChatID());
 
             }else if(message instanceof MsgLeaveRoom){
                 MsgLeaveRoom leaveMessage = (MsgLeaveRoom)message;
@@ -102,11 +102,12 @@ public class JSONConverter {
     }
 
     public String decodePlatformObject(JSONObject object){
-        String decodedData;
-        try{
+        String decodedData = new String();
+       /* try{
 
         }catch(JSONException e){
             e.printStackTrace();
-        }
+        }*/
+        return decodedData;
     }
 }
