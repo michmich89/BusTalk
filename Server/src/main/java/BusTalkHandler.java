@@ -2,20 +2,16 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.json.JSONObject;
 
-import javax.websocket.*;
-import javax.websocket.server.ServerEndpoint;
+import javax.websocket.Session;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Kristoffer on 2015-09-29.
+ * Created by Kristoffer on 2015-10-08.
  */
+public class BusTalkHandler {
 
-
-
-@ServerEndpoint(value = "/chat", encoders = BusTalkJsonEncoder.class, decoders = BusTalkJsonDecoder.class)
-public class BusTalkServer {
 
     // Message type constants
 
@@ -46,15 +42,26 @@ public class BusTalkServer {
     private final List<String> disallowedNames;
     private final Logger LOGGER;
     private final ChatroomFactory chatroomFactory;
-    
-    public BusTalkServer(){
+
+
+
+    private static BusTalkHandler instance;
+
+    public synchronized static BusTalkHandler getInstance(){
+        if(instance == null){
+            instance = new BusTalkHandler();
+        }
+        return instance;
+    }
+
+    private BusTalkHandler(){
 
         idToChatroom = new HashMap<Integer, Chatroom>();
         userToSession = HashBiMap.create();
         disallowedNames = new ArrayList<String>();
 
         disallowedNames.add("Alexander Kloutschek"); //TIHI
-        LOGGER = Logger.getLogger(BusTalkServer.class.getName());
+        LOGGER = Logger.getLogger(BusTalkServerEndpoint.class.getName());
         chatroomFactory = ChatroomFactory.getFactory();
 
         //TEST ROOMS
@@ -70,33 +77,9 @@ public class BusTalkServer {
         idToChatroom.put(3, testRoom3);
         idToChatroom.put(4, testRoom4);
         idToChatroom.put(5, testRoom5);
-
     }
 
-    @OnMessage
-    public void onMessage(UserMessage userMessage, Session session){
-        handleInput(userMessage, session);
-    }
-
-    @OnOpen
-    public void onOpen(Session session){
-        LOGGER.log(Level.INFO, String.format("[{0}] Connected to server.", session.getId()));
-    }
-
-    @OnError
-    public void onError(Throwable exception, Session session){
-
-    }
-
-
-    @OnClose
-    public void onClose(Session session){
-        LOGGER.log(Level.INFO, String.format("[{0}] Disconnected from server."));
-    }
-
-
-
-    private void handleInput(UserMessage userMessage, Session session){
+    public void handleInput(UserMessage userMessage, Session session){
         try {
             int type = userMessage.getInt("type");
 
@@ -125,7 +108,7 @@ public class BusTalkServer {
                     }
 
                 }
-                    break;
+                break;
                 case JOIN_ROOM_REQUEST:
                 {
                     int chatId = userMessage.getInt("chatId");
@@ -136,7 +119,7 @@ public class BusTalkServer {
 
                     newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
                 }
-                    break;
+                break;
                 case LIST_OF_USERS_IN_ROOM_REQUEST:
                     sendListOfUsersInChat(userMessage, session);
                     break;
@@ -178,7 +161,7 @@ public class BusTalkServer {
                     }
                 }
 
-                    break;
+                break;
                 case CHOOSE_NICKNAME_REQUEST:
                     changeNickOrInterest(userMessage, session);
                     break;
@@ -203,8 +186,8 @@ public class BusTalkServer {
 
     private void removeDisallowedName(String name){
         //if(disallowedNames.contains(name)){
-            disallowedNames.remove(name);
-            LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names", name));
+        disallowedNames.remove(name);
+        LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names", name));
         //}
     }
 
@@ -273,14 +256,14 @@ public class BusTalkServer {
             }
             status = 1;
         /*
-        TODO: Se till att tv√• anv√§ndare inte kan ha samma namn, och meddela anv√§ndaren om det valt ett
-        namn som √§r upptaget. Vad h√§nder om en anv√§ndare f√∂rs√∂ker byta till samma nick?
+        TODO: Se till att tvÂ anv‰ndare inte kan ha samma namn, och meddela anv‰ndaren om det valt ett
+        namn som ‰r upptaget. Vad h‰nder om en anv‰ndare fˆrsˆker byta till samma nick?
          */
         /*
-        H√§r tar vi hand om situationen d√• en anv√§ndare f√∂rs√∂ker byta till samma namn
-        Vi plockar ut anv√§ndaren
-        Kollar om denna anv√§ndares namn √∂verensst√§mmer med det nya smeknamnet, till exempel d√• han vill ha en
-        stor bokstav i mitten som en j√§vla chef, eller helt enkelt vill ha kvar namnet och enbart byta intressen
+        H‰r tar vi hand om situationen dÂ en anv‰ndare fˆrsˆker byta till samma namn
+        Vi plockar ut anv‰ndaren
+        Kollar om denna anv‰ndares namn ˆverensst‰mmer med det nya smeknamnet, till exempel dÂ han vill ha en
+        stor bokstav i mitten som en j‰vla chef, eller helt enkelt vill ha kvar namnet och enbart byta intressen
 
          */
         } else if (userToSession.inverse().get(session).getName().equalsIgnoreCase(newNickName)){ //Urgh
@@ -355,4 +338,9 @@ public class BusTalkServer {
             s.getAsyncRemote().sendObject(objectToSend);
         }
     }
+
+
+
+
+
 }
