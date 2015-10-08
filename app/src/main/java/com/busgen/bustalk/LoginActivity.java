@@ -20,15 +20,14 @@ public class LoginActivity extends AppCompatActivity {
     private EditText interestInput;
     private Button loginButton;
     private Toast loginToast;
-
-    //Client to be passed on to MainChatActivity
-    Client client;
+    private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        client = Client.getInstance();
         initViews();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -39,16 +38,15 @@ public class LoginActivity extends AppCompatActivity {
                     loginToast.show();
                     return;
                 }
+                //TODO
                 /**
-                 * Here it should be checked with the client (who in turn contacts the server) if
+                 * Here it should be checked with the serve (via the client) if
                  * the userName is available.
                  */
                 String interest = interestInput.getText().toString();
-
-                client = new Client(new User(userName, interest));
+                client.setUser(new User(userName, interest));
 
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                intent.putExtra("userName", userName);
                 startActivity(intent);
                 LoginActivity.this.finish();
             }
@@ -61,27 +59,5 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.login_button);
         loginToast = Toast.makeText(LoginActivity.this, "You have to choose a nickname",
                 Toast.LENGTH_SHORT);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
