@@ -113,10 +113,13 @@ public class MessageAdapter extends BaseAdapter{
             layoutParams.gravity = Gravity.RIGHT;
             holder.messageDate.setLayoutParams(layoutParams);
 
-			//This could be redundant
-			layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
-			layoutParams.gravity = Gravity.RIGHT;
-			holder.messageText.setLayoutParams(layoutParams);
+			//Sets the visibility of userName TextView to "gone"
+			holder.userName.setVisibility(View.GONE);
+
+            //This could be redundant
+            layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
+            layoutParams.gravity = Gravity.RIGHT;
+            holder.messageText.setLayoutParams(layoutParams);
         } else {
             holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
 
@@ -134,6 +137,9 @@ public class MessageAdapter extends BaseAdapter{
 			layoutParams = (LinearLayout.LayoutParams) holder.messageDate.getLayoutParams();
 			layoutParams.gravity = Gravity.LEFT;
 			holder.messageDate.setLayoutParams(layoutParams);
+
+            //Sets the visibility of userName TextView to "visible"
+            holder.userName.setVisibility(View.VISIBLE);
 
 			//This could be redundant
             layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
