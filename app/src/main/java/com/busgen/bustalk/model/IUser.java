@@ -5,8 +5,8 @@ package com.busgen.bustalk.model;
  */
 public interface IUser {
 
-    public void setUserName(String userName);
-    public void setInterest(String interest);
-    public String getUserName();
-    public String getInterest();
+    void setUserName(String userName);
+    void setInterest(String interest);
+    String getUserName();
+    String getInterest();
 }
