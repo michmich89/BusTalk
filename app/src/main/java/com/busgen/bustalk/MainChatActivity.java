@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
+import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.Client;
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class MainChatActivity extends AppCompatActivity {
     private ListView messageListView;
     private Button sendButton;
     private MessageAdapter messageAdapter;
-    private ArrayList<TempMessage> messageHistory;
+    private ArrayList<MsgChatMessage> messageHistory;
     private Client client;
 
     @Override
@@ -29,11 +31,9 @@ public class MainChatActivity extends AppCompatActivity {
         client = Client.getInstance();
         initViews();
 
-        //First dummy message, for testing
-        String date = DateFormat.getDateTimeInstance().format(new Date());
-        TempMessage message = new TempMessage(true, "YO YO YO, jag vill prata om " +
-                client.getInterest(), date, client.getUserName());
-        displayMessage(message);
+        //Testing purposes
+        Chatroom room = new Chatroom(1, "Group", "Fotboll", 100);
+        client.joinRoom(room);
     }
 
     private void initViews(){
@@ -42,7 +42,7 @@ public class MainChatActivity extends AppCompatActivity {
         sendButton = (Button) findViewById(R.id.send_button);
 
         //Initialize adapter and ListView
-        messageAdapter = new MessageAdapter(MainChatActivity.this, new ArrayList<TempMessage>());
+        messageAdapter = new MessageAdapter(MainChatActivity.this, new ArrayList<MsgChatMessage>());
         messageListView.setAdapter(messageAdapter);
 
         loadDummyHistory();
@@ -55,7 +55,7 @@ public class MainChatActivity extends AppCompatActivity {
                     return;
                 }
                 String date = DateFormat.getDateTimeInstance().format(new Date());
-                TempMessage message = new TempMessage(true, messageText, date, "Nisse Hult");
+                MsgChatMessage message = new MsgChatMessage(true, messageText, date, client.getUserName(), 1);
 
                 messageInputLine.setText("");
                 displayMessage(message);
@@ -63,27 +63,28 @@ public class MainChatActivity extends AppCompatActivity {
         });
     }
 
-    public void displayMessage(TempMessage message) {
+    public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
+        //TODO: if(message isme)
     }
 
     //Makes it seem like there has already been messages sent when the app launches
     private void loadDummyHistory(){
-        messageHistory = new ArrayList<TempMessage>();
+        messageHistory = new ArrayList<MsgChatMessage>();
 
         String messageText1 = "YO! bla bla bla bla bla bla bla bla bla bla blabla bla bla";
         String date1 = DateFormat.getDateTimeInstance().format(new Date());
-        TempMessage dummyMessage1 = new TempMessage(false, messageText1, date1, "Börje Plåt");
+        MsgChatMessage dummyMessage1 = new MsgChatMessage(false, messageText1, date1, "Börje Plåt", 1);
         messageHistory.add(dummyMessage1);
 
         String messageText2 = "Wadup bro!";
         String date2 = DateFormat.getDateTimeInstance().format(new Date());
-        TempMessage dummyMessage2 = new TempMessage(true, messageText2, date2, "Nisse Hult");
+        MsgChatMessage dummyMessage2 = new MsgChatMessage(true, messageText2, date2, client.getUserName(), 1);
         messageHistory.add(dummyMessage2);
 
         for(int i=0; i<messageHistory.size(); i++){
-            TempMessage message = messageHistory.get(i);
+            MsgChatMessage message = messageHistory.get(i);
             displayMessage(message);
         }
     }

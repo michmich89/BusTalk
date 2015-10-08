@@ -1,7 +1,10 @@
 package com.busgen.bustalk.model;
 
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Johan on 2015-10-05.
@@ -9,7 +12,7 @@ import java.util.Collection;
 public class Client implements IClient{
 
     private IUser user;
-    private Collection<IChatroom> chatrooms;
+    private List<IChatroom> chatrooms;
 
     //Singleton pattern
     private static Client client = null;
@@ -82,4 +85,13 @@ public class Client implements IClient{
             chatrooms.remove(chatroom);
         }
     }
+
+	@Override
+	public void addMessageToChatroom(MsgChatMessage message, int chatId) {
+		for(int i = 0; i<chatrooms.size(); i++){
+			if(chatrooms.get(i).getChatID()==chatId){
+				chatrooms.get(i).addMessage(message);
+			}
+		}
+	}
 }

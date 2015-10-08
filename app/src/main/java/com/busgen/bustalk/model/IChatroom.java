@@ -1,44 +1,49 @@
 package com.busgen.bustalk.model;
 
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
+
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Interface representing a Chatroom.
  */
 public interface IChatroom {
 
-    public String getChatID();
+    int getChatID();
 
-    public void setID(String chatID);
+    void setID(int chatID);
 
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 
-    public void setTitle(String title);
+    void setTitle(String title);
 
-    public String getTitle();
+    String getTitle();
 
-    public void addUser(IUser user);
+    void addUser(IUser user);
 
-    public void removeUser(IUser user);
+    void removeUser(IUser user);
 
-    public boolean containsUser(IUser user);
+    boolean containsUser(IUser user);
 
-    public int getNbrOfUsers();
+    int getNbrOfUsers();
 
-    public boolean isEmpty();
+    boolean isEmpty();
 
-    public boolean isFull();
+    boolean isFull();
 
-    public void setMaxUsers(int maxUsers);
+    void setMaxUsers(int maxUsers);
 
-    public int getMaxUsers();
+    int getMaxUsers();
 
-    public Collection<IUser> getUsers();
+    Collection<IUser> getUsers();
 
-    public Collection<IServerMessage> getMessages();
+    List<MsgChatMessage> getMessages();
 
-    public void terminate();
+    void terminate();
+
+    void addMessage(MsgChatMessage message);
 
 }

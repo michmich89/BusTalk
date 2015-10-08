@@ -23,4 +23,6 @@ public interface IClient {
 
     void joinRoom (IChatroom chatroom);
     void leaveRoom (IChatroom chatroom);
+
+    void addMessageToChatroom(MsgChatMessage message, int chatId);
 }
