@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
+
 import java.util.List;
 
 /**
@@ -17,21 +19,21 @@ import java.util.List;
  */
 public class MessageAdapter extends BaseAdapter{
 
-    private final List<TempMessage> messages;
+    private final List<MsgChatMessage> messages;
     private Activity context;
     private LayoutInflater inflater;
 
-    public MessageAdapter(Activity context, List<TempMessage> messages){
+    public MessageAdapter(Activity context, List<MsgChatMessage> messages){
         this.context = context;
         this.messages = messages;
         this.inflater = LayoutInflater.from(context);
     }
 
-	public void add(TempMessage message){
+	public void add(MsgChatMessage message){
 		messages.add(message);
 	}
 
-	public void add(List<TempMessage> messages){
+	public void add(List<MsgChatMessage> messages){
 		this.messages.addAll(messages);
 	}
 
@@ -45,7 +47,7 @@ public class MessageAdapter extends BaseAdapter{
     }
 
     @Override
-    public TempMessage getItem(int position){
+    public MsgChatMessage getItem(int position){
         if(messages != null){
             return messages.get(position);
         }else{
@@ -55,7 +57,7 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public long getItemId(int position) {
-        return messages.get(position).getId();
+        return messages.get(position).getChatId();
     }
 
     @Override
@@ -63,7 +65,7 @@ public class MessageAdapter extends BaseAdapter{
 
         //ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
         ViewHolder holder;
-        TempMessage message = getItem(position);
+        MsgChatMessage message = getItem(position);
 
         //Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
         //future reuse
@@ -114,7 +116,7 @@ public class MessageAdapter extends BaseAdapter{
             holder.messageDate.setLayoutParams(layoutParams);
 
 			//Sets the visibility of userName TextView to "gone"
-			holder.userName.setVisibility(View.GONE);
+			holder.userName.setVisibility(View.VISIBLE);
 
             //This could be redundant
             layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();

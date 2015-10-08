@@ -1,37 +1,40 @@
 package com.busgen.bustalk.model;
 
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Johan on 2015-10-02.
  */
 public class Chatroom implements IChatroom {
 
-    private String chatID;
+    private int chatID;
     private String type;
     private String title;
-    private Collection<IUser> users;
-    private Collection<IServerMessage> messages;
+    private List<IUser> users;
+    private List<MsgChatMessage> messages;
     private int maxUsers;
 
-    public Chatroom(String chatID, String type, String title, int maxUsers){
+    public Chatroom(int chatID, String type, String title, int maxUsers){
         this.chatID = chatID;
         this.type = type;
         this.title = title;
         this.maxUsers = maxUsers;
         users = new ArrayList<IUser>();
-        messages = new ArrayList<IServerMessage>();
+        messages = new ArrayList<MsgChatMessage>();
 
     }
 
     @Override
-    public String getChatID() {
+    public int getChatID() {
         return chatID;
     }
 
     @Override
-    public void setID(String chatID) {
+    public void setID(int chatID) {
         this.chatID = chatID;
     }
 
@@ -101,11 +104,16 @@ public class Chatroom implements IChatroom {
     }
 
     @Override
-    public Collection<IServerMessage> getMessages() {
+    public List<MsgChatMessage> getMessages() {
         return messages;
     }
 
     @Override
     public void terminate() {
+    }
+
+    @Override
+    public void addMessage(MsgChatMessage message) {
+        messages.add(message);
     }
 }
