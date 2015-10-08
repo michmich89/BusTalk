@@ -11,7 +11,7 @@ public class Client implements IClient{
     private IUser user;
     private Collection<IChatroom> chatrooms;
 
-    private Client (IUser user){
+    public Client (IUser user){
         this.user = user;
         chatrooms = new ArrayList<IChatroom>();
     }

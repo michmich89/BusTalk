@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import com.busgen.bustalk.model.Client;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,11 +20,20 @@ public class MainChatActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private ArrayList<TempMessage> messageHistory;
 
+    /**The Client is gonna have all the information about chatrooms etc. and handle communication
+     * with the server
+     */
+    private Client client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chat);
         initViews();
+
+        //getIntent().getExtras();
+        //Bundle bundle = getIntent().getExtras();
+        //bundle.get
     }
 
     private void initViews(){

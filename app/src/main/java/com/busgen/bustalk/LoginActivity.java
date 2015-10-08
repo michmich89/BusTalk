@@ -11,11 +11,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.busgen.bustalk.model.Client;
+import com.busgen.bustalk.model.IUser;
+import com.busgen.bustalk.model.User;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText userNameInput;
     private EditText interestInput;
     private Button loginButton;
     private Toast loginToast;
+
+    //Client to be passed on to MainChatActivity
+    Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +39,16 @@ public class LoginActivity extends AppCompatActivity {
                     loginToast.show();
                     return;
                 }
+                /**
+                 * Here it should be checked with the client (who in turn contacts the server) if
+                 * the userName is available.
+                 */
                 String interest = interestInput.getText().toString();
+
+                client = new Client(new User(userName, interest));
 
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("userName", userName);
-                intent.putExtra("interest", interest);
                 startActivity(intent);
                 LoginActivity.this.finish();
             }
