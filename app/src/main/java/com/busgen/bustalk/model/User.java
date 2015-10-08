@@ -5,32 +5,34 @@ package com.busgen.bustalk.model;
  */
 public class User implements IUser{
 
-    private String nickname;
-    private String interests;
+    private String userName;
+    private String interest;
 
-    public User(String nickname, String interests){
-        this.nickname = nickname;
-        this.interests = interests;
+    public User(){}
+
+    public User(String userName, String interest){
+        this.userName = userName;
+        this.interest = interest;
     }
 
     @Override
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override
-    public void setInterests(String interests) {
-        this.interests = interests;
+    public void setInterest(String interest) {
+        this.interest = interest;
     }
 
     @Override
-    public String getNickname() {
-        return nickname;
+    public String getUserName() {
+        return userName;
     }
 
     @Override
-    public String getInterests() {
-        return interests;
+    public String getInterest() {
+        return interest;
     }
 
 }

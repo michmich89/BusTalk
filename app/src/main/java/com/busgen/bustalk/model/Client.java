@@ -11,19 +11,29 @@ public class Client implements IClient{
     private IUser user;
     private Collection<IChatroom> chatrooms;
 
-    public Client (IUser user){
+    //Singleton pattern
+    private static Client client = null;
+
+    private Client (IUser user){
         this.user = user;
         chatrooms = new ArrayList<IChatroom>();
     }
 
+    public static Client getInstance(){
+        if(client == null){
+            client = new Client(new User());
+        }return client;
+    }
+
+
     @Override
-    public String getNickname() {
-        return user.getNickname();
+    public String getUserName() {
+        return user.getUserName();
     }
 
     @Override
-    public String getInterests() {
-        return user.getInterests();
+    public String getInterest() {
+        return user.getInterest();
     }
 
     @Override
@@ -32,13 +42,13 @@ public class Client implements IClient{
     }
 
     @Override
-    public void setNickname(String nickname) {
-        user.setNickname(nickname);
+    public void setUserName(String userName) {
+        user.setUserName(userName);
     }
 
     @Override
-    public void setInterests(String interests) {
-        user.setInterests(interests);
+    public void setInterest(String interest) {
+        user.setInterest(interest);
     }
 
     @Override

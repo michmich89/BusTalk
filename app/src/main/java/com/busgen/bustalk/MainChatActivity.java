@@ -19,21 +19,21 @@ public class MainChatActivity extends AppCompatActivity {
     private Button sendButton;
     private MessageAdapter messageAdapter;
     private ArrayList<TempMessage> messageHistory;
-
-    /**The Client is gonna have all the information about chatrooms etc. and handle communication
-     * with the server
-     */
     private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chat);
+
+        client = Client.getInstance();
         initViews();
 
-        //getIntent().getExtras();
-        //Bundle bundle = getIntent().getExtras();
-        //bundle.get
+        //First dummy message, for testing
+        String date = DateFormat.getDateTimeInstance().format(new Date());
+        TempMessage message = new TempMessage(true, "YO YO YO, jag vill prata om " +
+                client.getInterest(), date, client.getUserName());
+        displayMessage(message);
     }
 
     private void initViews(){
