@@ -1,15 +1,18 @@
 package com.busgen.bustalk.model;
 
+import android.util.Log;
+
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Created by Johan on 2015-10-02.
  */
-public class Chatroom implements IChatroom {
+public class Chatroom extends Observable implements IChatroom {
 
     private int chatID;
     private String type;
@@ -25,7 +28,6 @@ public class Chatroom implements IChatroom {
         this.maxUsers = maxUsers;
         users = new ArrayList<IUser>();
         messages = new ArrayList<MsgChatMessage>();
-
     }
 
     @Override
@@ -114,6 +116,9 @@ public class Chatroom implements IChatroom {
 
     @Override
     public void addMessage(MsgChatMessage message) {
+        Log.d("MyTag", "Inside addMessage in Chatroom");
         messages.add(message);
+        setChanged();
+        notifyObservers(message);
     }
 }

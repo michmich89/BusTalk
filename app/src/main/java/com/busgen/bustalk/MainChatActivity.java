@@ -14,14 +14,18 @@ import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 
-public class MainChatActivity extends AppCompatActivity {
+public class MainChatActivity extends AppCompatActivity implements Observer {
     private EditText messageInputLine;
     private ListView messageListView;
     private Button sendButton;
     private MessageAdapter messageAdapter;
     private ArrayList<MsgChatMessage> messageHistory;
     private Client client;
+    private Chatroom myChatroom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,19 +36,17 @@ public class MainChatActivity extends AppCompatActivity {
         initViews();
 
         //Testing purposes
-        Chatroom room = new Chatroom(1, "Group", "Fotboll", 100);
-        client.joinRoom(room);
+        myChatroom = new Chatroom(1, "Group", "Fotboll", 100);
+        client.joinRoom(myChatroom);
+        myChatroom.addObserver(this);
     }
 
     private void initViews(){
         messageInputLine = (EditText) findViewById(R.id.message_input_line);
         messageListView = (ListView) findViewById(R.id.message_list_view);
         sendButton = (Button) findViewById(R.id.send_button);
-
-        //Initialize adapter and ListView
         messageAdapter = new MessageAdapter(MainChatActivity.this, new ArrayList<MsgChatMessage>());
         messageListView.setAdapter(messageAdapter);
-
         loadDummyHistory();
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +54,12 @@ public class MainChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String messageText = messageInputLine.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
+                    //For testing purposes, an empty messageInputLine now makes it seem like a
+                    //random message has been sent to the user
+                    Random rand = new Random();
+                    String date = DateFormat.getDateTimeInstance().format(new Date());
+                    MsgChatMessage message = new MsgChatMessage(false, "" + rand.nextInt(1000), date, "Börje Plåt", myChatroom.getChatID());
+                    client.addMessageToChatroom(message);
                     return;
                 }
                 String date = DateFormat.getDateTimeInstance().format(new Date());
@@ -88,6 +96,15 @@ public class MainChatActivity extends AppCompatActivity {
 
         for(int i=0; i<messageHistory.size(); i++){
             MsgChatMessage message = messageHistory.get(i);
+            displayMessage(message);
+        }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        Log.d("MyTag", "Inside update in MainChatActivity");
+        MsgChatMessage message = (MsgChatMessage) data;
+        if(!message.getIsMe()){
             displayMessage(message);
         }
     }
