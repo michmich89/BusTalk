@@ -6,9 +6,6 @@ import com.busgen.bustalk.model.IEventBusListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Johan on 2015-10-09.
- */
 public class EventBus {
 
 

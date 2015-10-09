@@ -1,9 +1,6 @@
 package com.busgen.bustalk;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Paint;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,7 +80,7 @@ public class MessageAdapter extends BaseAdapter{
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
-        holder.userName.setText(message.getUserName() + ":");
+        holder.userName.setText(message.getNickname() + ":");
 
         //Underlines the username text, not applied at the moment
         //holder.userName.setPaintFlags(holder.userName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);

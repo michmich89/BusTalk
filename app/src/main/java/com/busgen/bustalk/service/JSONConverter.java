@@ -1,7 +1,5 @@
 package com.busgen.bustalk.service;
 
-import android.os.Message;
-
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
@@ -67,7 +65,7 @@ public class JSONConverter {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
                 //todo fixa bättre metodnamn i chat message klassen
-                object.put("chatID", chatMessage.getChatID());
+                object.put("chatID", chatMessage.getChatId());
                 object.put("nickname", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
                 object.put("timestamp", chatMessage.getTimestamp());

@@ -21,11 +21,11 @@
 //        this.chatId = chatId;
 //    }
 //
-//    public String getUserName() {
+//    public String getNickname() {
 //        return userName;
 //    }
 //
-//    public void setUserName(String userName) {
+//    public void setNickname(String userName) {
 //        this.userName = userName;
 //    }
 //
