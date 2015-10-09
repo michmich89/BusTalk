@@ -46,13 +46,12 @@ public class BusTalkHandler {
 
 
 
-    private static BusTalkHandler instance;
+    private static class Holder {
+        static final BusTalkHandler INSTANCE = new BusTalkHandler();
+    }
 
     public synchronized static BusTalkHandler getInstance(){
-        if(instance == null){
-            instance = new BusTalkHandler();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     private BusTalkHandler(){
