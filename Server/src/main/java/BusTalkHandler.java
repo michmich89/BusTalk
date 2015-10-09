@@ -1,5 +1,6 @@
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import org.json.JSONObject;
 
 import javax.websocket.Session;
@@ -56,9 +57,9 @@ public class BusTalkHandler {
 
     private BusTalkHandler(){
 
-        idToChatroom = new HashMap<Integer, Chatroom>();
-        userToSession = HashBiMap.create();
-        disallowedNames = new ArrayList<String>();
+        idToChatroom = Collections.synchronizedMap(new HashMap<Integer, Chatroom>());
+        userToSession = Maps.synchronizedBiMap(HashBiMap.<User, Session>create());
+        disallowedNames = Collections.synchronizedList(new ArrayList<String>());
 
         disallowedNames.add("Alexander Kloutschek"); //TIHI
         LOGGER = Logger.getLogger(BusTalkServerEndpoint.class.getName());
@@ -94,11 +95,11 @@ public class BusTalkHandler {
                     Chatroom chatroom = chatroomFactory.createChatroom(nameOfRoom);
                     int chatId = chatroom.getIdNbr();
 
-                    LOGGER.log(Level.INFO, String.format("[{0}] Created chat {1} with id {2}\n Existing chat rooms: {3}",
-                            new Object[]{session.getId(), nameOfRoom, chatId, idToChatroom.values().toString()}));
-
                     idToChatroom.put(chatId, chatroom);
                     chatroom.subscribeToRoom(userToSession.inverse().get(session));
+
+                    LOGGER.log(Level.INFO, String.format("[{0}] Created chat \"{1}\" with id {2}\n Existing chat rooms: {3}"),
+                            new Object[]{session.getId(), nameOfRoom, chatId, idToChatroom.values().toString()});
 
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("type", ROOM_CREATED_NOTIFICATION);
@@ -179,6 +180,7 @@ public class BusTalkHandler {
         }catch(IllegalArgumentException e){
             //TODO: Vi ska skicka tillbaka information om Vad som gick fel
             session.getAsyncRemote().sendText(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -303,6 +305,9 @@ public class BusTalkHandler {
         }
 
         session.getAsyncRemote().sendObject(jsonObject);
+
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Sent list of chatrooms"),
+                new Object[]{session.getId(), userToSession.inverse().get(session).getName()});
     }
 
     private void newUserInChatNotification(Chatroom chatroom, User user) {
@@ -317,8 +322,6 @@ public class BusTalkHandler {
             s.getAsyncRemote().sendObject(objectToSend);
         }
     }
-
-
 
 
 
