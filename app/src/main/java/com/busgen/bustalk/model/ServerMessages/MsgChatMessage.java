@@ -2,8 +2,6 @@ package com.busgen.bustalk.model.ServerMessages;
 
 import com.busgen.bustalk.model.IServerMessage;
 
-import java.util.Date;
-
 /**
  * Created by Johan on 2015-10-05.
  */
@@ -11,24 +9,24 @@ public class MsgChatMessage implements IServerMessage {
 
     private String message;
     private int chatId;
-    private String userName;
+    private String nickname;
     private String date;
     private boolean isMe;
 
-    public MsgChatMessage(boolean isMe, String message, String date, String userName, int chatId) {
+    public MsgChatMessage(boolean isMe, String message, String date, String nickname, int chatId) {
         this.isMe = isMe;
         this.message = message;
         this.date = date;
-        this.userName = userName;
+        this.nickname = nickname;
         this.chatId = chatId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public int getChatId() {
