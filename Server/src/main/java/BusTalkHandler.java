@@ -276,16 +276,15 @@ public class BusTalkHandler {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", LIST_OF_USERS_IN_CHAT_NOTIFICATION);
-        for (User u : chatRoom.getChatroomUsers()) {
-            Session s = userToSession.get(u);
-            User user = userToSession.inverse().get(session);
-
+        for (User user : chatRoom.getChatroomUsers()) {
             JSONObject jsonUser = new JSONObject();
             jsonUser.put("name", user.getName());
             jsonUser.put("interests", user.getInterests());
 
-            jsonObject.append("users", user);
+            jsonObject.append("users", jsonUser);
         }
+
+        System.out.println(jsonObject.toString());
 
         session.getAsyncRemote().sendObject(jsonObject);
     }
