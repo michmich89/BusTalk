@@ -94,7 +94,8 @@ public class BusTalkHandler {
                     Chatroom chatroom = chatroomFactory.createChatroom(nameOfRoom);
                     int chatId = chatroom.getIdNbr();
 
-                    LOGGER.log(Level.INFO, String.format("[{0}] Created chat {1} with id {2}", new Object[]{session.getId(), nameOfRoom, chatId}));
+                    LOGGER.log(Level.INFO, String.format("[{0}] Created chat {1} with id {2}\n Existing chat rooms: {3}",
+                            new Object[]{session.getId(), nameOfRoom, chatId, idToChatroom.values().toString()}));
 
                     idToChatroom.put(chatId, chatroom);
                     chatroom.subscribeToRoom(userToSession.inverse().get(session));
@@ -113,11 +114,13 @@ public class BusTalkHandler {
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatRoom = idToChatroom.get(chatId);
-                    chatRoom.subscribeToRoom(userToSession.inverse().get(session));
+                    User user = userToSession.inverse().get(session);
+                    chatRoom.subscribeToRoom(user);
 
-                    LOGGER.log(Level.INFO, String.format("[{0}] Joined room {1} ({2})"), new Object[]{session.getId(), chatRoom.getTitle(), chatId});
+                    LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
+                            new Object[]{session.getId(), user.getName(), chatRoom.getTitle(), chatId});
 
-                    newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
+                    newUserInChatNotification(chatRoom, user);
                 }
                 break;
                 case LIST_OF_USERS_IN_ROOM_REQUEST:
@@ -131,14 +134,17 @@ public class BusTalkHandler {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatroom = idToChatroom.get(chatId);
 
-                    chatroom.unsubscribeToRoom(userToSession.inverse().get(session));
+                    User user = userToSession.inverse().get(session);
+                    chatroom.unsubscribeToRoom(user);
 
-                    LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"), new Object[]{session.getId(), chatroom.getTitle(), chatId});
+                    LOGGER.log(Level.INFO, String.format("[{0}:{1}] Left room {2} ({3})"),
+                            new Object[]{session.getId(), user.getName(), chatroom.getTitle(), chatId});
 
                     if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > 100){
                         idToChatroom.remove(chatId);
 
-                        LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
+                        LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed. Existing chat rooms: {2}"),
+                                new Object[]{chatroom.getTitle(), chatId, idToChatroom.values().toString()});
 
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("type", ROOM_DELETED_NOTIFICATION);
@@ -151,7 +157,6 @@ public class BusTalkHandler {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("type", USER_LEFT_ROOM_NOTIFICATION);
                         jsonObject.put("chatId", chatId);
-                        User user = userToSession.inverse().get(session);
                         jsonObject.put("name", user.getName());
 
                         for (User u : chatroom.getChatroomUsers()) {
@@ -163,7 +168,7 @@ public class BusTalkHandler {
 
                 break;
                 case CHOOSE_NICKNAME_REQUEST:
-                    changeNickOrInterest(userMessage, session);
+                    setNameAndInterest(userMessage, session);
                     break;
                 case NICKNAME_AVAILABLE_CHECK:
                     break;
@@ -178,29 +183,35 @@ public class BusTalkHandler {
     }
 
     private void addDisallowedName(String name){
+        name = name.toLowerCase();
         if(!disallowedNames.contains(name)) {
             disallowedNames.add(name);
-            LOGGER.log(Level.INFO, String.format("Added \"{0}\" to list of disallowed names", name));
+            LOGGER.log(Level.INFO, String.format("Added \"{0}\" to list of disallowed names"), name);
         }
     }
 
     private void removeDisallowedName(String name){
-        //if(disallowedNames.contains(name)){
+        name = name.toLowerCase();
         disallowedNames.remove(name);
-        LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names", name));
-        //}
+        LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names"), name);
+    }
+
+    private boolean isNameAllowed(String name) {
+        return !disallowedNames.contains(name.toLowerCase());
     }
 
     private void addUser(User user, Session session){
         userToSession.put(user, session);
-        LOGGER.log(Level.INFO, String.format("[{0}] \"{1}\" added to user list"), new Object[]{session.getId(), user.getName()});
-        disallowedNames.add(user.getName());
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Added to user list"), new Object[]{session.getId(), user.getName()});
+        addDisallowedName(user.getName());
+        LOGGER.log(Level.INFO, String.format("\"{0}\" was added to the list of disallowed names"), user.getName());
     }
 
     private void removeUser(User user){
-        disallowedNames.remove(user.getName());
+        removeDisallowedName(user.getName());
+        LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), user.getName());
         userToSession.remove(user);
-        LOGGER.log(Level.INFO, String.format("[{0}] \"{1}\" removed from user list"), new Object[]{userToSession.get(user).getId(), user.getName()});
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Removed from user list"), new Object[]{userToSession.get(user).getId(), user.getName()});
     }
 
     private void sendChatMessage(UserMessage userMessage, Session session) {
@@ -223,64 +234,32 @@ public class BusTalkHandler {
         }
     }
 
-    private void changeNickOrInterest(UserMessage userMessage, Session session) {
-        String newNickName = userMessage.getString("name");
-        String newInterest = userMessage.getString("interests");
-        int status = 0;
+    private void setNameAndInterest(UserMessage message, Session session) {
+        boolean status = true;
 
-        if (!disallowedNames.contains(newNickName)){
+        String name = message.getString("name");
+        String interests = message.getString("interests");
+        User user = userToSession.inverse().get(session);
 
-            //DOES THE USER EXIST? IF NOT - DO THIS
-            if(!userToSession.containsValue(session)) {
-                User user = new User(newNickName, newInterest);
-                addUser(user, session);
-                LOGGER.log(Level.INFO, "[" + session.getId() + "]" + "User \"" + user.getName() + "\" created with interests \"" + newInterest + "\"");
-
-                //THE USER EXIST - DO THIS
-                //TODO: Maybe this should check if new interests = null and then leave the interests as they are?
-            }else{
-                User user = userToSession.inverse().get(session);
-
-                //BEGONE WITH THE OLD
-                String oldName = user.getName();
-                String oldInterests = user.getInterests();
-                removeDisallowedName(oldName);
-
-                //...IN WITH THE NEW
-                user.setName(newNickName);
-                user.setInterests(newInterest);
-                addDisallowedName(newNickName);
-
-                LOGGER.log(Level.INFO, "[" + session.getId() + "] Name changed" + oldName + " -> " + newNickName
-                        + " and interest " + oldInterests + " -> " + newInterest);
-            }
-            status = 1;
-        /*
-        TODO: Se till att två användare inte kan ha samma namn, och meddela användaren om det valt ett
-        namn som är upptaget. Vad händer om en användare försöker byta till samma nick?
-         */
-        /*
-        Här tar vi hand om situationen då en användare försöker byta till samma namn
-        Vi plockar ut användaren
-        Kollar om denna användares namn överensstämmer med det nya smeknamnet, till exempel då han vill ha en
-        stor bokstav i mitten som en jävla chef, eller helt enkelt vill ha kvar namnet och enbart byta intressen
-
-         */
-        } else if (userToSession.inverse().get(session).getName().equalsIgnoreCase(newNickName)){ //Urgh
-            User user = userToSession.inverse().get(session);
-            //BEGONE WITH THE OLD
+        if (user != null && (isNameAllowed(name) || user.getName().equals(name))) {
             String oldName = user.getName();
             String oldInterests = user.getInterests();
-            removeDisallowedName(oldName);
 
-            //...IN WITH THE NEW
-            user.setName(newNickName);
-            user.setInterests(newInterest);
-            addDisallowedName(newNickName);
+            user.setName(name);
+            user.setInterests(interests);
 
-            status = 1;
-            LOGGER.log(Level.INFO, "[" + session.getId() + "] Name changed" + oldName + " -> " + newNickName
-                    + " and interest " + oldInterests + " -> " + newInterest);
+            addUser(user, session);
+
+            LOGGER.log(Level.INFO, String.format("[{0}:{1}] Name changed to \"{2}\" and interest changed from \"{3}\" to \"{4}\""),
+                    new Object[]{session.getId(), oldName, user.getName(), oldInterests, user.getInterests()});
+        } else if (isNameAllowed(name)) {
+            user = new User(name, interests);
+            addUser(user, session);
+
+            LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created with interests \"{2}\""),
+                    new Object[]{session.getId(), user.getName(), user.getInterests()});
+        } else {
+            status = false;
         }
 
         JSONObject jsonObject = new JSONObject();
