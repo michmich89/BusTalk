@@ -26,6 +26,7 @@ public class MainChatActivity extends AppCompatActivity implements Observer {
     private ArrayList<MsgChatMessage> messageHistory;
     private Client client;
     private Chatroom myChatroom;
+    private MenuItem usersPresent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,15 @@ public class MainChatActivity extends AppCompatActivity implements Observer {
         myChatroom = new Chatroom(1, "Group", "Fotboll", 100);
         client.joinRoom(myChatroom);
         myChatroom.addObserver(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main_chat, menu);
+        this.usersPresent = menu.findItem(R.id.action_users);
+        this.usersPresent.setTitle("" + myChatroom.getNbrOfUsers());
+        return true;
     }
 
     private void initViews(){
