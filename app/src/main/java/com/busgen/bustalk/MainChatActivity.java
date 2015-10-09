@@ -66,7 +66,10 @@ public class MainChatActivity extends AppCompatActivity {
     public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
-        //TODO: if(message isme)
+        //If the user sent the message, then put the message in the Chatroom-object
+        if(message.getIsMe()){
+            client.addMessageToChatroom(message);
+        }
     }
 
     //Makes it seem like there has already been messages sent when the app launches

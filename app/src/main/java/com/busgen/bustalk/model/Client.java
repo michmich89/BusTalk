@@ -87,9 +87,9 @@ public class Client implements IClient{
     }
 
 	@Override
-	public void addMessageToChatroom(MsgChatMessage message, int chatId) {
+	public void addMessageToChatroom(MsgChatMessage message) {
 		for(int i = 0; i<chatrooms.size(); i++){
-			if(chatrooms.get(i).getChatID()==chatId){
+			if(chatrooms.get(i).getChatID()==message.getChatId()){
 				chatrooms.get(i).addMessage(message);
 			}
 		}
