@@ -25,7 +25,7 @@ public class ChatroomFactory {
     }
 
     private ChatroomFactory(){
-        idNbr = 101;
+        idNbr = Constants.NBR_OF_RESERVED_CHAT_IDS;
     }
 
     public Chatroom createChatroom(String chatroomSubject){

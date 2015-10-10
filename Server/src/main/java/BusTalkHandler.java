@@ -11,32 +11,6 @@ import java.util.logging.Logger;
  * Created by Kristoffer on 2015-10-08.
  */
 public class BusTalkHandler {
-
-
-    // Message type constants
-
-    private final int CHAT_MESSAGE = 11;
-
-    private final int CREATE_ROOM_REQUEST = 21;
-    private final int JOIN_ROOM_REQUEST = 22;
-    private final int LIST_OF_USERS_IN_ROOM_REQUEST = 23;
-    private final int LIST_OF_ALL_CHATROOMS_REQUEST = 26;
-    private final int LEAVE_ROOM_REQUEST = 29;
-
-    private final int CHOOSE_NICKNAME_REQUEST = 31;
-    private final int NICKNAME_AVAILABLE_CHECK = 32;
-
-    //Notification number that's being sent back
-    private final int NEW_USER_IN_CHAT_NOTIFICATION = 101;
-    private final int LIST_OF_CHATROOMS_NOTIFICATION = 102;
-    private final int LIST_OF_USERS_IN_CHAT_NOTIFICATION = 103;
-    private final int CREDENTIAL_CHANGE_NOTIFICATION = 104;
-    private final int CHAT_MESSAGE_NOTIFICATION = 105;
-    private final int USER_LEFT_ROOM_NOTIFICATION = 106;
-    private final int ROOM_DELETED_NOTIFICATION = 107;
-    private final int ROOM_CREATED_NOTIFICATION = 108;
-    //TODO: Rensa och snygga upp bland dessa?
-
     private final Map<Integer, Chatroom> idToChatroom;
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
@@ -84,11 +58,11 @@ public class BusTalkHandler {
             int type = userMessage.getInt("type");
 
             switch(type){
-                case CHAT_MESSAGE:
+                case MessageType.CHAT_MESSAGE:
                     sendChatMessage(userMessage, session);
                     break;
 
-                case CREATE_ROOM_REQUEST:
+                case MessageType.CREATE_ROOM_REQUEST:
                 {
                     String nameOfRoom = userMessage.getString("chatName");
                     Chatroom chatroom = chatroomFactory.createChatroom(nameOfRoom);
@@ -100,72 +74,60 @@ public class BusTalkHandler {
                     chatroom.subscribeToRoom(userToSession.inverse().get(session));
 
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("type", ROOM_CREATED_NOTIFICATION);
+                    jsonObject.put("type", MessageType.ROOM_CREATED_NOTIFICATION);
                     jsonObject.put("title", nameOfRoom);
                     jsonObject.put("id", chatId);
+                    jsonObject.put("isYours", false);
                     for (Session s : userToSession.values()) {
-                        s.getAsyncRemote().sendObject(jsonObject);
+                        if(!s.equals(session)) {
+                            s.getAsyncRemote().sendObject(jsonObject);
+                        }
                     }
+                    jsonObject.put("isYours", true);
+                    session.getAsyncRemote().sendObject(jsonObject);
 
                 }
                 break;
-                case JOIN_ROOM_REQUEST:
+                case MessageType.JOIN_ROOM_REQUEST:
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatRoom = idToChatroom.get(chatId);
-                    chatRoom.subscribeToRoom(userToSession.inverse().get(session));
-
-                    LOGGER.log(Level.INFO, String.format("[{0}] Joined room {1} ({2})"), new Object[]{session.getId(), chatRoom.getTitle(), chatId});
-
-                    newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
+                    if(chatRoom.subscribeToRoom(userToSession.inverse().get(session))){
+                        newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
+                        LOGGER.log(Level.INFO, String.format("[{0}] Joined room {1} ({2})"),
+                                        new Object[]{session.getId(), chatRoom.getTitle(), chatId});
+                    }
                 }
                 break;
-                case LIST_OF_USERS_IN_ROOM_REQUEST:
+                case MessageType.LIST_OF_USERS_IN_ROOM_REQUEST:
                     sendListOfUsersInChat(userMessage, session);
                     break;
-                case LIST_OF_ALL_CHATROOMS_REQUEST:
+                case MessageType.LIST_OF_ALL_CHATROOMS_REQUEST:
                     sendListOfChatrooms(userMessage, session);
                     break;
-                case LEAVE_ROOM_REQUEST: // Leave room
+                case MessageType.LEAVE_ROOM_REQUEST: // Leave room
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatroom = idToChatroom.get(chatId);
 
-                    chatroom.unsubscribeToRoom(userToSession.inverse().get(session));
+                    if(!chatroom.unsubscribeToRoom(userToSession.inverse().get(session))){
+                        break;
+                    }
 
                     LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"), new Object[]{session.getId(), chatroom.getTitle(), chatId});
-
-                    if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > 100){
-                        idToChatroom.remove(chatId);
-
-                        LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
-
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("type", ROOM_DELETED_NOTIFICATION);
-                        jsonObject.put("chatId", chatId);
-
-                        for (Session s : userToSession.values()) {
-                            s.getAsyncRemote().sendObject(jsonObject);
-                        }
+                    if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS){
+                        deleteRoom(chatroom);
                     } else {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("type", USER_LEFT_ROOM_NOTIFICATION);
-                        jsonObject.put("chatId", chatId);
-                        User user = userToSession.inverse().get(session);
-                        jsonObject.put("name", user.getName());
+                        userLeftRoomNotification(chatroom, userToSession.inverse().get(session));
 
-                        for (User u : chatroom.getChatroomUsers()) {
-                            Session s = userToSession.get(u);
-                            s.getAsyncRemote().sendObject(jsonObject);
-                        }
                     }
                 }
 
                 break;
-                case CHOOSE_NICKNAME_REQUEST:
+                case MessageType.CHOOSE_NICKNAME_REQUEST:
                     changeNickOrInterest(userMessage, session);
                     break;
-                case NICKNAME_AVAILABLE_CHECK:
+                case MessageType.NICKNAME_AVAILABLE_CHECK:
                     break;
 
                 default:
@@ -213,7 +175,7 @@ public class BusTalkHandler {
         for (User u : chatRoom.getChatroomUsers()) {
             Session s = userToSession.get(u);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", CHAT_MESSAGE_NOTIFICATION);
+            jsonObject.put("type", MessageType.CHAT_MESSAGE_NOTIFICATION);
             jsonObject.put("chatId", chatId);
             jsonObject.put("sender", sender.getName());
             jsonObject.put("message", message);
@@ -284,7 +246,7 @@ public class BusTalkHandler {
         }
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", CREDENTIAL_CHANGE_NOTIFICATION);
+        jsonObject.put("type", MessageType.CREDENTIAL_CHANGE_NOTIFICATION);
         jsonObject.put("status", status);
         session.getAsyncRemote().sendObject(jsonObject);
     }
@@ -294,7 +256,7 @@ public class BusTalkHandler {
         Chatroom chatRoom = idToChatroom.get(chatId);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", LIST_OF_USERS_IN_CHAT_NOTIFICATION);
+        jsonObject.put("type", MessageType.LIST_OF_USERS_IN_CHAT_NOTIFICATION);
         for (User u : chatRoom.getChatroomUsers()) {
             Session s = userToSession.get(u);
             User user = userToSession.inverse().get(session);
@@ -311,7 +273,7 @@ public class BusTalkHandler {
 
     private void sendListOfChatrooms(UserMessage userMessage, Session session) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", LIST_OF_CHATROOMS_NOTIFICATION);
+        jsonObject.put("type", MessageType.LIST_OF_CHATROOMS_NOTIFICATION);
 
         Iterator iterator = idToChatroom.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -328,7 +290,7 @@ public class BusTalkHandler {
 
     private void newUserInChatNotification(Chatroom chatroom, User user) {
         JSONObject objectToSend = new JSONObject();
-        objectToSend.put("type", NEW_USER_IN_CHAT_NOTIFICATION); //What notification should be sent back?
+        objectToSend.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION); //What notification should be sent back?
         objectToSend.put("chatId", chatroom.getIdNbr());
         objectToSend.put("user", user.getName());
         objectToSend.put("interests", user.getInterests());
@@ -337,6 +299,42 @@ public class BusTalkHandler {
             Session s = userToSession.get(u);
             s.getAsyncRemote().sendObject(objectToSend);
         }
+    }
+
+    private void userLeftRoomNotification(Chatroom chatroom, User user){
+        int chatId = chatroom.getIdNbr();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", MessageType.USER_LEFT_ROOM_NOTIFICATION);
+        jsonObject.put("chatId", chatId);
+        jsonObject.put("name", user.getName());
+
+        for (User u : chatroom.getChatroomUsers()) {
+            Session s = userToSession.get(u);
+            s.getAsyncRemote().sendObject(jsonObject);
+        }
+    }
+
+    private void roomDeletedNotification(Chatroom chatroom){
+        int chatId = chatroom.getIdNbr();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", MessageType.ROOM_DELETED_NOTIFICATION);
+        jsonObject.put("chatId", chatId);
+
+        for (Session s : userToSession.values()) {
+            s.getAsyncRemote().sendObject(jsonObject);
+        }
+
+    }
+
+    private void deleteRoom(Chatroom chatroom){
+        int chatId = chatroom.getIdNbr();
+        idToChatroom.remove(chatId);
+
+        LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
+
+        roomDeletedNotification(chatroom);
     }
 
 

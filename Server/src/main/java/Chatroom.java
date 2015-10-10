@@ -21,12 +21,24 @@ public class Chatroom {
         chatroomUsers = new ArrayList<User>();
     }
 
-    public void subscribeToRoom(User user){
-        chatroomUsers.add(user);
+    /**
+     * Method will add user to a chatroom, if user is not already subscribed to room
+     *
+     * @param user - the user you want to add
+     * @return true if user was just added - false if user was already subscribed to room
+     */
+    public boolean subscribeToRoom(User user){
+        return chatroomUsers.add(user);
     }
 
-    public void unsubscribeToRoom(User user){
-        chatroomUsers.remove(user);
+    /**
+     * Method will remove a user from a chatroom if the user is subscribed to that room
+     *
+     * @param user - the user who wants to leave a room
+     * @return true if user was able to be removed - false if the user wasn't subscribed to the room
+     */
+    public boolean unsubscribeToRoom(User user){
+        return chatroomUsers.remove(user);
     }
 
     public int getIdNbr(){
