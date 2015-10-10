@@ -69,15 +69,16 @@ public class BusTalkHandler {
                     int chatId = chatroom.getIdNbr();
 
                     idToChatroom.put(chatId, chatroom);
-                    chatroom.subscribeToRoom(userToSession.inverse().get(session));
 
                     LOGGER.log(Level.INFO, String.format("[{0}] Created chat \"{1}\" with id {2}\n Existing chat rooms: {3}"),
                             new Object[]{session.getId(), nameOfRoom, chatId, idToChatroom.values().toString()});
 
+                    joinRoom(userToSession.inverse().get(session), chatroom);
+
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("type", MessageType.ROOM_CREATED_NOTIFICATION);
                     jsonObject.put("title", nameOfRoom);
-                    jsonObject.put("id", chatId);
+                    jsonObject.put("chatId", chatId);
                     jsonObject.put("isYours", false);
                     for (Session s : userToSession.values()) {
                         if(!s.equals(session)) {
@@ -94,11 +95,8 @@ public class BusTalkHandler {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatRoom = idToChatroom.get(chatId);
 
-                    if(chatRoom.subscribeToRoom(userToSession.inverse().get(session))){
-                        newUserInChatNotification(chatRoom, userToSession.inverse().get(session));
-                        LOGGER.log(Level.INFO, String.format("[{0}] Joined room {1} ({2})"),
-                                        new Object[]{session.getId(), chatRoom.getTitle(), chatId});
-                    }
+                    User user = userToSession.inverse().get(session);
+                    joinRoom(user, chatRoom);
 
                 }
                 break;
@@ -113,18 +111,16 @@ public class BusTalkHandler {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatroom = idToChatroom.get(chatId);
 
-
-                    if(!chatroom.unsubscribeToRoom(userToSession.inverse().get(session))){
+                    User user = userToSession.inverse().get(session);
+                    if(!chatroom.unsubscribeToRoom(user) || user == null){
                         break;
                     }
 
                     LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"), new Object[]{session.getId(), chatroom.getTitle(), chatId});
-                    if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS){
+                    if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS - 1){
                         deleteRoom(chatroom);
                     } else {
                         userLeftRoomNotification(chatroom, userToSession.inverse().get(session));
-
-
                     }
                 }
 
@@ -252,8 +248,6 @@ public class BusTalkHandler {
             jsonObject.append("users", jsonUser);
         }
 
-        System.out.println(jsonObject.toString());
-
         session.getAsyncRemote().sendObject(jsonObject);
     }
 
@@ -266,7 +260,7 @@ public class BusTalkHandler {
             Map.Entry pair = (Map.Entry)iterator.next();
             Chatroom chatroom = (Chatroom)pair.getValue();
             JSONObject jsonChatroom = new JSONObject();
-            jsonChatroom.put("id", chatroom.getIdNbr());
+            jsonChatroom.put("chatId", chatroom.getIdNbr());
             jsonChatroom.put("name", chatroom.getTitle());
             jsonObject.append("chatrooms", jsonChatroom);
         }
@@ -281,7 +275,7 @@ public class BusTalkHandler {
         JSONObject objectToSend = new JSONObject();
         objectToSend.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION); //What notification should be sent back?
         objectToSend.put("chatId", chatroom.getIdNbr());
-        objectToSend.put("user", user.getName());
+        objectToSend.put("name", user.getName());
         objectToSend.put("interests", user.getInterests());
 
         for (User u : chatroom.getChatroomUsers()) {
@@ -326,6 +320,14 @@ public class BusTalkHandler {
         roomDeletedNotification(chatroom);
     }
 
+    private void joinRoom(User user, Chatroom chatroom) {
+        if (chatroom.subscribeToRoom(user)) {
+            newUserInChatNotification(chatroom, user);
 
+            Session session = userToSession.get(user);
+            LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
+                    new Object[]{session.getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
+        }
+    }
 
 }

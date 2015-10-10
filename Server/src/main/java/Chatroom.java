@@ -28,7 +28,10 @@ public class Chatroom {
      * @return true if user was just added - false if user was already subscribed to room
      */
     public boolean subscribeToRoom(User user){
-        return chatroomUsers.add(user);
+        if (!chatroomUsers.contains(user)) {
+            return chatroomUsers.add(user);
+        }
+        return false;
     }
 
     /**
