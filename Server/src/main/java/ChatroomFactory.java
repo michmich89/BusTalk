@@ -17,11 +17,12 @@ public class ChatroomFactory {
     private static ChatroomFactory chatroomFactory;
     private int idNbr;
 
+    private static class Holder {
+        static final ChatroomFactory INSTANCE = new ChatroomFactory();
+    }
+
     public static ChatroomFactory getFactory(){
-        if(chatroomFactory == null){
-            chatroomFactory = new ChatroomFactory();
-        }
-        return chatroomFactory;
+        return Holder.INSTANCE;
     }
 
     private ChatroomFactory(){
