@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import javax.websocket.Session;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**
@@ -49,6 +50,8 @@ public class BusTalkHandler {
         try {
             int type = userMessage.getInt("type");
 
+            // TODO: Check if user exists or if type is CHOOSE_NICKNAME_REQUEST, throw exception if none is true
+
             switch(type){
                 case MessageType.CHAT_MESSAGE:
                     sendChatMessage(userMessage, session);
@@ -64,7 +67,9 @@ public class BusTalkHandler {
                 break;
                 case MessageType.JOIN_ROOM_REQUEST: {
                     int chatId = userMessage.getInt("chatId");
+                    System.out.println("Före");
                     User user = userHandler.getUser(session);
+                    System.out.println("Efter");
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
 
                     if(chatroomHandler.joinChatroom(user, chatroom)){
@@ -129,17 +134,20 @@ public class BusTalkHandler {
     public void removeSession(Session session){
         User user = userHandler.getUser(session);
 
-        for(Chatroom c : chatroomHandler.getListOfOpenChatrooms()){
-            if(chatroomHandler.getChatroom(chatId) == null){
+        Iterator<Chatroom> iterator = chatroomHandler.getListOfOpenChatrooms().iterator();
+        while (iterator.hasNext()){
+            Chatroom chatroom = iterator.next();
+
+            chatroomHandler.leaveChatroom(user, chatroom);
+
+            if(chatroomHandler.getChatroom(chatroom.getIdNbr()) == null){
                 messageSender.chatDeletedNotification(chatroom);
             }else{
                 messageSender.userLeftNotification(user, chatroom);
             }
         }
 
-//        chatroomHandler.unsubscribeUser(user);
         userHandler.removeUser(user);
-        messageSender.userLeftNotification();
     }
 
 }

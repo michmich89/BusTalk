@@ -102,4 +102,6 @@ public class ChatroomHandler {
             leaveChatroom(user, c);
         }
     }
+
+    // TODO: Create method that checks if there's a user for the session
 }
