@@ -2,7 +2,6 @@ package com.busgen.bustalk.server;
 
 import com.busgen.bustalk.server.chatroom.Chatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
-import com.busgen.bustalk.server.message.MessageSender;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
@@ -19,7 +18,7 @@ import java.util.logging.Logger;
 public class BusTalkHandler {
     private final UserHandler userHandler;
     private final ChatroomHandler chatroomHandler;
-    private final MessageSender messageSender;
+    private final BusTalkSender messageSender;
 
     private static final Logger logger = Logger.getLogger(BusTalkHandler.class.getName());
 
@@ -35,7 +34,7 @@ public class BusTalkHandler {
 
         this.userHandler = UserHandler.getInstance();
         this.chatroomHandler = ChatroomHandler.getInstance();
-        this.messageSender = MessageSender.getInstance();
+        this.messageSender = BusTalkSender.getInstance();
 
         this.chatroomHandler.createChatroom("test1", 0);
         this.chatroomHandler.createChatroom("test2", 1);

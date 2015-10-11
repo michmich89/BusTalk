@@ -1,7 +1,8 @@
-package com.busgen.bustalk.server.message;
+package com.busgen.bustalk.server;
 
 import com.busgen.bustalk.server.chatroom.Chatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
+import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import com.busgen.bustalk.server.util.Constants;
@@ -12,21 +13,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MessageSender {
+public class BusTalkSender {
 
     private final UserHandler userHandler;
     private final ChatroomHandler chatroomHandler;
 
     private static class Holder {
-        static final MessageSender INSTANCE = new MessageSender();
+        static final BusTalkSender INSTANCE = new BusTalkSender();
     }
 
-    private MessageSender() {
+    private BusTalkSender() {
         this.userHandler = UserHandler.getInstance();
         this.chatroomHandler = ChatroomHandler.getInstance();
     }
 
-    public static MessageSender getInstance() {
+    public static BusTalkSender getInstance() {
         return Holder.INSTANCE;
     }
 
