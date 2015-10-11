@@ -6,6 +6,8 @@ import com.busgen.bustalk.server.util.JsonEncoder;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Kristoffer on 2015-09-29.
@@ -16,7 +18,8 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/chat", encoders = JsonEncoder.class, decoders = JsonDecoder.class)
 public class BusTalkServerEndpoint {
     private BusTalkHandler busTalkHandler;
-    
+    private static final Logger LOGGER = Logger.getLogger(BusTalkServerEndpoint.class.getName());
+
     public BusTalkServerEndpoint(){
         busTalkHandler = BusTalkHandler.getInstance();
     }
@@ -28,7 +31,7 @@ public class BusTalkServerEndpoint {
 
     @OnOpen
     public void onOpen(Session session){
-    //    LOGGER.log(Level.INFO, String.format("[{0}] Connected to server.", session.getId()));
+        LOGGER.log(Level.INFO, String.format("[{0}] Connected to server.", session.getId()));
     }
 
     @OnError
@@ -39,7 +42,8 @@ public class BusTalkServerEndpoint {
 
     @OnClose
     public void onClose(Session session){
-    //    LOGGER.log(Level.INFO, String.format("[{0}] Disconnected from server."));
+        LOGGER.log(Level.INFO, String.format("[{0}] Disconnected from server."));
+        busTalkHandler.removeSession(session);
     }
 
 

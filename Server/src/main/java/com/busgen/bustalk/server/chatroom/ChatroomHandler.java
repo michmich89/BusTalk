@@ -18,8 +18,7 @@ public class ChatroomHandler {
     private final BiMap<Integer, Chatroom> idToChatroom;
     private final ChatroomFactory chatroomFactory;
     private final UserHandler userHandler;
-    private final BusTalkSender messageSender;
-    private final static Logger LOGGER;
+    private final static Logger LOGGER = Logger.getLogger(ChatroomHandler.class.getName());
 
     private static class Holder {
         static final ChatroomHandler INSTANCE = new ChatroomHandler();
@@ -29,15 +28,14 @@ public class ChatroomHandler {
         this.idToChatroom = Maps.synchronizedBiMap(HashBiMap.<Integer, Chatroom>create());
         this.chatroomFactory = ChatroomFactory.getFactory();
         this.userHandler = UserHandler.getInstance();
-        this.messageSender = BusTalkSender.getInstance();
-        LOGGER = new Logger.log
+
     }
 
     public static ChatroomHandler getInstance() {
         return Holder.INSTANCE;
     }
 
-    public void createChatroom(User user, String name) {
+    public Chatroom createChatroom(User user, String name) {
         Chatroom chatroom = chatroomFactory.createChatroom(name);
         idToChatroom.put(chatroom.getIdNbr(), chatroom);
 
@@ -45,7 +43,8 @@ public class ChatroomHandler {
                 new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
 
         joinChatroom(user, chatroom);
-        messageSender.chatroomCreatedNotification(user, chatroom);
+        return chatroom;
+
     }
 
     public void createChatroom(String name, int chatId) {
@@ -56,13 +55,14 @@ public class ChatroomHandler {
     }
 
     //TODO: Ska denna ligga i User eller i Chatroom?
-    public void joinChatroom(User user, Chatroom chatroom) {
-        if (chatroom.subscribeToRoom(user)) {
-            messageSender.userJoinedNotification(user, chatroom);
-
+    public boolean joinChatroom(User user, Chatroom chatroom) {
+        boolean joinSuccessful = chatroom.subscribeToRoom(user);
+        if (joinSuccessful) {
             LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
                     new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
+
         }
+        return joinSuccessful;
     }
 
     //TODO: Ska denna ligga i User eller i Chatroom?
@@ -75,18 +75,13 @@ public class ChatroomHandler {
                 new Object[]{userHandler.getSession(user).getId(), chatroom.getTitle(), chatroom.getIdNbr()});
         if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS - 1){
             deleteChatroom(chatroom.getIdNbr());
-        } else {
-            messageSender.userLeftNotification(user, chatroom);
         }
     }
 
     private void deleteChatroom(int chatId) {
         Chatroom chatroom = idToChatroom.get(chatId);
         idToChatroom.remove(chatId);
-
         LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
-
-        messageSender.chatDeletedNotification(chatroom);
     }
 
     public List<Chatroom> getListOfOpenChatrooms() {
@@ -100,5 +95,11 @@ public class ChatroomHandler {
 
     public Chatroom getChatroom(int chatId) {
         return idToChatroom.get(chatId);
+    }
+
+    public void unsubscribeUser(User user){
+        for(Chatroom c : idToChatroom.values()){
+            leaveChatroom(user, c);
+        }
     }
 }

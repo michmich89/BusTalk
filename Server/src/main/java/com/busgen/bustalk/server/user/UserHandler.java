@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserHandler {
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
+    private static final Logger LOGGER = Logger.getLogger(UserHandler.class.getName());
 
     private static class Holder {
         static final UserHandler INSTANCE = new UserHandler();
@@ -54,29 +56,29 @@ public class UserHandler {
         name = name.toLowerCase();
         if (!disallowedNames.contains(name)) {
             disallowedNames.add(name);
-            Constants.LOGGER.log(Level.INFO, String.format("Added \"{0}\" to list of disallowed names"), name);
+            LOGGER.log(Level.INFO, String.format("Added \"{0}\" to list of disallowed names"), name);
         }
     }
 
     private void removeDisallowedName(String name) {
         name = name.toLowerCase();
         if (disallowedNames.remove(name)) {
-            Constants.LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names"), name);
+            LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names"), name);
         }
     }
 
     public void addUser(User user, Session session) {
         userToSession.put(user, session);
-        Constants.LOGGER.log(Level.INFO, String.format("[{0}:{1}] Added to user list"), new Object[]{session.getId(), user.getName()});
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Added to user list"), new Object[]{session.getId(), user.getName()});
         addDisallowedName(user.getName());
-        Constants.LOGGER.log(Level.INFO, String.format("\"{0}\" was added to the list of disallowed names"), user.getName());
+        LOGGER.log(Level.INFO, String.format("\"{0}\" was added to the list of disallowed names"), user.getName());
     }
 
     public void removeUser(User user) {
         removeDisallowedName(user.getName());
-        Constants.LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), user.getName());
+        LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), user.getName());
         userToSession.remove(user);
-        Constants.LOGGER.log(Level.INFO, String.format("[{0}:{1}] Removed from user list"), new Object[]{userToSession.get(user).getId(), user.getName()});
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Removed from user list"), new Object[]{userToSession.get(user).getId(), user.getName()});
     }
 
     public boolean setUserNameAndInterests(User user, Session session, String name, String interests) {
@@ -89,13 +91,13 @@ public class UserHandler {
 
             //addUser(user, session);
 
-            Constants.LOGGER.log(Level.INFO, String.format("[{0}:{1}] Name changed to \"{2}\" and interest changed from \"{3}\" to \"{4}\""),
+            LOGGER.log(Level.INFO, String.format("[{0}:{1}] Name changed to \"{2}\" and interest changed from \"{3}\" to \"{4}\""),
                     new Object[]{session.getId(), oldName, user.getName(), oldInterests, user.getInterests()});
         } else if (isNameAllowed(name)) {
             user = new User(name, interests);
             addUser(user, session);
 
-            Constants.LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created with interests \"{2}\""),
+            LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created with interests \"{2}\""),
                     new Object[]{session.getId(), user.getName(), user.getInterests()});
         } else {
             return false;

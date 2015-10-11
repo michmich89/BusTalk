@@ -3,32 +3,30 @@ package com.busgen.bustalk.server;
 import com.busgen.bustalk.server.chatroom.Chatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
+import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import com.busgen.bustalk.server.util.Constants;
 import org.json.JSONObject;
 
 import javax.websocket.Session;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BusTalkSender {
 
     private final UserHandler userHandler;
     private final ChatroomHandler chatroomHandler;
+    private static final Logger LOGGER = Logger.getLogger(BusTalkSender.class.getName());
 
-    private static class Holder {
-        static final BusTalkSender INSTANCE = new BusTalkSender();
-    }
 
-    private BusTalkSender() {
+
+    public BusTalkSender() {
         this.userHandler = UserHandler.getInstance();
         this.chatroomHandler = ChatroomHandler.getInstance();
-    }
-
-    public static BusTalkSender getInstance() {
-        return Holder.INSTANCE;
     }
 
     public void chatroomCreatedNotification(User user, Chatroom chatroom) {
@@ -50,7 +48,7 @@ public class BusTalkSender {
 
     public void userJoinedNotification(User user, Chatroom chatroom) {
         JSONObject objectToSend = new JSONObject();
-        objectToSend.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION); //What notification should be sent back?
+        objectToSend.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION);
         objectToSend.put("chatId", chatroom.getIdNbr());
         objectToSend.put("name", user.getName());
         objectToSend.put("interests", user.getInterests());
@@ -100,7 +98,7 @@ public class BusTalkSender {
         Session requester = userHandler.getSession(user);
         requester.getAsyncRemote().sendObject(jsonObject);
 
-        Constants.LOGGER.log(Level.INFO, String.format("[{0}:{1}] Sent list of chatrooms"),
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Sent list of chatrooms"),
                 new Object[]{requester.getId(), user.getName()});
     }
 
@@ -118,5 +116,21 @@ public class BusTalkSender {
 
         Session requester = userHandler.getSession(user);
         requester.getAsyncRemote().sendObject(jsonObject);
+    }
+
+    public void chatMessage(User sender, Chatroom chatroom, String message) {
+
+        int chatId = chatroom.getIdNbr();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", MessageType.CHAT_MESSAGE_NOTIFICATION);
+        jsonObject.put("chatId", chatId);
+        jsonObject.put("sender", sender.getName());
+        jsonObject.put("message", message);
+        jsonObject.put("time", new Date().toString());
+
+        for (User u : chatroomHandler.getListOfUsersInChatroom(chatId)) {
+            Session s = userHandler.getSession(u);
+            s.getAsyncRemote().sendObject(jsonObject);
+        }
     }
 }
