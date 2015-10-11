@@ -1,6 +1,6 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Kristoffer
+  com.busgen.bustalk.server.user.User: Kristoffer
   Date: 2015-09-29
   Time: 11:11
   To change this template use File | Settings | File Templates.

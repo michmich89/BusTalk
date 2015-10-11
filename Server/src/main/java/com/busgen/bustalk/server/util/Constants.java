@@ -1,3 +1,5 @@
+package com.busgen.bustalk.server.util;
+
 /**
  * Created by Kristoffer on 2015-10-08.
  */

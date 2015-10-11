@@ -1,12 +1,11 @@
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import org.json.JSONObject;
+package com.busgen.bustalk.server;
+
+import com.busgen.bustalk.server.message.UserMessage;
+import com.busgen.bustalk.server.util.JsonDecoder;
+import com.busgen.bustalk.server.util.JsonEncoder;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Kristoffer on 2015-09-29.
@@ -14,7 +13,7 @@ import java.util.logging.Logger;
 
 
 
-@ServerEndpoint(value = "/chat", encoders = BusTalkJsonEncoder.class, decoders = BusTalkJsonDecoder.class)
+@ServerEndpoint(value = "/chat", encoders = JsonEncoder.class, decoders = JsonDecoder.class)
 public class BusTalkServerEndpoint {
     private BusTalkHandler busTalkHandler;
     

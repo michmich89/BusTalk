@@ -1,4 +1,7 @@
-import javax.websocket.Session;
+package com.busgen.bustalk.server.chatroom;
+
+import com.busgen.bustalk.server.user.User;
+
 import java.util.ArrayList;
 import java.util.List;
 

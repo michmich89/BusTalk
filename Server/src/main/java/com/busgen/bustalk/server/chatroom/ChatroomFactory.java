@@ -1,7 +1,9 @@
-/**
+package com.busgen.bustalk.server.chatroom; /**
  * Created by Kristoffer on 2015-09-29.
  */
 
+
+import com.busgen.bustalk.server.util.Constants;
 
 /**
  * This is a singleton, and unless another method for chatroom identification is implemented, this Needs to be a
@@ -21,12 +23,12 @@ public class ChatroomFactory {
         static final ChatroomFactory INSTANCE = new ChatroomFactory();
     }
 
-    public static ChatroomFactory getFactory(){
-        return Holder.INSTANCE;
-    }
-
     private ChatroomFactory(){
         idNbr = Constants.NBR_OF_RESERVED_CHAT_IDS;
+    }
+
+    public static ChatroomFactory getFactory(){
+        return Holder.INSTANCE;
     }
 
     public Chatroom createChatroom(String chatroomSubject){
@@ -34,6 +36,13 @@ public class ChatroomFactory {
         this.idNbr++;
         return temporaryReference;
 
+    }
+
+    public Chatroom createChatroom(String name, int chatId) {
+        if (chatId < Constants.NBR_OF_RESERVED_CHAT_IDS - 1) {
+            return new Chatroom(chatId, name);
+        }
+        return null;
     }
 
 }

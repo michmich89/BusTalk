@@ -1,3 +1,6 @@
+package com.busgen.bustalk.server.util;
+
+import com.busgen.bustalk.server.message.UserMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,7 +11,7 @@ import javax.websocket.EndpointConfig;
 /**
  * Created by Kristoffer on 2015-09-30.
  */
-public class BusTalkJsonDecoder implements Decoder.Text<UserMessage> {
+public class JsonDecoder implements Decoder.Text<UserMessage> {
 
     JSONObject jsonObject;
 

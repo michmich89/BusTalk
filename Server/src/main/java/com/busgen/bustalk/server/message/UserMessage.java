@@ -1,3 +1,5 @@
+package com.busgen.bustalk.server.message;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
