@@ -35,7 +35,6 @@ public class ChatroomFactory {
         Chatroom temporaryReference = new Chatroom(this.idNbr, chatroomSubject);
         this.idNbr++;
         return temporaryReference;
-
     }
 
     public Chatroom createChatroom(String name, int chatId) {

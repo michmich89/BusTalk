@@ -1,16 +1,23 @@
 package com.busgen.bustalk.server.user;
 
+import com.busgen.bustalk.server.chatroom.Chatroom;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Kristoffer on 2015-09-29.
  */
-public class User {
+public class User implements IUser {
 
     private String name;
     private String interests;
+    private final List<Chatroom> inChatrooms;
 
     public User(String name, String interests){
         this.name = name;
         this.interests = interests;
+        inChatrooms = new ArrayList<Chatroom>();
     }
 
     @Override
@@ -44,6 +51,21 @@ public class User {
 
     public void setInterests(String newInterests){
         this.interests = newInterests;
+    }
+
+    public void onJoinChatroom(Chatroom chatroom){
+        inChatrooms.add(chatroom);
+    }
+
+
+    public void onLeaveChatroom(Chatroom chatroom){
+        inChatrooms.remove(chatroom);
+    }
+
+
+
+    public List<Chatroom> getCurrentChatrooms(){
+        return new ArrayList<Chatroom>(inChatrooms);
     }
 
 }

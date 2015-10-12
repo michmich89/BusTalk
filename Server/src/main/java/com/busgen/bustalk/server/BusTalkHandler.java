@@ -5,11 +5,10 @@ import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
+import com.busgen.bustalk.server.user.UserDoesNotExistException;
 import com.busgen.bustalk.server.user.UserHandler;
-import org.json.JSONObject;
 
 import javax.websocket.Session;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -46,12 +45,23 @@ public class BusTalkHandler {
 
     }
 
+    /**
+     * Method which will sort out what user sent what
+     *
+     * @param userMessage Message that a user sent
+     * @param session Session from which the UserMessage came from
+     */
     public void handleInput(UserMessage userMessage, Session session){
         try {
             int type = userMessage.getInt("type");
-
+            User userCheck = userHandler.getUser(session);
             // TODO: Check if user exists or if type is CHOOSE_NICKNAME_REQUEST, throw exception if none is true
-
+            if(userCheck == null){
+                //TODO: This only sends the code to the catch, but maybe thats enough for now?
+                //TODO: Do we even want to throw an exception?
+                //throw new UserDoesNotExistException();
+                throw new NullPointerException();
+            }
             switch(type){
                 case MessageType.CHAT_MESSAGE:
                     sendChatMessage(userMessage, session);
@@ -73,6 +83,7 @@ public class BusTalkHandler {
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
 
                     if(chatroomHandler.joinChatroom(user, chatroom)){
+                        userHandler.addToCurrentRooms(user, chatroom);
                         messageSender.userJoinedNotification(user, chatroom);
                     }
                 }
@@ -93,6 +104,7 @@ public class BusTalkHandler {
                     User user = userHandler.getUser(session);
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
                     chatroomHandler.leaveChatroom(user, chatroom);
+                    userHandler.removeFromCurrentRooms(user, chatroom);
 
                     if(chatroomHandler.getChatroom(chatId) == null){
                         messageSender.chatDeletedNotification(chatroom);
@@ -111,6 +123,8 @@ public class BusTalkHandler {
                 }
                     break;
                 case MessageType.NICKNAME_AVAILABLE_CHECK:
+                    //TODO: Implement?
+
                     break;
 
                 default:
@@ -120,6 +134,9 @@ public class BusTalkHandler {
             //TODO: Vi ska skicka tillbaka information om Vad som gick fel
             session.getAsyncRemote().sendText(e.getMessage());
             e.printStackTrace();
+        }catch(NullPointerException e){
+            //TODO: What should we do with it? Send info saying that they need to create another user?
+            //Create a user with a temporary name that they can change?
         }
     }
 
@@ -131,10 +148,27 @@ public class BusTalkHandler {
         messageSender.chatMessage(sender, chatroom, message);
     }
 
+    /**
+     * Removes the user (tied to the session) from all rooms it's connected to
+     *
+     * @param session The session that's tied to wanted user
+     */
     public void removeSession(Session session){
         User user = userHandler.getUser(session);
 
-        Iterator<Chatroom> iterator = chatroomHandler.getListOfOpenChatrooms().iterator();
+        for(Chatroom c : user.getCurrentChatrooms()){
+            Chatroom chatroom = c;
+
+            chatroomHandler.leaveChatroom(user, c);
+
+            if(chatroomHandler.getChatroom(chatroom.getIdNbr()) == null){
+                messageSender.chatDeletedNotification(chatroom);
+            }else{
+                messageSender.userLeftNotification(user, chatroom);
+            }
+        }
+
+/*        Iterator<Chatroom> iterator = chatroomHandler.getListOfOpenChatrooms().iterator();
         while (iterator.hasNext()){
             Chatroom chatroom = iterator.next();
 
@@ -146,7 +180,7 @@ public class BusTalkHandler {
                 messageSender.userLeftNotification(user, chatroom);
             }
         }
-
+*/
         userHandler.removeUser(user);
     }
 

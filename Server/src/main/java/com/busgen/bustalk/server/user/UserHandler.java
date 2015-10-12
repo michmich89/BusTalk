@@ -1,5 +1,6 @@
 package com.busgen.bustalk.server.user;
 
+import com.busgen.bustalk.server.chatroom.Chatroom;
 import com.busgen.bustalk.server.util.Constants;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -52,6 +53,11 @@ public class UserHandler {
         return !disallowedNames.contains(name.toLowerCase());
     }
 
+
+    /**
+     * Adds a name to a list to disallow the usage of said name
+     * @param name - name to disallow
+     */
     private void addDisallowedName(String name) {
         name = name.toLowerCase();
         if (!disallowedNames.contains(name)) {
@@ -60,6 +66,11 @@ public class UserHandler {
         }
     }
 
+    /**
+     * Removes a name from the disallowed list, making it allowed to be used again
+     *
+     * @param name the name to remove from the list of disallowed names
+     */
     private void removeDisallowedName(String name) {
         name = name.toLowerCase();
         if (disallowedNames.remove(name)) {
@@ -67,6 +78,13 @@ public class UserHandler {
         }
     }
 
+
+    /**
+     * Maps a user to a session using a Bimap
+     *
+     * @param user
+     * @param session
+     */
     public void addUser(User user, Session session) {
         userToSession.put(user, session);
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Added to user list"), new Object[]{session.getId(), user.getName()});
@@ -74,6 +92,11 @@ public class UserHandler {
         LOGGER.log(Level.INFO, String.format("\"{0}\" was added to the list of disallowed names"), user.getName());
     }
 
+    /**
+     * Removes the map between a user and a session
+     *
+     * @param user
+     */
     public void removeUser(User user) {
         removeDisallowedName(user.getName());
         LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), user.getName());
@@ -104,5 +127,27 @@ public class UserHandler {
         }
 
         return true;
+    }
+
+    //TODO: Should/can be private?
+    /**
+     * Adds a room to a user, updating the list of rooms the user is connected to
+     *
+     * @param user
+     * @param chatroom
+     */
+    public void addToCurrentRooms(User user, Chatroom chatroom){
+        user.onJoinChatroom(chatroom);
+    }
+
+    //TODO: Should/can be private?
+    /**
+     * Removes a room from a user, updating the list of rooms the user is connected to
+     *
+     * @param user
+     * @param chatroom
+     */
+    public void removeFromCurrentRooms(User user, Chatroom chatroom){
+        user.onLeaveChatroom(chatroom);
     }
 }
