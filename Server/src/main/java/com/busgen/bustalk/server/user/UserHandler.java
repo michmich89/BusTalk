@@ -150,4 +150,8 @@ public class UserHandler {
     public void removeFromCurrentRooms(User user, Chatroom chatroom){
         user.onLeaveChatroom(chatroom);
     }
+
+    public boolean canJoinRoom(User user, Chatroom chatroom){
+        return !user.isInRoom(chatroom);
+    }
 }

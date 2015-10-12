@@ -54,23 +54,25 @@ public class ChatroomHandler {
         }
     }
 
-    //TODO: Ska denna ligga i User eller i Chatroom?
-    public boolean joinChatroom(User user, Chatroom chatroom) {
-        boolean joinSuccessful = chatroom.subscribeToRoom(user);
-        if (joinSuccessful) {
-            LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
-                    new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
+    public boolean canJoinRoom(User user, Chatroom chatroom){
+        return chatroom.canUserJoin(user);
+    }
 
-        }
-        return joinSuccessful;
+
+    //TODO: Ska denna ligga i User eller i Chatroom?
+    public void joinChatroom(User user, Chatroom chatroom) {
+        chatroom.subscribeToRoom(user);
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
+                    new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
     }
 
     //TODO: Ska denna ligga i User eller i Chatroom?
     public void leaveChatroom(User user, Chatroom chatroom) {
-        if (!chatroom.unsubscribeToRoom(user) || user == null) {
+        if (user == null || !chatroom.canUserLeave(user)) {
             return;
         }
 
+        chatroom.unsubscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"),
                 new Object[]{userHandler.getSession(user).getId(), chatroom.getTitle(), chatroom.getIdNbr()});
         if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS - 1){

@@ -82,8 +82,8 @@ public class BusTalkHandler {
                     System.out.println("Efter");
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
 
-                    if(chatroomHandler.joinChatroom(user, chatroom)){
-                        userHandler.addToCurrentRooms(user, chatroom);
+                    if(canJoinRoom(user, chatroom)){
+                        joinRoom(user, chatroom);
                         messageSender.userJoinedNotification(user, chatroom);
                     }
                 }
@@ -182,6 +182,15 @@ public class BusTalkHandler {
         }
 */
         userHandler.removeUser(user);
+    }
+
+    private boolean canJoinRoom(User user, Chatroom chatroom){
+        return (chatroomHandler.canJoinRoom(user, chatroom) && userHandler.canJoinRoom(user, chatroom));
+    }
+
+    private void joinRoom(User user, Chatroom chatroom){
+        chatroomHandler.joinChatroom(user, chatroom);
+        userHandler.addToCurrentRooms(user, chatroom);
     }
 
 }

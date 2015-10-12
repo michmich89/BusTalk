@@ -68,4 +68,8 @@ public class User implements IUser {
         return new ArrayList<Chatroom>(inChatrooms);
     }
 
+    public boolean isInRoom(Chatroom chatroom){
+        return inChatrooms.contains(chatroom);
+    }
+
 }

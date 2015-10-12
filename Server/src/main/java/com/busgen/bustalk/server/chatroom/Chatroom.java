@@ -22,15 +22,13 @@ public class Chatroom implements IChatroom {
         chatroomUsers = new ArrayList<User>();
     }
 
-    public boolean subscribeToRoom(User user){
-        if (!chatroomUsers.contains(user)) {
-            return chatroomUsers.add(user);
-        }
-        return false;
+    public void subscribeToRoom(User user){
+        chatroomUsers.add(user);
+
     }
 
-    public boolean unsubscribeToRoom(User user){
-        return chatroomUsers.remove(user);
+    public void unsubscribeToRoom(User user){
+        chatroomUsers.remove(user);
     }
 
     public int getIdNbr(){
@@ -45,5 +43,12 @@ public class Chatroom implements IChatroom {
         return new ArrayList<User>(chatroomUsers);
     }
 
+    public boolean canUserJoin(User user){
+        return !chatroomUsers.contains(user);
+    }
+
+    public boolean canUserLeave(User user){
+        return chatroomUsers.contains(user);
+    }
 
 }
