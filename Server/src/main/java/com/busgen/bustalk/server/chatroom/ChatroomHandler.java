@@ -54,10 +54,9 @@ public class ChatroomHandler {
         }
     }
 
-    public boolean canJoinRoom(User user, Chatroom chatroom){
-        return chatroom.canUserJoin(user);
+    public boolean isUserInRoom(User user, Chatroom chatroom) {
+        return chatroom.isUserInRoom(user);
     }
-
 
     //TODO: Ska denna ligga i User eller i Chatroom?
     public void joinChatroom(User user, Chatroom chatroom) {
@@ -68,10 +67,6 @@ public class ChatroomHandler {
 
     //TODO: Ska denna ligga i User eller i Chatroom?
     public void leaveChatroom(User user, Chatroom chatroom) {
-        if (user == null || !chatroom.canUserLeave(user)) {
-            return;
-        }
-
         chatroom.unsubscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"),
                 new Object[]{userHandler.getSession(user).getId(), chatroom.getTitle(), chatroom.getIdNbr()});

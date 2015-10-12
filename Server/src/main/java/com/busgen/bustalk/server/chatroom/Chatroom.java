@@ -43,12 +43,7 @@ public class Chatroom implements IChatroom {
         return new ArrayList<User>(chatroomUsers);
     }
 
-    public boolean canUserJoin(User user){
-        return !chatroomUsers.contains(user);
-    }
-
-    public boolean canUserLeave(User user){
+    public boolean isUserInRoom(User user){
         return chatroomUsers.contains(user);
     }
-
 }

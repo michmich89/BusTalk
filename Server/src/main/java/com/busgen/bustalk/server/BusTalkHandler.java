@@ -54,14 +54,15 @@ public class BusTalkHandler {
     public void handleInput(UserMessage userMessage, Session session){
         try {
             int type = userMessage.getInt("type");
-            User userCheck = userHandler.getUser(session);
+            User user = userHandler.getUser(session);
             // TODO: Check if user exists or if type is CHOOSE_NICKNAME_REQUEST, throw exception if none is true
-            if(userCheck == null){
+            if(user == null && type != MessageType.CHOOSE_NICKNAME_REQUEST){
                 //TODO: This only sends the code to the catch, but maybe thats enough for now?
                 //TODO: Do we even want to throw an exception?
                 //throw new UserDoesNotExistException();
                 throw new NullPointerException();
             }
+
             switch(type){
                 case MessageType.CHAT_MESSAGE:
                     sendChatMessage(userMessage, session);
@@ -70,16 +71,12 @@ public class BusTalkHandler {
                 case MessageType.CREATE_ROOM_REQUEST:
                 {
                     String nameOfRoom = userMessage.getString("chatName");
-                    User user = userHandler.getUser(session);
                     Chatroom chatroom = chatroomHandler.createChatroom(user, nameOfRoom);
                     messageSender.chatroomCreatedNotification(user, chatroom);
                 }
                 break;
                 case MessageType.JOIN_ROOM_REQUEST: {
                     int chatId = userMessage.getInt("chatId");
-                    System.out.println("Före");
-                    User user = userHandler.getUser(session);
-                    System.out.println("Efter");
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
 
                     if(canJoinRoom(user, chatroom)){
@@ -90,7 +87,6 @@ public class BusTalkHandler {
                 break;
                 case MessageType.LIST_OF_USERS_IN_ROOM_REQUEST: {
                     int chatId = userMessage.getInt("chatId");
-                    User user = userHandler.getUser(session);
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
                     messageSender.listOfUsersInRoom(user, chatroom);
                 }
@@ -101,15 +97,16 @@ public class BusTalkHandler {
                 case MessageType.LEAVE_ROOM_REQUEST: // Leave room
                 {
                     int chatId = userMessage.getInt("chatId");
-                    User user = userHandler.getUser(session);
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
-                    chatroomHandler.leaveChatroom(user, chatroom);
-                    userHandler.removeFromCurrentRooms(user, chatroom);
 
-                    if(chatroomHandler.getChatroom(chatId) == null){
-                        messageSender.chatDeletedNotification(chatroom);
-                    }else{
-                        messageSender.userLeftNotification(user, chatroom);
+                    if (canLeaveRoom(user, chatroom)) {
+                        leaveRoom(user, chatroom);
+
+                        if (chatroomHandler.getChatroom(chatId) == null) {
+                            messageSender.chatDeletedNotification(chatroom);
+                        } else {
+                            messageSender.userLeftNotification(user, chatroom);
+                        }
                     }
                 }
 
@@ -118,7 +115,6 @@ public class BusTalkHandler {
                 case MessageType.CHOOSE_NICKNAME_REQUEST: {
                     String name = userMessage.getString("name");
                     String interests = userMessage.getString("interests");
-                    User user = userHandler.getUser(session);
                     userHandler.setUserNameAndInterests(user, session, name, interests);
                 }
                     break;
@@ -137,6 +133,7 @@ public class BusTalkHandler {
         }catch(NullPointerException e){
             //TODO: What should we do with it? Send info saying that they need to create another user?
             //Create a user with a temporary name that they can change?
+            e.printStackTrace();
         }
     }
 
@@ -185,7 +182,7 @@ public class BusTalkHandler {
     }
 
     private boolean canJoinRoom(User user, Chatroom chatroom){
-        return (chatroomHandler.canJoinRoom(user, chatroom) && userHandler.canJoinRoom(user, chatroom));
+        return (!chatroomHandler.isUserInRoom(user, chatroom) && !userHandler.isUserInRoom(user, chatroom));
     }
 
     private void joinRoom(User user, Chatroom chatroom){
@@ -193,4 +190,12 @@ public class BusTalkHandler {
         userHandler.addToCurrentRooms(user, chatroom);
     }
 
+    private boolean canLeaveRoom(User user, Chatroom chatroom) {
+        return chatroomHandler.isUserInRoom(user, chatroom) || userHandler.isUserInRoom(user, chatroom);
+    }
+
+    private void leaveRoom(User user, Chatroom chatroom) {
+        chatroomHandler.leaveChatroom(user, chatroom);
+        userHandler.removeFromCurrentRooms(user, chatroom);
+    }
 }

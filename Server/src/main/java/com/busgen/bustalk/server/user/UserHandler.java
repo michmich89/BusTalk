@@ -151,7 +151,7 @@ public class UserHandler {
         user.onLeaveChatroom(chatroom);
     }
 
-    public boolean canJoinRoom(User user, Chatroom chatroom){
-        return !user.isInRoom(chatroom);
+    public boolean isUserInRoom(User user, Chatroom chatroom){
+        return user.isInRoom(chatroom);
     }
 }
