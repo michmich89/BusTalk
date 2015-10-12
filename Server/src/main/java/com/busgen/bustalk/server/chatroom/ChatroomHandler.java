@@ -8,8 +8,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +18,7 @@ public class ChatroomHandler {
     private final ChatroomFactory chatroomFactory;
     private final UserHandler userHandler;
     private final static Logger LOGGER = Logger.getLogger(ChatroomHandler.class.getName());
+    private final Map<String, List<Chatroom>> groupToListOfChatrooms;
 
     private static class Holder {
         static final ChatroomHandler INSTANCE = new ChatroomHandler();
@@ -28,6 +28,7 @@ public class ChatroomHandler {
         this.idToChatroom = Maps.synchronizedBiMap(HashBiMap.<Integer, Chatroom>create());
         this.chatroomFactory = ChatroomFactory.getFactory();
         this.userHandler = UserHandler.getInstance();
+        this.groupToListOfChatrooms = Collections.synchronizedMap(new HashMap<String, List<Chatroom>>());
 
     }
 
@@ -38,19 +39,37 @@ public class ChatroomHandler {
     public Chatroom createChatroom(User user, String name) {
         Chatroom chatroom = chatroomFactory.createChatroom(name);
         idToChatroom.put(chatroom.getIdNbr(), chatroom);
+        List<Chatroom> tempList = groupToListOfChatrooms.get(user.getGroupId());
+        tempList.add(chatroom);
 
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created chat \"{2}\" with id {3}"),
                 new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
-
         joinChatroom(user, chatroom);
         return chatroom;
 
     }
 
-    public void createChatroom(String name, int chatId) {
+    public void createChatroom(String name, int chatId, String groupId) {
         Chatroom chatroom = chatroomFactory.createChatroom(name, chatId);
+
+
+        /*
+        TODO:
+        Chatrum ska alltid ha ett gruppID(?)
+        Chatrum ska delas upp i listor baserat på detta ID
+        Chat
+         */
+
         if (chatroom != null) {
             idToChatroom.put(chatroom.getIdNbr(), chatroom);
+            List<Chatroom> listChatroom= groupToListOfChatrooms.get(groupId);
+            if(listChatroom == null){
+                ArrayList<Chatroom> tempList = new ArrayList<Chatroom>();
+                tempList.add(chatroom);
+                groupToListOfChatrooms.put(groupId, tempList);
+            }else{
+                listChatroom.add(chatroom);
+            }
         }
     }
 
@@ -58,14 +77,12 @@ public class ChatroomHandler {
         return chatroom.isUserInRoom(user);
     }
 
-    //TODO: Ska denna ligga i User eller i Chatroom?
     public void joinChatroom(User user, Chatroom chatroom) {
         chatroom.subscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
                     new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
     }
 
-    //TODO: Ska denna ligga i User eller i Chatroom?
     public void leaveChatroom(User user, Chatroom chatroom) {
         chatroom.unsubscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"),
@@ -76,8 +93,13 @@ public class ChatroomHandler {
     }
 
     private void deleteChatroom(int chatId) {
+
+        //TODO: May be temporary solution
         Chatroom chatroom = idToChatroom.get(chatId);
         idToChatroom.remove(chatId);
+        for(List<Chatroom> c : groupToListOfChatrooms.values()){
+            c.remove(chatroom);
+        }
         LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
     }
 

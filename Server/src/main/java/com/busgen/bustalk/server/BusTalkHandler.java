@@ -37,11 +37,11 @@ public class BusTalkHandler {
         this.messageSender = new BusTalkSender();
 
 
-        this.chatroomHandler.createChatroom("test1", 0);
-        this.chatroomHandler.createChatroom("test2", 1);
-        this.chatroomHandler.createChatroom("test3", 2);
-        this.chatroomHandler.createChatroom("test4", 3);
-        this.chatroomHandler.createChatroom("test5", 4);
+        this.chatroomHandler.createChatroom("test1", 0, "1");
+        this.chatroomHandler.createChatroom("test2", 1, "2");
+        this.chatroomHandler.createChatroom("test3", 2, "3");
+        this.chatroomHandler.createChatroom("test4", 3, "4");
+        this.chatroomHandler.createChatroom("test5", 4, "5");
 
     }
 
@@ -92,7 +92,13 @@ public class BusTalkHandler {
                 }
                     break;
                 case MessageType.LIST_OF_ALL_CHATROOMS_REQUEST:
-                    messageSender.listOfChatrooms(userHandler.getUser(session));
+                    /*
+                    TODO: Chatrooms need to be grouped up
+                    TODO: Send back a list of chatrooms depending on what bus the user is in
+                    TODO:
+                     */
+
+                    messageSender.listOfChatrooms(user);
                     break;
                 case MessageType.LEAVE_ROOM_REQUEST: // Leave room
                 {
@@ -156,8 +162,8 @@ public class BusTalkHandler {
         for(Chatroom c : user.getCurrentChatrooms()){
             Chatroom chatroom = c;
 
-            chatroomHandler.leaveChatroom(user, c);
-
+            //chatroomHandler.leaveChatroom(user, c);
+            leaveRoom(user, c);
             if(chatroomHandler.getChatroom(chatroom.getIdNbr()) == null){
                 messageSender.chatDeletedNotification(chatroom);
             }else{
