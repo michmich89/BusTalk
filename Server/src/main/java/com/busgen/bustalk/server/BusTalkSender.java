@@ -51,11 +51,11 @@ public class BusTalkSender {
 
         for(User u : userHandler.getUsers()){
             if(!u.equals(user) && u.getGroupId().equals(groupId)){
-                userHandler.getSession(u).getAsyncRemote().sendObject(jsonObject);
+                userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
             }
         }
         jsonObject.put("isYours", true);
-        creator.getAsyncRemote().sendObject(jsonObject);
+        creator.getAsyncRemote().sendObject(new UserMessage(jsonObject));
     }
 
     /**
@@ -91,7 +91,7 @@ public class BusTalkSender {
 
         for (User u : chatroom.getChatroomUsers()) {
             Session s = userHandler.getSession(u);
-            s.getAsyncRemote().sendObject(jsonObject);
+            s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
     }
 
@@ -108,7 +108,7 @@ public class BusTalkSender {
 
         for (User u : userHandler.getUsers()) {
             if(u.getGroupId().equals(groupId)) {
-                userHandler.getSession(u).getAsyncRemote().sendObject(jsonObject);
+                userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
             }
         }
     }
@@ -131,7 +131,8 @@ public class BusTalkSender {
         }
 
         Session requester = userHandler.getSession(user);
-        requester.getAsyncRemote().sendObject(jsonObject);
+        System.out.print(requester.getId() + "           " + requester.toString());
+        requester.getAsyncRemote().sendObject(new UserMessage(jsonObject));
 
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Sent list of chatrooms"),
                 new Object[]{requester.getId(), user.getName()});
@@ -156,7 +157,7 @@ public class BusTalkSender {
         }
 
         Session requester = userHandler.getSession(user);
-        requester.getAsyncRemote().sendObject(jsonObject);
+        requester.getAsyncRemote().sendObject(new UserMessage(jsonObject));
     }
 
     /**
@@ -178,7 +179,7 @@ public class BusTalkSender {
 
         for (User u : chatroomHandler.getListOfUsersInChatroom(chatId)) {
             Session s = userHandler.getSession(u);
-            s.getAsyncRemote().sendObject(jsonObject);
+            s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
     }
 }

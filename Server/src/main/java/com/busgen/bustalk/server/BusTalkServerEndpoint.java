@@ -34,7 +34,7 @@ public class BusTalkServerEndpoint {
 
     @OnOpen
     public void onOpen(Session session){
-        LOGGER.log(Level.INFO, String.format("[{0}] Connected to server.", session.getId()));
+        LOGGER.log(Level.INFO, String.format("[{0}] Connected to server."), session.getId());
     }
 
     @OnError
@@ -45,7 +45,7 @@ public class BusTalkServerEndpoint {
 
     @OnClose
     public void onClose(Session session){
-        LOGGER.log(Level.INFO, String.format("[{0}] Disconnected from server."));
+        LOGGER.log(Level.INFO, String.format("[{0}] Disconnected from server."), session.getId());
         busTalkHandler.removeSession(session);
     }
 

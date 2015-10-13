@@ -11,6 +11,7 @@ import sun.plugin2.message.Message;
 
 import javax.websocket.Session;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -116,12 +117,15 @@ public class BusTalkHandler {
                     String name = userMessage.getString("name");
                     String interests = userMessage.getString("interests");
                     userHandler.setUserNameAndInterests(user, session, name, interests);
+                    // TODO: Return result to client
                 }
                     break;
 
                 case MessageType.CHANGE_GROUP_ID: {
                     String id = userMessage.getString("groupId");
                     user.setGroupId(id);
+                    logger.log(Level.INFO, String.format("[{0}:{1}] Group ID changed to {2}"),
+                            new Object[]{session.getId(), user.getName(), user.getGroupId()});
 
                     for(Chatroom c : user.getCurrentChatrooms()) {
                         leaveRoom(user, c);
