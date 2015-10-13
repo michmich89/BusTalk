@@ -33,22 +33,44 @@ public class UserHandler {
         return Holder.INSTANCE;
     }
 
+    /**
+     * @param session the session connected to a user
+     * @return User connected to the parameter session
+     */
     public User getUser(Session session) {
         return userToSession.inverse().get(session);
     }
 
+    /**
+     * @param user the user connected to a session
+     * @return Session connected to the parameter user
+     */
     public Session getSession(User user) {
         return userToSession.get(user);
     }
 
+    /**
+     *
+     * @return a list of users in the room
+     */
     public List<User> getUsers() {
         return new ArrayList<User>(userToSession.keySet());
     }
 
+    /**
+     *
+     * @return a list of sessions to the users in the room
+     */
     public List<Session> getSessions() {
         return new ArrayList<Session>(userToSession.values());
     }
 
+    /**
+     * Checks is a name is available to use
+     *
+     * @param name The name that's being checked
+     * @return boolean value stating if it's possible (True = yes/False = no)
+     */
     public boolean isNameAllowed(String name) {
         return !disallowedNames.contains(name.toLowerCase());
     }

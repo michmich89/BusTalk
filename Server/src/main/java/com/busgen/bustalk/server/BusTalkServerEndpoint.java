@@ -10,6 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * All session (connections between a user and the server) will create their own instance of this class, and uses
+ * the singleton <b>BusTalkHandler</b> as their connection to their server logic.
+ *
  * Created by Kristoffer on 2015-09-29.
  */
 

@@ -36,6 +36,13 @@ public class ChatroomHandler {
         return Holder.INSTANCE;
     }
 
+    /**
+     * Creates a chatroom without a group ID
+     *
+     * @param user The user that's creating the chatroom
+     * @param name The name/title of the chatroom
+     * @return The newly created chatroom
+     */
     public Chatroom createChatroom(User user, String name) {
         Chatroom chatroom = chatroomFactory.createChatroom(name);
         idToChatroom.put(chatroom.getIdNbr(), chatroom);
@@ -49,17 +56,15 @@ public class ChatroomHandler {
 
     }
 
+    /**
+     * Creates a chatroom with a group ID (Used for testing purpose?)
+     *
+     * @param name The name/title of the chatroom
+     * @param chatId The specific ID of the chatroom
+     * @param groupId The specific group ID
+     */
     public void createChatroom(String name, int chatId, String groupId) {
         Chatroom chatroom = chatroomFactory.createChatroom(name, chatId);
-
-
-        /*
-        TODO:
-        Chatrum ska alltid ha ett gruppID(?)
-        Chatrum ska delas upp i listor baserat på detta ID
-        Chat
-         */
-
         if (chatroom != null) {
             idToChatroom.put(chatroom.getIdNbr(), chatroom);
             List<Chatroom> listChatroom= groupToListOfChatrooms.get(groupId);
@@ -73,16 +78,35 @@ public class ChatroomHandler {
         }
     }
 
+    /**
+     * Checks if a user is in a chatroom
+     *
+     * @param user
+     * @param chatroom
+     * @return
+     */
     public boolean isUserInRoom(User user, Chatroom chatroom) {
         return chatroom.isUserInRoom(user);
     }
 
+    /**
+     * Adds a user to a charoom
+     *
+     * @param user
+     * @param chatroom
+     */
     public void joinChatroom(User user, Chatroom chatroom) {
         chatroom.subscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Joined room {2} ({3})"),
                     new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
     }
 
+    /**
+     * Removes a user from a chatroom
+     *
+     * @param user
+     * @param chatroom
+     */
     public void leaveChatroom(User user, Chatroom chatroom) {
         chatroom.unsubscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"),
@@ -92,6 +116,7 @@ public class ChatroomHandler {
         }
     }
 
+
     private void deleteChatroom(int chatId, String groupId) {
         Chatroom chatroom = idToChatroom.get(chatId);
         idToChatroom.remove(chatId);
@@ -100,22 +125,37 @@ public class ChatroomHandler {
         LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
     }
 
+    /**
+     * @return a list of all chatroom
+     */
     public List<Chatroom> getListOfOpenChatrooms() {
         return new ArrayList<Chatroom>(idToChatroom.values());
     }
 
+    /**
+     *
+     * @param chatId The ID number of the chatroom a user list is requested
+     * @return A list of users in the room
+     */
     public List<User> getListOfUsersInChatroom(int chatId) {
         Chatroom chatroom = idToChatroom.get(chatId);
         return chatroom.getChatroomUsers();
     }
 
+    /**
+     * @param chatId the ID number of the chatroom that's being asked for
+     * @return the chatroom with a matching ID
+     */
     public Chatroom getChatroom(int chatId) {
         return idToChatroom.get(chatId);
     }
 
+    /**
+     * @param groupId the group ID of the chatrooms being asked for
+     * @return a list of chatrooms with given groupId
+     */
     public List<Chatroom> getGroupOfChatrooms(String groupId){
         return groupToListOfChatrooms.get(groupId);
     }
 
-    // TODO: Create method that checks if there's a user for the session
 }

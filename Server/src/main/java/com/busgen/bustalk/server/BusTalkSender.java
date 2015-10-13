@@ -17,6 +17,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/**
+ * This class handles all messages between users, acts like a post office.
+ */
 public class BusTalkSender {
 
     private final UserHandler userHandler;
@@ -30,6 +34,12 @@ public class BusTalkSender {
         this.chatroomHandler = ChatroomHandler.getInstance();
     }
 
+    /**
+     * Sends a notification to all affected users when a chatroom is created
+     *
+     * @param user The user that created the chatroom
+     * @param chatroom The newly created chatroom you want to notify users about
+     */
     public void chatroomCreatedNotification(User user, Chatroom chatroom) {
         Session creator = userHandler.getSession(user);
         String groupId = user.getGroupId();
@@ -48,6 +58,12 @@ public class BusTalkSender {
         creator.getAsyncRemote().sendObject(jsonObject);
     }
 
+    /**
+     * Sends out a notification to all users in a charoom, when a new user joins
+     *
+     * @param user The user that just joined
+     * @param chatroom The chatroom whos users will be notified
+     */
     public void userJoinedNotification(User user, Chatroom chatroom) {
         JSONObject objectToSend = new JSONObject();
         objectToSend.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION);
@@ -61,6 +77,12 @@ public class BusTalkSender {
         }
     }
 
+    /**
+     * Sends out a notification to all users in a chatroom, when a user has left the room
+     *
+     * @param user The user who left
+     * @param chatroom The chatroom that the user left
+     */
     public void userLeftNotification(User user, Chatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.USER_LEFT_ROOM_NOTIFICATION);
@@ -73,16 +95,29 @@ public class BusTalkSender {
         }
     }
 
-    public void chatDeletedNotification(Chatroom chatroom) {
+    /**
+     * Sends out a message to affected users that a chatroom has been deleted.
+     *
+     * @param groupId the group ID of all affected users
+     * @param chatroom the chatroom that was deleted
+     */
+    public void chatDeletedNotification(String groupId, Chatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.ROOM_DELETED_NOTIFICATION);
         jsonObject.put("chatId", chatroom.getIdNbr());
 
-        for (Session s : userHandler.getSessions()) {
-            s.getAsyncRemote().sendObject(jsonObject);
+        for (User u : userHandler.getUsers()) {
+            if(u.getGroupId().equals(groupId)) {
+                userHandler.getSession(u).getAsyncRemote().sendObject(jsonObject);
+            }
         }
     }
 
+    /**
+     * Sends out a message containing all chatrooms that a specific user can join
+     *
+     * @param user
+     */
     public void listOfChatrooms(User user) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.LIST_OF_CHATROOMS_NOTIFICATION);
@@ -102,6 +137,12 @@ public class BusTalkSender {
                 new Object[]{requester.getId(), user.getName()});
     }
 
+    /**
+     * Sends out a message to a user, containing information of other users in a specific room
+     *
+     * @param user the user the message should be sent to
+     * @param chatroom the chatroom the user wants info about
+     */
     public void listOfUsersInRoom(User user, Chatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
 
@@ -118,6 +159,13 @@ public class BusTalkSender {
         requester.getAsyncRemote().sendObject(jsonObject);
     }
 
+    /**
+     * When a user sends a message, this will send out that message to all users in a chatroom
+     *
+     * @param sender The user that sent the message
+     * @param chatroom The chatroom the message was sent to
+     * @param message The actual message the user wrote
+     */
     public void chatMessage(User sender, Chatroom chatroom, String message) {
 
         int chatId = chatroom.getIdNbr();

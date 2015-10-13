@@ -14,6 +14,9 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**
+ * A singleton, due to the fact that every session created will have their own instance of <b>BusTalkServerEndpoint</b>.
+ * As a singleton, all instances of BusTalkServerEndpoint talk to the same object of BusTalkHandler.
+ *
  * Created by Kristoffer on 2015-10-08.
  */
 public class BusTalkHandler {
@@ -183,9 +186,10 @@ public class BusTalkHandler {
         if(canLeaveRoom(user, chatroom)) {
             chatroomHandler.leaveChatroom(user, chatroom);
             userHandler.removeFromCurrentRooms(user, chatroom);
+            String groupId = user.getGroupId();
 
             if (chatroomHandler.getChatroom(chatroom.getIdNbr()) == null) {
-                messageSender.chatDeletedNotification(chatroom);
+                messageSender.chatDeletedNotification(groupId, chatroom);
             } else {
                 messageSender.userLeftNotification(user, chatroom);
             }

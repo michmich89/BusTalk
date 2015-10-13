@@ -6,9 +6,8 @@ package com.busgen.bustalk.server.chatroom; /**
 import com.busgen.bustalk.server.util.Constants;
 
 /**
- * This is a singleton, and unless another method for chatroom identification is implemented, this Needs to be a
- * singleton aswell, as the one instantiation of the class will take care of assigning a unique ID-number to a
- * chatroom.
+ * This is a singleton, and Needs to be a singleton aswell, as the one instantiation of the class will take care of
+ * assigning a unique ID-number to a chatroom.
  *
  * The first 100 id numbers are reserved for rooms that should never be removed, for example a main room for a bus
  *
