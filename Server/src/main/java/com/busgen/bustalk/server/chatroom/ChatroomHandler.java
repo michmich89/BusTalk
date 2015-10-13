@@ -46,8 +46,15 @@ public class ChatroomHandler {
     public Chatroom createChatroom(User user, String name) {
         Chatroom chatroom = chatroomFactory.createChatroom(name);
         idToChatroom.put(chatroom.getIdNbr(), chatroom);
+
         List<Chatroom> tempList = groupToListOfChatrooms.get(user.getGroupId());
-        tempList.add(chatroom);
+        if (tempList == null) {
+            tempList = new ArrayList<Chatroom>();
+            tempList.add(chatroom);
+            groupToListOfChatrooms.put(user.getGroupId(), tempList);
+        } else {
+            tempList.add(chatroom);
+        }
 
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created chat \"{2}\" with id {3}"),
                 new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
