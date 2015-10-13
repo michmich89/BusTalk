@@ -7,6 +7,7 @@ import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserDoesNotExistException;
 import com.busgen.bustalk.server.user.UserHandler;
+import sun.plugin2.message.Message;
 
 import javax.websocket.Session;
 import java.util.Iterator;
@@ -55,15 +56,14 @@ public class BusTalkHandler {
         try {
             int type = userMessage.getInt("type");
             User user = userHandler.getUser(session);
-            // TODO: Check if user exists or if type is CHOOSE_NICKNAME_REQUEST, throw exception if none is true
-            if(user == null && type != MessageType.CHOOSE_NICKNAME_REQUEST){
+            if((user == null && type != MessageType.CHOOSE_NICKNAME_REQUEST) || (user != null && user.getGroupId() == null && type != MessageType.CHANGE_GROUP_ID)){
                 //TODO: This only sends the code to the catch, but maybe thats enough for now?
                 //TODO: Do we even want to throw an exception?
                 //throw new UserDoesNotExistException();
                 throw new NullPointerException();
             }
 
-            switch(type){
+                switch(type){
                 case MessageType.CHAT_MESSAGE:
                     sendChatMessage(userMessage, session);
                     break;
@@ -104,16 +104,7 @@ public class BusTalkHandler {
                 {
                     int chatId = userMessage.getInt("chatId");
                     Chatroom chatroom = chatroomHandler.getChatroom(chatId);
-
-                    if (canLeaveRoom(user, chatroom)) {
-                        leaveRoom(user, chatroom);
-
-                        if (chatroomHandler.getChatroom(chatId) == null) {
-                            messageSender.chatDeletedNotification(chatroom);
-                        } else {
-                            messageSender.userLeftNotification(user, chatroom);
-                        }
-                    }
+                    leaveRoom(user, chatroom);
                 }
 
                 break;
@@ -124,10 +115,16 @@ public class BusTalkHandler {
                     userHandler.setUserNameAndInterests(user, session, name, interests);
                 }
                     break;
-                case MessageType.NICKNAME_AVAILABLE_CHECK:
-                    //TODO: Implement?
 
+                case MessageType.CHANGE_GROUP_ID: {
+                    String id = userMessage.getString("groupId");
+                    user.setGroupId(id);
+
+                    for(Chatroom c : user.getCurrentChatrooms()) {
+                        leaveRoom(user, c);
+                    }
                     break;
+                }
 
                 default:
 
@@ -161,34 +158,16 @@ public class BusTalkHandler {
 
         for(Chatroom c : user.getCurrentChatrooms()){
             Chatroom chatroom = c;
-
-            //chatroomHandler.leaveChatroom(user, c);
             leaveRoom(user, c);
-            if(chatroomHandler.getChatroom(chatroom.getIdNbr()) == null){
-                messageSender.chatDeletedNotification(chatroom);
-            }else{
-                messageSender.userLeftNotification(user, chatroom);
-            }
         }
-
-/*        Iterator<Chatroom> iterator = chatroomHandler.getListOfOpenChatrooms().iterator();
-        while (iterator.hasNext()){
-            Chatroom chatroom = iterator.next();
-
-            chatroomHandler.leaveChatroom(user, chatroom);
-
-            if(chatroomHandler.getChatroom(chatroom.getIdNbr()) == null){
-                messageSender.chatDeletedNotification(chatroom);
-            }else{
-                messageSender.userLeftNotification(user, chatroom);
-            }
-        }
-*/
         userHandler.removeUser(user);
     }
 
     private boolean canJoinRoom(User user, Chatroom chatroom){
-        return (!chatroomHandler.isUserInRoom(user, chatroom) && !userHandler.isUserInRoom(user, chatroom));
+
+        boolean isInCorrectGroup = chatroomHandler.getGroupOfChatrooms(user.getGroupId()).contains(chatroom);
+
+        return isInCorrectGroup && !chatroomHandler.isUserInRoom(user, chatroom) && !userHandler.isUserInRoom(user, chatroom);
     }
 
     private void joinRoom(User user, Chatroom chatroom){
@@ -201,7 +180,15 @@ public class BusTalkHandler {
     }
 
     private void leaveRoom(User user, Chatroom chatroom) {
-        chatroomHandler.leaveChatroom(user, chatroom);
-        userHandler.removeFromCurrentRooms(user, chatroom);
+        if(canLeaveRoom(user, chatroom)) {
+            chatroomHandler.leaveChatroom(user, chatroom);
+            userHandler.removeFromCurrentRooms(user, chatroom);
+
+            if (chatroomHandler.getChatroom(chatroom.getIdNbr()) == null) {
+                messageSender.chatDeletedNotification(chatroom);
+            } else {
+                messageSender.userLeftNotification(user, chatroom);
+            }
+        }
     }
 }

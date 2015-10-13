@@ -13,6 +13,7 @@ public class User implements IUser {
     private String name;
     private String interests;
     private final List<Chatroom> inChatrooms;
+    private String groupId;
 
     public User(String name, String interests){
         this.name = name;
@@ -70,6 +71,14 @@ public class User implements IUser {
 
     public boolean isInRoom(Chatroom chatroom){
         return inChatrooms.contains(chatroom);
+    }
+
+    public void setGroupId(String groupId){
+        this.groupId = groupId;
+    }
+
+    public String getGroupId(){
+        return this.groupId;
     }
 
 }

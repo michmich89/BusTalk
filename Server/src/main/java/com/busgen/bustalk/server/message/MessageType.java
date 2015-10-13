@@ -10,6 +10,7 @@ public class MessageType {
     public static final int CREATE_ROOM_REQUEST = 21;
     public static final int JOIN_ROOM_REQUEST = 22;
     public static final int LIST_OF_USERS_IN_ROOM_REQUEST = 23;
+    public static final int CHANGE_GROUP_ID = 24;
     public static final int LIST_OF_ALL_CHATROOMS_REQUEST = 26;
     public static final int LEAVE_ROOM_REQUEST = 29;
 

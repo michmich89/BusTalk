@@ -88,18 +88,15 @@ public class ChatroomHandler {
         LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"),
                 new Object[]{userHandler.getSession(user).getId(), chatroom.getTitle(), chatroom.getIdNbr()});
         if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS - 1){
-            deleteChatroom(chatroom.getIdNbr());
+            deleteChatroom(chatroom.getIdNbr(), user.getGroupId());
         }
     }
 
-    private void deleteChatroom(int chatId) {
-
-        //TODO: May be temporary solution
+    private void deleteChatroom(int chatId, String groupId) {
         Chatroom chatroom = idToChatroom.get(chatId);
         idToChatroom.remove(chatId);
-        for(List<Chatroom> c : groupToListOfChatrooms.values()){
-            c.remove(chatroom);
-        }
+        groupToListOfChatrooms.get(groupId).remove(chatroom);
+
         LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
     }
 
@@ -116,10 +113,8 @@ public class ChatroomHandler {
         return idToChatroom.get(chatId);
     }
 
-    public void unsubscribeUser(User user){
-        for(Chatroom c : idToChatroom.values()){
-            leaveChatroom(user, c);
-        }
+    public List<Chatroom> getGroupOfChatrooms(String groupId){
+        return groupToListOfChatrooms.get(groupId);
     }
 
     // TODO: Create method that checks if there's a user for the session
