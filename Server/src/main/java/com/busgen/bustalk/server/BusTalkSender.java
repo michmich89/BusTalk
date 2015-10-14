@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// TODO: Make sure disconnected users don't throw NullPointerException
 
 /**
  * This class handles all messages between users, acts like a post office.
@@ -65,15 +66,15 @@ public class BusTalkSender {
      * @param chatroom The chatroom whos users will be notified
      */
     public void userJoinedNotification(User user, Chatroom chatroom) {
-        JSONObject objectToSend = new JSONObject();
-        objectToSend.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION);
-        objectToSend.put("chatId", chatroom.getIdNbr());
-        objectToSend.put("name", user.getName());
-        objectToSend.put("interests", user.getInterests());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION);
+        jsonObject.put("chatId", chatroom.getIdNbr());
+        jsonObject.put("name", user.getName());
+        jsonObject.put("interests", user.getInterests());
 
         for (User u : chatroom.getChatroomUsers()) {
             Session s = userHandler.getSession(u);
-            s.getAsyncRemote().sendObject(objectToSend);
+            s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
     }
 
@@ -131,7 +132,6 @@ public class BusTalkSender {
         }
 
         Session requester = userHandler.getSession(user);
-        System.out.print(requester.getId() + "           " + requester.toString());
         requester.getAsyncRemote().sendObject(new UserMessage(jsonObject));
 
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Sent list of chatrooms"),
@@ -148,7 +148,7 @@ public class BusTalkSender {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("type", MessageType.LIST_OF_USERS_IN_CHAT_NOTIFICATION);
-        for (User u : chatroomHandler.getListOfUsersInChatroom(chatroom.getIdNbr())) {
+        for (User u : chatroom.getChatroomUsers()) {
             JSONObject jsonUser = new JSONObject();
             jsonUser.put("name", u.getName());
             jsonUser.put("interests", u.getInterests());
@@ -168,7 +168,6 @@ public class BusTalkSender {
      * @param message The actual message the user wrote
      */
     public void chatMessage(User sender, Chatroom chatroom, String message) {
-
         int chatId = chatroom.getIdNbr();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.CHAT_MESSAGE_NOTIFICATION);
@@ -177,7 +176,8 @@ public class BusTalkSender {
         jsonObject.put("message", message);
         jsonObject.put("time", new Date().toString());
 
-        for (User u : chatroomHandler.getListOfUsersInChatroom(chatId)) {
+        System.out.println(chatroom.getChatroomUsers().toString());
+        for (User u : chatroom.getChatroomUsers()) {
             Session s = userHandler.getSession(u);
             s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }

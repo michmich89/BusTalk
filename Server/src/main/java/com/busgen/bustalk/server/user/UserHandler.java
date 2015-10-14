@@ -84,7 +84,6 @@ public class UserHandler {
         name = name.toLowerCase();
         if (!disallowedNames.contains(name)) {
             disallowedNames.add(name);
-            LOGGER.log(Level.INFO, String.format("Added \"{0}\" to list of disallowed names"), name);
         }
     }
 
@@ -95,9 +94,7 @@ public class UserHandler {
      */
     private void removeDisallowedName(String name) {
         name = name.toLowerCase();
-        if (disallowedNames.remove(name)) {
-            LOGGER.log(Level.INFO, String.format("Removed \"{0}\" from list of disallowed names"), name);
-        }
+        disallowedNames.remove(name);
     }
 
 
@@ -122,8 +119,9 @@ public class UserHandler {
     public void removeUser(User user) {
         removeDisallowedName(user.getName());
         LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), user.getName());
+        Session session = userToSession.get(user);
         userToSession.remove(user);
-        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Removed from user list"), new Object[]{userToSession.get(user).getId(), user.getName()});
+        LOGGER.log(Level.INFO, String.format("[{0}:{1}] Removed from user list"), new Object[]{session.getId(), user.getName()});
     }
 
     public boolean setUserNameAndInterests(User user, Session session, String name, String interests) {

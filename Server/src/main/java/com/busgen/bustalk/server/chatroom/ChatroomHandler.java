@@ -144,8 +144,7 @@ public class ChatroomHandler {
      * @param chatId The ID number of the chatroom a user list is requested
      * @return A list of users in the room
      */
-    public List<User> getListOfUsersInChatroom(int chatId) {
-        Chatroom chatroom = idToChatroom.get(chatId);
+    public List<User> getListOfUsersInChatroom(Chatroom chatroom) {
         return chatroom.getChatroomUsers();
     }
 

@@ -5,12 +5,9 @@ import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
-import com.busgen.bustalk.server.user.UserDoesNotExistException;
 import com.busgen.bustalk.server.user.UserHandler;
-import sun.plugin2.message.Message;
 
 import javax.websocket.Session;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,7 +142,10 @@ public class BusTalkHandler {
         String message = userMessage.getString("message");
         User sender = userHandler.getUser(session);
         Chatroom chatroom = chatroomHandler.getChatroom(chatId);
-        messageSender.chatMessage(sender, chatroom, message);
+
+        if (chatroom.getChatroomUsers().contains(sender)) {
+            messageSender.chatMessage(sender, chatroom, message);
+        }
     }
 
     /**
