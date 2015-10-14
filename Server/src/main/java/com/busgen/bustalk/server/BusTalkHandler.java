@@ -96,12 +96,6 @@ public class BusTalkHandler {
                 }
                     break;
                 case MessageType.LIST_OF_ALL_CHATROOMS_REQUEST:
-                    /*
-                    TODO: Chatrooms need to be grouped up
-                    TODO: Send back a list of chatrooms depending on what bus the user is in
-                    TODO:
-                     */
-
                     messageSender.listOfChatrooms(user);
                     break;
                 case MessageType.LEAVE_ROOM_REQUEST: // Leave room
@@ -116,8 +110,8 @@ public class BusTalkHandler {
                 case MessageType.CHOOSE_NICKNAME_REQUEST: {
                     String name = userMessage.getString("name");
                     String interests = userMessage.getString("interests");
-                    userHandler.setUserNameAndInterests(user, session, name, interests);
-                    // TODO: Return result to client
+                    boolean status = userHandler.setUserNameAndInterests(user, session, name, interests);
+                    messageSender.userNameAndInterestStatus(session, status);
                 }
                     break;
 
@@ -138,7 +132,6 @@ public class BusTalkHandler {
             }
         }catch(IllegalArgumentException e){
             //TODO: Vi ska skicka tillbaka information om Vad som gick fel
-            session.getAsyncRemote().sendText(e.getMessage());
             e.printStackTrace();
         }catch(NullPointerException e){
             //TODO: What should we do with it? Send info saying that they need to create another user?

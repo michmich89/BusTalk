@@ -182,4 +182,13 @@ public class BusTalkSender {
             s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
     }
+
+    public void userNameAndInterestStatus(Session session, boolean succeeded) {
+        // TODO: Is there a better way than having session as parameter here?
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", MessageType.NAME_AND_INTEREST_SET);
+        jsonObject.put("succeeded", succeeded);
+
+        session.getAsyncRemote().sendObject(new UserMessage(jsonObject));
+    }
 }

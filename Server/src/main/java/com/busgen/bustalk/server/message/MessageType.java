@@ -15,7 +15,6 @@ public class MessageType {
     public static final int LEAVE_ROOM_REQUEST = 29;
 
     public static final int CHOOSE_NICKNAME_REQUEST = 31;
-    public static final int NICKNAME_AVAILABLE_CHECK = 32;
 
     //Notification number that's being sent back
     public static final int NEW_USER_IN_CHAT_NOTIFICATION = 101;
@@ -26,6 +25,7 @@ public class MessageType {
     public static final int USER_LEFT_ROOM_NOTIFICATION = 106;
     public static final int ROOM_DELETED_NOTIFICATION = 107;
     public static final int ROOM_CREATED_NOTIFICATION = 108;
+    public static final int NAME_AND_INTEREST_SET = 109;
     //TODO: Rensa och snygga upp bland dessa?
     
 }
