@@ -72,6 +72,7 @@ public class BusTalkHandlerTest {
         User user = new User("username", "userinterests");
         Session session = Mockito.mock(Session.class);
         userHandler.addUser(user, session);
+        Mockito.when(session.getAsyncRemote()).thenReturn(Mockito.mock(RemoteEndpoint.Async.class));
 
         //Add group to user
         JSONObject message = new JSONObject();
@@ -114,6 +115,13 @@ public class BusTalkHandlerTest {
         int nbr1after = first.getChatroomUsers().size();
         int nbr2after = second.getChatroomUsers().size();
         int nbr3after = third.getChatroomUsers().size();
+
+        System.out.println(nbr1);
+        System.out.println(nbr1after);
+        System.out.println(nbr2);
+        System.out.println(nbr2after);
+        System.out.println(nbr3);
+        System.out.println(nbr3after);
 
         assertTrue(nbr1 == nbr2 && nbr2 == nbr3 && nbr1 == 1 && nbr1after == nbr2after && nbr2after == nbr3after && nbr1after == 0);
 
