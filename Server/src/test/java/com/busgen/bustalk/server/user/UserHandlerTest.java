@@ -2,6 +2,7 @@ package com.busgen.bustalk.server.user;
 
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class UserHandlerTest {
         String name = "new user";
         String interests = "interests";
         // Should create a new user as "new user" is an allowed name
-        Session session = createNewSession();
+        Session session = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, session, name, interests);
 
         assertTrue(userHandler.getUser(session).getName().equals(name));
@@ -39,10 +40,10 @@ public class UserHandlerTest {
 
     @Test
     public void testIfUserCannotChooseANameThatIsAlreadyTaken() {
-        Session firstUser = createNewSession();
+        Session firstUser = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, firstUser, "carl", "nothing");
         // Another user wants to have the same name as user above
-        Session secondUser = createNewSession();
+        Session secondUser = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, secondUser, "carl", "everything");
 
         assertTrue(userHandler.getUser(firstUser) != null && userHandler.getUser(secondUser) == null);
@@ -52,7 +53,7 @@ public class UserHandlerTest {
     public void testIfExistingUserCanChangeNameToTheSameName() {
         String name = "NewName";
 
-        Session userSession = createNewSession();
+        Session userSession = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, userSession, "newname", "unit testing");
         User user = userHandler.getUser(userSession);
         userHandler.setUserNameAndInterests(user, userSession, name, "something else");
@@ -62,160 +63,11 @@ public class UserHandlerTest {
 
     @Test
     public void testIfUserIsRemovedCorrectly() {
-        Session userSession = createNewSession();
+        Session userSession = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, userSession, "user name", "some interests");
         User user = userHandler.getUser(userSession);
 
         userHandler.removeUser(user);
         assertTrue(!userHandler.getUsers().contains(user) && userHandler.isNameAllowed(user.getName()));
-    }
-
-    private Session createNewSession() {
-        return new Session() {
-            @Override
-            public WebSocketContainer getContainer() {
-                return null;
-            }
-
-            @Override
-            public void addMessageHandler(MessageHandler handler) throws IllegalStateException {
-
-            }
-
-            @Override
-            public <T> void addMessageHandler(Class<T> clazz, MessageHandler.Whole<T> handler) {
-
-            }
-
-            @Override
-            public <T> void addMessageHandler(Class<T> clazz, MessageHandler.Partial<T> handler) {
-
-            }
-
-            @Override
-            public Set<MessageHandler> getMessageHandlers() {
-                return null;
-            }
-
-            @Override
-            public void removeMessageHandler(MessageHandler handler) {
-
-            }
-
-            @Override
-            public String getProtocolVersion() {
-                return null;
-            }
-
-            @Override
-            public String getNegotiatedSubprotocol() {
-                return null;
-            }
-
-            @Override
-            public List<Extension> getNegotiatedExtensions() {
-                return null;
-            }
-
-            @Override
-            public boolean isSecure() {
-                return false;
-            }
-
-            @Override
-            public boolean isOpen() {
-                return false;
-            }
-
-            @Override
-            public long getMaxIdleTimeout() {
-                return 0;
-            }
-
-            @Override
-            public void setMaxIdleTimeout(long milliseconds) {
-
-            }
-
-            @Override
-            public void setMaxBinaryMessageBufferSize(int length) {
-
-            }
-
-            @Override
-            public int getMaxBinaryMessageBufferSize() {
-                return 0;
-            }
-
-            @Override
-            public void setMaxTextMessageBufferSize(int length) {
-
-            }
-
-            @Override
-            public int getMaxTextMessageBufferSize() {
-                return 0;
-            }
-
-            @Override
-            public RemoteEndpoint.Async getAsyncRemote() {
-                return null;
-            }
-
-            @Override
-            public RemoteEndpoint.Basic getBasicRemote() {
-                return null;
-            }
-
-            @Override
-            public String getId() {
-                return null;
-            }
-
-            @Override
-            public void close() throws IOException {
-
-            }
-
-            @Override
-            public void close(CloseReason closeReason) throws IOException {
-
-            }
-
-            @Override
-            public URI getRequestURI() {
-                return null;
-            }
-
-            @Override
-            public Map<String, List<String>> getRequestParameterMap() {
-                return null;
-            }
-
-            @Override
-            public String getQueryString() {
-                return null;
-            }
-
-            @Override
-            public Map<String, String> getPathParameters() {
-                return null;
-            }
-
-            @Override
-            public Map<String, Object> getUserProperties() {
-                return null;
-            }
-
-            @Override
-            public Principal getUserPrincipal() {
-                return null;
-            }
-
-            @Override
-            public Set<Session> getOpenSessions() {
-                return null;
-            }
-        };
     }
 }
