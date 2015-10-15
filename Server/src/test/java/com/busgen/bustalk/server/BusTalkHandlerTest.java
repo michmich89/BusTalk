@@ -1,8 +1,12 @@
 package com.busgen.bustalk.server;
 
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
+import com.busgen.bustalk.server.message.MessageType;
+import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
+import org.json.JSONObject;
+import org.junit.Test;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -21,11 +25,50 @@ public class BusTalkHandlerTest {
 
     private ChatroomHandler chatroomHandler;
     private UserHandler userHandler;
+    private BusTalkHandler busTalkHandler;
     private User user;
 
     public BusTalkHandlerTest(){
         chatroomHandler = ChatroomHandler.getInstance();
         userHandler = UserHandler.getInstance();
+        busTalkHandler = BusTalkHandler.getInstance();
+    }
+
+    @Test
+    public void TestChangeGroupIdOfUser(){
+        //Create objects needed
+        User user = new User("username", "userinterests");
+        Session session = createNewSession();
+        userHandler.addUser(user, session);
+
+        //Create first simulated userMessage
+        JSONObject message = new JSONObject();
+        message.put("type", MessageType.CHANGE_GROUP_ID);
+        message.put("groupId", "firstGroup");
+        UserMessage userMessage = new UserMessage(message);
+
+        //Send first message
+        busTalkHandler.handleInput(userMessage, session);
+
+        //Save ID
+        String firstGroupId = user.getGroupId();
+        System.out.println(firstGroupId);
+
+        //Create second simulated userMessage
+        JSONObject messageTwo = new JSONObject();
+        messageTwo.put("type", MessageType.CHANGE_GROUP_ID);
+        messageTwo.put("groupId", "secondGroup");
+        UserMessage userMessageTwo = new UserMessage(messageTwo);
+
+        //Send second message
+        busTalkHandler.handleInput(userMessageTwo, session);
+
+        //Save second ID
+        String secondGroupId = user.getGroupId();
+        System.out.println(secondGroupId);
+
+        assertTrue(firstGroupId != null && secondGroupId != null && !firstGroupId.equals(secondGroupId));
+
     }
 
 

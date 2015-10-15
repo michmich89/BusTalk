@@ -114,12 +114,14 @@ public class BusTalkHandler {
 
                 case MessageType.CHANGE_GROUP_ID: {
                     String id = userMessage.getString("groupId");
-                    user.setGroupId(id);
-                    logger.log(Level.INFO, String.format("[{0}:{1}] Group ID changed to {2}"),
-                            new Object[]{session.getId(), user.getName(), user.getGroupId()});
+                    if(user.getGroupId() == null || !user.getGroupId().equalsIgnoreCase(id)) {
+                        user.setGroupId(id);
+                        logger.log(Level.INFO, String.format("[{0}:{1}] Group ID changed to {2}"),
+                                new Object[]{session.getId(), user.getName(), user.getGroupId()});
 
-                    for(Chatroom c : user.getCurrentChatrooms()) {
-                        leaveRoom(user, c);
+                        for (Chatroom c : user.getCurrentChatrooms()) {
+                            leaveRoom(user, c);
+                        }
                     }
                     break;
                 }
