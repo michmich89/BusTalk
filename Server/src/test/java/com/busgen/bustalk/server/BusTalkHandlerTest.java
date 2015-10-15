@@ -10,15 +10,11 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.websocket.*;
-import java.io.IOException;
-import java.net.URI;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.websocket.RemoteEndpoint;
+import javax.websocket.Session;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by danie on 2015-10-15.
@@ -41,6 +37,7 @@ public class BusTalkHandlerTest {
         //Create objects needed
         User user = new User("username", "userinterests");
         Session session = Mockito.mock(Session.class);
+        Mockito.when(session.getAsyncRemote()).thenReturn(Mockito.mock(RemoteEndpoint.Async.class));
         userHandler.addUser(user, session);
 
         //Create first simulated userMessage
@@ -75,6 +72,7 @@ public class BusTalkHandlerTest {
     @Test
     public void testIfUserLeavesChatroomsWhenChangingGroup() {
         Session userSession = Mockito.mock(Session.class);
+        Mockito.when(userSession.getAsyncRemote()).thenReturn(Mockito.mock(RemoteEndpoint.Async.class));
         userHandler.setUserNameAndInterests(null, userSession, "abc123", "interests");
 
         int chatId = 0;
