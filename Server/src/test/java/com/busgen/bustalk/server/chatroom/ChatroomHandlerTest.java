@@ -45,8 +45,7 @@ public class ChatroomHandlerTest {
         Chatroom chatroom = chatroomHandler.createChatroom(user, "test chatroom");
 
         assertTrue(chatroomHandler.getListOfOpenChatrooms().contains(chatroom)
-                && chatroomHandler.getGroupOfChatrooms(user.getGroupId()).contains(chatroom)
-                && chatroom.getChatroomUsers().contains(user));
+                && chatroomHandler.getGroupOfChatrooms(user.getGroupId()).contains(chatroom));
     }
 
     @Test
