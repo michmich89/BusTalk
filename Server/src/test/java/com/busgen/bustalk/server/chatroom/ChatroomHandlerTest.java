@@ -50,7 +50,11 @@ public class ChatroomHandlerTest {
 
     @Test
     public void testIfUserCreatedChatroomIsDeletedWhenLastUserLeaves() {
-        Chatroom chatroom = chatroomHandler.getChatroom(100);
+        Chatroom chatroom = chatroomHandler.createChatroom(user, "chat room 123");
+        chatroomHandler.joinChatroom(user, chatroom);
+
+        assertTrue(chatroom.getChatroomUsers().contains(user));
+
         chatroomHandler.leaveChatroom(user, chatroom);
 
         assertFalse(chatroomHandler.getListOfOpenChatrooms().contains(chatroom));
