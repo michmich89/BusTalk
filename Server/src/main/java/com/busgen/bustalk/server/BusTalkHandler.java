@@ -6,6 +6,7 @@ import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
+import org.json.JSONObject;
 
 import javax.websocket.Session;
 import java.util.logging.Level;
@@ -73,6 +74,7 @@ public class BusTalkHandler {
                 {
                     String nameOfRoom = userMessage.getString("chatName");
                     Chatroom chatroom = chatroomHandler.createChatroom(user, nameOfRoom);
+                    joinRoom(user, chatroom);
                     messageSender.chatroomCreatedNotification(user, chatroom);
                 }
                 break;

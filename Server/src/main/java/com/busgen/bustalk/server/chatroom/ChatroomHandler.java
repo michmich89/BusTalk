@@ -58,7 +58,6 @@ public class ChatroomHandler {
 
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created chat \"{2}\" with id {3}"),
                 new Object[]{userHandler.getSession(user).getId(), user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
-        joinChatroom(user, chatroom);
         return chatroom;
 
     }
