@@ -1,5 +1,6 @@
 package com.busgen.bustalk.server;
 
+import com.busgen.bustalk.server.chatroom.Chatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
@@ -52,7 +53,6 @@ public class BusTalkHandlerTest {
 
         //Save ID
         String firstGroupId = user.getGroupId();
-        System.out.println(firstGroupId);
 
         //Create second simulated userMessage
         JSONObject messageTwo = new JSONObject();
@@ -65,9 +65,61 @@ public class BusTalkHandlerTest {
 
         //Save second ID
         String secondGroupId = user.getGroupId();
-        System.out.println(secondGroupId);
 
         assertTrue(firstGroupId != null && secondGroupId != null && !firstGroupId.equals(secondGroupId));
+
+    }
+
+    @Test
+    public void UserLeavingAllRoomsWhenSessionIsClosed(){
+        User user = new User("username", "userinterests");
+        Session session = createNewSession();
+        userHandler.addUser(user, session);
+
+        //Add group to user
+        JSONObject message = new JSONObject();
+        message.put("type", MessageType.CHANGE_GROUP_ID);
+        message.put("groupId", "firstGroup");
+        UserMessage userMessage = new UserMessage(message);
+
+        busTalkHandler.handleInput(userMessage, session);
+
+        //Create simulated userMessages
+        JSONObject join1 = new JSONObject();
+        join1.put("type", MessageType.CREATE_ROOM_REQUEST);
+        join1.put("chatName", "firstRoom");
+        UserMessage userMessage1 = new UserMessage(join1);
+
+        JSONObject join2 = new JSONObject();
+        join2.put("type", MessageType.CREATE_ROOM_REQUEST);
+        join2.put("chatName", "secondRoom");
+        UserMessage userMessage2 = new UserMessage(join2);
+
+        JSONObject join3 = new JSONObject();
+        join3.put("type", MessageType.CREATE_ROOM_REQUEST);
+        join3.put("chatName", "thirdRoom");
+        UserMessage userMessage3 = new UserMessage(join3);
+
+        busTalkHandler.handleInput(userMessage1, session);
+        busTalkHandler.handleInput(userMessage2, session);
+        busTalkHandler.handleInput(userMessage3, session);
+
+        Chatroom first = chatroomHandler.getChatroom(100);
+        Chatroom second = chatroomHandler.getChatroom(101);
+        Chatroom third = chatroomHandler.getChatroom(102);
+
+        int nbr1 = first.getChatroomUsers().size();
+        int nbr2 = second.getChatroomUsers().size();
+        int nbr3 = third.getChatroomUsers().size();
+
+        busTalkHandler.removeSession(session);
+
+        int nbr1after = first.getChatroomUsers().size();
+        int nbr2after = second.getChatroomUsers().size();
+        int nbr3after = third.getChatroomUsers().size();
+
+        assertTrue(nbr1 == nbr2 && nbr2 == nbr3 && nbr1 == 1 && nbr1after == nbr2after && nbr2after == nbr3after && nbr1after == 0);
+
 
     }
 
