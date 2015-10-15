@@ -125,7 +125,7 @@ public class UserHandler {
     }
 
     public boolean setUserNameAndInterests(User user, Session session, String name, String interests) {
-        if (user != null && (isNameAllowed(name) || user.getName().equals(name))) {
+        if (user != null && (isNameAllowed(name) || user.getName().equalsIgnoreCase(name))) {
             String oldName = user.getName();
             String oldInterests = user.getInterests();
 

@@ -24,9 +24,6 @@ public class UserHandlerTest {
     public UserHandlerTest () {
         chatroomHandler = ChatroomHandler.getInstance();
         userHandler = UserHandler.getInstance();
-
-        //user = new User("username", "interests");
-        //user.setGroupId("testGroup");
     }
 
     @Test
@@ -53,14 +50,25 @@ public class UserHandlerTest {
 
     @Test
     public void testIfExistingUserCanChangeNameToTheSameName() {
-        Session userSession = createNewSession();
-        userHandler.setUserNameAndInterests(null, userSession, "iamnew", "unit testing");
-        User user = userHandler.getUser(userSession);
-        userHandler.setUserNameAndInterests(user, userSession, "IamNew", "something else");
+        String name = "NewName";
 
-        assertTrue(user.getName().equals("IamNew"));
+        Session userSession = createNewSession();
+        userHandler.setUserNameAndInterests(null, userSession, "newname", "unit testing");
+        User user = userHandler.getUser(userSession);
+        userHandler.setUserNameAndInterests(user, userSession, name, "something else");
+
+        assertTrue(user.getName().equals(name));
     }
 
+    @Test
+    public void testIfUserIsRemovedCorrectly() {
+        Session userSession = createNewSession();
+        userHandler.setUserNameAndInterests(null, userSession, "user name", "some interests");
+        User user = userHandler.getUser(userSession);
+
+        userHandler.removeUser(user);
+        assertTrue(!userHandler.getUsers().contains(user) && userHandler.isNameAllowed(user.getName()));
+    }
 
     private Session createNewSession() {
         return new Session() {
