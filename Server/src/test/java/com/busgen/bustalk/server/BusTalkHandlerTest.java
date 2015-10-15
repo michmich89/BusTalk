@@ -1,5 +1,6 @@
 package com.busgen.bustalk.server;
 
+import com.busgen.bustalk.server.chatroom.Chatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
@@ -7,6 +8,7 @@ import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import org.json.JSONObject;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -38,7 +40,7 @@ public class BusTalkHandlerTest {
     public void TestChangeGroupIdOfUser(){
         //Create objects needed
         User user = new User("username", "userinterests");
-        Session session = createNewSession();
+        Session session = Mockito.mock(Session.class);
         userHandler.addUser(user, session);
 
         //Create first simulated userMessage
@@ -68,156 +70,34 @@ public class BusTalkHandlerTest {
         System.out.println(secondGroupId);
 
         assertTrue(firstGroupId != null && secondGroupId != null && !firstGroupId.equals(secondGroupId));
-
     }
 
+    @Test
+    public void testIfUserLeavesChatroomsWhenChangingGroup() {
+        Session userSession = Mockito.mock(Session.class);
+        userHandler.setUserNameAndInterests(null, userSession, "abc123", "interests");
 
-    private Session createNewSession() {
-        return new Session() {
-            @Override
-            public WebSocketContainer getContainer() {
-                return null;
-            }
+        int chatId = 0;
+        User user = userHandler.getUser(userSession);
+        busTalkHandler.handleInput(changeGroup("1"), userSession);
+        busTalkHandler.handleInput(joinRoom(chatId), userSession);
+        Chatroom chatroom = chatroomHandler.getChatroom(chatId);
+        assertTrue(chatroom.getChatroomUsers().contains(user));
+        busTalkHandler.handleInput(changeGroup("2"), userSession);
+        assertFalse(chatroom.getChatroomUsers().contains(user));
+    }
 
-            @Override
-            public void addMessageHandler(MessageHandler handler) throws IllegalStateException {
+    private UserMessage changeGroup(String group) {
+        JSONObject json = new JSONObject();
+        json.put("type", MessageType.CHANGE_GROUP_ID);
+        json.put("groupId", group);
+        return new UserMessage(json);
+    }
 
-            }
-
-            @Override
-            public <T> void addMessageHandler(Class<T> clazz, MessageHandler.Whole<T> handler) {
-
-            }
-
-            @Override
-            public <T> void addMessageHandler(Class<T> clazz, MessageHandler.Partial<T> handler) {
-
-            }
-
-            @Override
-            public Set<MessageHandler> getMessageHandlers() {
-                return null;
-            }
-
-            @Override
-            public void removeMessageHandler(MessageHandler handler) {
-
-            }
-
-            @Override
-            public String getProtocolVersion() {
-                return null;
-            }
-
-            @Override
-            public String getNegotiatedSubprotocol() {
-                return null;
-            }
-
-            @Override
-            public List<Extension> getNegotiatedExtensions() {
-                return null;
-            }
-
-            @Override
-            public boolean isSecure() {
-                return false;
-            }
-
-            @Override
-            public boolean isOpen() {
-                return false;
-            }
-
-            @Override
-            public long getMaxIdleTimeout() {
-                return 0;
-            }
-
-            @Override
-            public void setMaxIdleTimeout(long milliseconds) {
-
-            }
-
-            @Override
-            public void setMaxBinaryMessageBufferSize(int length) {
-
-            }
-
-            @Override
-            public int getMaxBinaryMessageBufferSize() {
-                return 0;
-            }
-
-            @Override
-            public void setMaxTextMessageBufferSize(int length) {
-
-            }
-
-            @Override
-            public int getMaxTextMessageBufferSize() {
-                return 0;
-            }
-
-            @Override
-            public RemoteEndpoint.Async getAsyncRemote() {
-                return null;
-            }
-
-            @Override
-            public RemoteEndpoint.Basic getBasicRemote() {
-                return null;
-            }
-
-            @Override
-            public String getId() {
-                return null;
-            }
-
-            @Override
-            public void close() throws IOException {
-
-            }
-
-            @Override
-            public void close(CloseReason closeReason) throws IOException {
-
-            }
-
-            @Override
-            public URI getRequestURI() {
-                return null;
-            }
-
-            @Override
-            public Map<String, List<String>> getRequestParameterMap() {
-                return null;
-            }
-
-            @Override
-            public String getQueryString() {
-                return null;
-            }
-
-            @Override
-            public Map<String, String> getPathParameters() {
-                return null;
-            }
-
-            @Override
-            public Map<String, Object> getUserProperties() {
-                return null;
-            }
-
-            @Override
-            public Principal getUserPrincipal() {
-                return null;
-            }
-
-            @Override
-            public Set<Session> getOpenSessions() {
-                return null;
-            }
-        };
+    private UserMessage joinRoom(int room) {
+        JSONObject json = new JSONObject();
+        json.put("type", MessageType.JOIN_ROOM_REQUEST);
+        json.put("chatId", room);
+        return new UserMessage(json);
     }
 }
