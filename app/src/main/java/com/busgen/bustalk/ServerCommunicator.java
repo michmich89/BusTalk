@@ -42,7 +42,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 /**
  * Created by Alexander Kloutschek on 2015-10-02.
  */
-@ClientEndpoint
+@ClientEndpoint(encoders = JSONEncoder.class, decoders = JSONDecoder.class)
 public class ServerCommunicator implements IEventBusListener {
     //Kanske behöver dela upp ansvaret i flera klasser.
 
