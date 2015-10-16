@@ -8,12 +8,18 @@ import com.busgen.bustalk.model.IServerMessage;
 public class MsgChooseNickname implements IServerMessage {
 
     private String nickname;
+    private String interests;
 
-    public MsgChooseNickname(String nickname){
+    public MsgChooseNickname(String nickname, String interests){
         this.nickname = nickname;
+        this.interests = interests;
     }
 
     public String getNickname(){
         return nickname;
+    }
+
+    public String getInterests(){
+        return interests;
     }
 }

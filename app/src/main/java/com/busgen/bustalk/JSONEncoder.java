@@ -50,6 +50,7 @@ public class JSONEncoder implements Encoder.Text<IServerMessage> {
                 MsgCreateRoom createMessage = (MsgCreateRoom)clientMessage;
                 object.put("type",MessageTypes.CREATE_ROOM_REQUEST);
                 object.put("chatId", createMessage.getChatID());
+                object.put("chatName", createMessage.getChatName());
 
             }else if(clientMessage instanceof MsgLeaveRoom){
                 MsgLeaveRoom leaveMessage = (MsgLeaveRoom)clientMessage;
@@ -60,6 +61,7 @@ public class JSONEncoder implements Encoder.Text<IServerMessage> {
                 MsgChooseNickname nickMessage = (MsgChooseNickname)clientMessage;
                 object.put("type", MessageTypes.CHOOSE_NICKNAME_REQUEST);
                 object.put("nickname", nickMessage.getNickname());
+                object.put("interets", nickMessage.getInterests());
             }else if(clientMessage instanceof MsgAvailableRoomsRequest){
                 object.put("type", MessageTypes.LIST_OF_ALL_CHATROOMS_REQUEST);
             }else if(clientMessage instanceof MsgUsersInChatRequest){

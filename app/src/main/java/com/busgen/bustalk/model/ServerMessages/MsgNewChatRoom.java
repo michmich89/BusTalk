@@ -8,12 +8,25 @@ import com.busgen.bustalk.model.IServerMessage;
 public class MsgNewChatRoom implements IServerMessage {
 
     private int chatID;
+    private String title;
+    private boolean isYours;
 
-    public MsgNewChatRoom(int chatID){
+    public MsgNewChatRoom(int chatID, String title, boolean isYours){
         this.chatID = chatID;
+        this.title = title;
+        this.isYours = isYours;
     }
 
     public int getChatID(){
         return chatID;
+    }
+    public String getTitle(){
+        return title;
+    }
+    /*
+    Indicates whether the client created the chatroom or not.
+     */
+    public boolean isClientCreator(){
+        return isYours;
     }
 }

@@ -10,8 +10,8 @@ import java.util.List;
  * Created by nalex on 16/10/2015.
  */
 public class MsgUsersInChat {
-    List<IUser> userList;
-    int chatId;
+    private List<IUser> userList;
+    private int chatId;
 
     public MsgUsersInChat(int chatId){
         this.chatId = chatId;
