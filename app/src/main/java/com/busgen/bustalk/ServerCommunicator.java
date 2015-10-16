@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.websocket.ClientEndpoint;
 import javax.websocket.ContainerProvider;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -43,9 +44,7 @@ import javax.websocket.WebSocketContainer;
  * Created by Alexander Kloutschek on 2015-10-02.
  */
 
-
-
-
+@ClientEndpoint(encoders = JSONEncoder.class, decoders = JSONDecoder.class)
 public class ServerCommunicator implements IEventBusListener {
     //Kanske behöver dela upp ansvaret i flera klasser.
 
