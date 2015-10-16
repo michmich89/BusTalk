@@ -184,7 +184,8 @@ public class BusTalkSender {
     }
 
     public void userNameAndInterestStatus(Session session, boolean succeeded) {
-        // TODO: Is there a better way than having session as parameter here?
+        // TODO: Is there a better way than having session as parameter here? User might have not been created yet
+        // TODO: Send info to all clients that a user has changed name
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.NAME_AND_INTEREST_SET);
         jsonObject.put("succeeded", succeeded);
