@@ -7,7 +7,7 @@ import java.util.List;
  * Created by nalex on 16/10/2015.
  */
 public class MsgAvailableRooms {
-    List<MsgNewChatRoom> roomList;
+    private List<MsgNewChatRoom> roomList;
 
     public MsgAvailableRooms(){
         roomList = new ArrayList<MsgNewChatRoom>();
