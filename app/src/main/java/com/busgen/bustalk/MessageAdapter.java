@@ -1,14 +1,13 @@
 package com.busgen.bustalk;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Paint;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.List;
 
@@ -17,19 +16,21 @@ import java.util.List;
  */
 public class MessageAdapter extends BaseAdapter{
 
-    private final List<TempMessage> messages;
+    private final List<MsgChatMessage> messages;
     private Activity context;
+    private LayoutInflater inflater;
 
-    public MessageAdapter(Activity context, List<TempMessage> messages){
+    public MessageAdapter(Activity context, List<MsgChatMessage> messages){
         this.context = context;
         this.messages = messages;
+        this.inflater = LayoutInflater.from(context);
     }
 
-	public void add(TempMessage message){
+	public void add(MsgChatMessage message){
 		messages.add(message);
 	}
 
-	public void add(List<TempMessage> messages){
+	public void add(List<MsgChatMessage> messages){
 		this.messages.addAll(messages);
 	}
 
@@ -43,7 +44,7 @@ public class MessageAdapter extends BaseAdapter{
     }
 
     @Override
-    public TempMessage getItem(int position){
+    public MsgChatMessage getItem(int position){
         if(messages != null){
             return messages.get(position);
         }else{
@@ -53,21 +54,24 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public long getItemId(int position) {
-        return messages.get(position).getId();
+        return messages.get(position).getChatId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-		Log.d("myTag", "Inside getView");
-        ViewHolder holder;
-        TempMessage message = getItem(position);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        //ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
+        ViewHolder holder;
+        MsgChatMessage message = getItem(position);
+
+        //Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
+        //future reuse
         if(convertView == null){
             convertView = inflater.inflate(R.layout.message_item, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        }//Reuses the holder set as tag to convertView, eliminates the need to call findViewById
+        else{
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -76,7 +80,7 @@ public class MessageAdapter extends BaseAdapter{
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
-        holder.userName.setText(message.getUserName() + ":");
+        holder.userName.setText(message.getNickname() + ":");
 
         //Underlines the username text, not applied at the moment
         //holder.userName.setPaintFlags(holder.userName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -84,12 +88,11 @@ public class MessageAdapter extends BaseAdapter{
         return convertView;
     }
 
-	//Sets the layout of a message item (Which includes 2 TextViews: Message date and the
-	//actual message text) in the ListView depending on who sent the message
+	//Sets the layout of a message item in the ListView depending on who sent the message
     private void setAlignment(ViewHolder holder, boolean isMe){
         if (isMe) {
 			//Sets a 9-patch image of a white chat bubble as background for message text
-            holder.messageTextContainer.setBackgroundResource(R.drawable.speech_bubble_green);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal_mirror);
 
 			//Aligns the message text and its corresponding bubble to the right in message item
             LinearLayout.LayoutParams layoutParams =
@@ -109,12 +112,15 @@ public class MessageAdapter extends BaseAdapter{
             layoutParams.gravity = Gravity.RIGHT;
             holder.messageDate.setLayoutParams(layoutParams);
 
-			//This could be redundant
-			layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
-			layoutParams.gravity = Gravity.RIGHT;
-			holder.messageText.setLayoutParams(layoutParams);
+			//Sets the visibility of userName TextView to "gone"
+			holder.userName.setVisibility(View.VISIBLE);
+
+            //This could be redundant
+            layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
+            layoutParams.gravity = Gravity.RIGHT;
+            holder.messageText.setLayoutParams(layoutParams);
         } else {
-            holder.messageTextContainer.setBackgroundResource(R.drawable.speech_bubble_orange);
+            holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal);
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.messageTextContainer.getLayoutParams();
@@ -131,6 +137,9 @@ public class MessageAdapter extends BaseAdapter{
 			layoutParams.gravity = Gravity.LEFT;
 			holder.messageDate.setLayoutParams(layoutParams);
 
+            //Sets the visibility of userName TextView to "visible"
+            holder.userName.setVisibility(View.VISIBLE);
+
 			//This could be redundant
             layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
@@ -138,7 +147,7 @@ public class MessageAdapter extends BaseAdapter{
         }
     }
 
-	//ViewHolder class used for the ViewHolder Design Pattern
+	//ViewHolder class used for the ViewHolder design pattern
 	private static class ViewHolder{
 		public TextView messageText;
 		public TextView messageDate;
@@ -157,6 +166,4 @@ public class MessageAdapter extends BaseAdapter{
         holder.userName = (TextView) v.findViewById(R.id.user_name);
         return holder;
     }
-
-
 }

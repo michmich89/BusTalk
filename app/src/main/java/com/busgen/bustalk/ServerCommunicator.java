@@ -132,7 +132,6 @@ public class ServerCommunicator implements IEventBusListener {
         return platformData;
     }
 
-
     @Override
     public void onEvent(Event event) {
 
