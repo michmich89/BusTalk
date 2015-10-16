@@ -40,7 +40,7 @@ public class JSONDecoder implements Decoder.Text<IServerMessage> {
             jsonObject = new JSONObject(s);
             IServerMessage serverMessage = null;
             int type = jsonObject.getInt("type");
-            if(type == MessageTypes.CHAT_MESSAGE_NOTIFICATION)){
+            if(type == MessageTypes.CHAT_MESSAGE_NOTIFICATION){
 
                 Date testDate = new Date();
                 //todo needs to convert timestamp to date och ska hur ska jag ta reda på iSME här?
