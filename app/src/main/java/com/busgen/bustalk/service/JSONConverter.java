@@ -1,7 +1,5 @@
 package com.busgen.bustalk.service;
 
-import android.os.Message;
-
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
@@ -32,8 +30,8 @@ public class JSONConverter {
             if(type.equals("chatmessage")){
                 String dateString = object.getString("timestamp");
                 Date testDate = new Date();
-                //todo needs to convert timestamp to date?
-                message = new MsgChatMessage(object.getString("message"), object.getInt("chatID"),object.getString("nickname"), testDate);
+                //todo needs to convert timestamp to date och ska hur ska jag ta reda på iSME här?
+                message = new MsgChatMessage(true, object.getString("message"),  object.getString("date"), object.getString("nickname"), object.getInt("chatID"));
             }else if(type.equals("NewChatRoom")){
                 message = new MsgNewChatRoom(object.getInt("chatID"));
             }else if(type.equals("LostChatRoom")){
@@ -66,10 +64,10 @@ public class JSONConverter {
             if(message instanceof MsgChatMessage){
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 object.put("type", "chatmessage");
-                object.put("chatID", chatMessage.getChatID());
+                object.put("chatID", chatMessage.getChatId());
                 object.put("nickname", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
-                object.put("timestamp", chatMessage.getTimestamp());
+                object.put("timestamp", chatMessage.getDate().toString());
 
             }else if(message instanceof MsgJoinRoom){
                 MsgJoinRoom joinMessage = (MsgJoinRoom)message;
