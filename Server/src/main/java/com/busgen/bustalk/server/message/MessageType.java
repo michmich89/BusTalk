@@ -20,7 +20,6 @@ public class MessageType {
     public static final int NEW_USER_IN_CHAT_NOTIFICATION = 101;
     public static final int LIST_OF_CHATROOMS_NOTIFICATION = 102;
     public static final int LIST_OF_USERS_IN_CHAT_NOTIFICATION = 103;
-    public static final int CREDENTIAL_CHANGE_NOTIFICATION = 104;
     public static final int CHAT_MESSAGE_NOTIFICATION = 105;
     public static final int USER_LEFT_ROOM_NOTIFICATION = 106;
     public static final int ROOM_DELETED_NOTIFICATION = 107;

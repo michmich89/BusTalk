@@ -50,6 +50,7 @@ public class BusTalkSender {
         jsonObject.put("chatId", chatroom.getIdNbr());
         jsonObject.put("isYours", false);
 
+        // TODO: Could perhaps be more optimized...
         for(User u : userHandler.getUsers()){
             if(!u.equals(user) && u.getGroupId().equals(groupId)){
                 userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
@@ -175,12 +176,20 @@ public class BusTalkSender {
         jsonObject.put("sender", sender.getName());
         jsonObject.put("message", message);
         jsonObject.put("time", new Date().toString());
+        jsonObject.put("isMe", false);
+
 
         System.out.println(chatroom.getChatroomUsers().toString());
         for (User u : chatroom.getChatroomUsers()) {
-            Session s = userHandler.getSession(u);
-            s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
+            if (!u.equals(sender)) {
+                Session s = userHandler.getSession(u);
+                s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
+            }
         }
+
+        jsonObject.put("isMe", true);
+        Session session = userHandler.getSession(sender);
+        session.getAsyncRemote().sendObject(new UserMessage(jsonObject));
     }
 
     public void userNameAndInterestStatus(Session session, boolean succeeded) {
