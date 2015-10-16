@@ -13,7 +13,7 @@ import javax.websocket.EndpointConfig;
  */
 public class JsonDecoder implements Decoder.Text<UserMessage> {
 
-    JSONObject jsonObject;
+    private JSONObject jsonObject;
 
     @Override
     public UserMessage decode(String s) throws DecodeException {

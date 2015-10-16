@@ -58,10 +58,12 @@ public class BusTalkHandler {
         try {
             int type = userMessage.getInt("type");
             User user = userHandler.getUser(session);
-            if((user == null && type != MessageType.CHOOSE_NICKNAME_REQUEST) || (user != null && user.getGroupId() == null && type != MessageType.CHANGE_GROUP_ID)){
-                //TODO: This only sends the code to the catch, but maybe thats enough for now?
-                //TODO: Do we even want to throw an exception?
+            if(user == null && type != MessageType.CHOOSE_NICKNAME_REQUEST){
+                //TODO: Throw checked exception
                 //throw new UserDoesNotExistException();
+                throw new NullPointerException();
+            } else if (user != null && user.getGroupId() == null && type != MessageType.CHANGE_GROUP_ID && type != MessageType.CHOOSE_NICKNAME_REQUEST) {
+                //TODO: Throw checked exception
                 throw new NullPointerException();
             }
 
