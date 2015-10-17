@@ -11,24 +11,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.User;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BindingActivity {
     private EditText userNameInput;
     private EditText interestInput;
     private Button loginButton;
     private Toast loginToast;
-    private Client client;
+    //private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        client = Client.getInstance();
+      //  client = Client.getInstance();
         initViews();
+
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                  * the userName is available.
                  */
                 String interest = interestInput.getText().toString();
-                client.setUser(new User(userName, interest));
+        //        client.setUser(new User(userName, interest));
 
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 startActivity(intent);
@@ -59,5 +62,10 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.login_button);
         loginToast = Toast.makeText(LoginActivity.this, "You have to choose a nickname",
                 Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onEvent(Event event){
+
     }
 }
