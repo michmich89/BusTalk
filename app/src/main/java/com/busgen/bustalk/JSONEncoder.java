@@ -31,10 +31,11 @@ public class JSONEncoder {
                 MsgChatMessage chatMessage = (MsgChatMessage) clientMessage;
                 object.put("type", MessageTypes.CHAT_MESSAGE);
                 object.put("chatId", chatMessage.getChatId());
-                object.put("sender", chatMessage.getNickname());
                 object.put("message", chatMessage.getMessage());
+                /*
+                object.put("sender", chatMessage.getNickname());
                 object.put("time", chatMessage.getDate().toString());
-
+                */
             }else if(clientMessage instanceof MsgJoinRoom){
                 MsgJoinRoom joinMessage = (MsgJoinRoom)clientMessage;
                 object.put("type", MessageTypes.JOIN_ROOM_REQUEST);

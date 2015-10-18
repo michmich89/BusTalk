@@ -1,6 +1,7 @@
 package com.busgen.bustalk.model;
 
 import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
@@ -12,6 +13,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
+import com.busgen.bustalk.service.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +26,7 @@ public class Client implements IClient, IEventBusListener {
 
     private IUser user;
     private List<IChatroom> chatrooms;
+    private EventBus eventBus;
 
     //Singleton pattern
     private static Client client = null;
@@ -64,6 +67,16 @@ public class Client implements IClient, IEventBusListener {
     @Override
     public void setInterest(String interest) {
         user.setInterest(interest);
+    }
+
+    @Override
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     @Override
@@ -116,12 +129,20 @@ public class Client implements IClient, IEventBusListener {
             if (message instanceof MsgChatMessage) {
 
             } else if (message instanceof MsgChooseNickname) {
+                setUserName(((MsgChooseNickname) message).getNickname());
+               // System.out.println("client får ett event om choose nickname");
+               IServerMessage serverMessage = new MsgChooseNickname(getUserName(), getInterest());
+                Event testEvent = new ToActivityEvent(serverMessage);
+                
 
-            } else if (message instanceof MsgChooseNickname) {
+                eventBus.postEvent(testEvent);
 
             } else if (message instanceof MsgCreateRoom) {
 
             } else if (message instanceof MsgJoinRoom) {
+
+                IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
+                chatrooms.add(chatroom);
 
             } else if (message instanceof MsgLeaveRoom) {
 
