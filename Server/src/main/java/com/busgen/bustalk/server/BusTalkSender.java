@@ -123,6 +123,7 @@ public class BusTalkSender {
     public void listOfChatrooms(User user) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.LIST_OF_CHATROOMS_NOTIFICATION);
+        jsonObject.put("groupId", user.getGroupId());
 
         List<Chatroom> tempChatroomList = chatroomHandler.getGroupOfChatrooms(user.getGroupId());
         for (Chatroom c : tempChatroomList) {
@@ -192,6 +193,12 @@ public class BusTalkSender {
         session.getAsyncRemote().sendObject(new UserMessage(jsonObject));
     }
 
+    /**
+     * Sends a message to the client requesting to set name/interests, informing them whether the name/interests were
+     * successful or not
+     * @param session The session that requested to set name/interests
+     * @param succeeded true if the name/interests were successfully set, false otherwise
+     */
     public void userNameAndInterestStatus(Session session, boolean succeeded) {
         // TODO: Is there a better way than having session as parameter here? User might have not been created yet
         // TODO: Send info to all clients that a user has changed name
