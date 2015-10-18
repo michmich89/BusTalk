@@ -14,11 +14,9 @@ import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Random;
 
-public class MainChatActivity extends BindingActivity implements Observer {
+public class MainChatActivity extends BindingActivity {
     private EditText messageInputLine;
     private ListView messageListView;
     private Button sendButton;
@@ -39,7 +37,7 @@ public class MainChatActivity extends BindingActivity implements Observer {
         //Testing purposes
         myChatroom = new Chatroom(1, "Group", "Fotboll", 100);
         client.joinRoom(myChatroom);
-        myChatroom.addObserver(this);
+
     }
 
     @Override
@@ -111,12 +109,4 @@ public class MainChatActivity extends BindingActivity implements Observer {
         }
     }
 
-    @Override
-    public void update(Observable observable, Object data) {
-        Log.d("MyTag", "Inside update in MainChatActivity");
-        MsgChatMessage message = (MsgChatMessage) data;
-        if(!message.getIsMe()){
-            displayMessage(message);
-        }
-    }
 }
