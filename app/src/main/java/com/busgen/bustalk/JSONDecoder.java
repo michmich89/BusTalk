@@ -16,26 +16,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
-import javax.websocket.DecodeException;
-import javax.websocket.Decoder;
-import javax.websocket.EndpointConfig;
-
 /**
  * Created by nalex on 16/10/2015.
  */
-public class JSONDecoder implements Decoder.Text<IServerMessage> {
+public class JSONDecoder {
 
     private JSONObject jsonObject;
     private IServerMessage serverMessage;
 
-    @Override
-    public IServerMessage decode(String s) throws DecodeException {
+    public IServerMessage decode(String s) {
         return serverMessage;
     }
 
-    @Override
     public boolean willDecode(String s) {
         try{
             jsonObject = new JSONObject(s);
@@ -81,15 +73,5 @@ public class JSONDecoder implements Decoder.Text<IServerMessage> {
         }catch(JSONException e){
             return false;
         }
-    }
-
-    @Override
-    public void init(EndpointConfig config) {
-
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }

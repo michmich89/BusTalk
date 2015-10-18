@@ -7,25 +7,19 @@ import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
 import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLeaveRoom;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.websocket.EncodeException;
-import javax.websocket.Encoder;
-import javax.websocket.EndpointConfig;
-
 import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 import com.busgen.bustalk.utils.MessageTypes;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by nalex on 16/10/2015.
  */
-public class JSONEncoder implements Encoder.Text<IServerMessage> {
+public class JSONEncoder {
 
-    @Override
-    public String encode(IServerMessage clientMessage) throws EncodeException {
+    public String encode(IServerMessage clientMessage) {
         //Maybe should have "return clientMessage.toString();" instead
         if(clientMessage == null){
             throw new NullPointerException("The message was null and could therefore not be converted to a JSON object");
@@ -77,15 +71,5 @@ public class JSONEncoder implements Encoder.Text<IServerMessage> {
             e.printStackTrace();
         }
         return object.toString();
-    }
-
-    @Override
-    public void init(EndpointConfig config) {
-
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }
