@@ -1,7 +1,9 @@
 package com.busgen.bustalk;
 
+import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
+import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgLostChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
@@ -34,7 +36,6 @@ public class JSONDecoder {
             IServerMessage serverMessage = null;
             int type = jsonObject.getInt("type");
             if(type == MessageTypes.CHAT_MESSAGE_NOTIFICATION){
-                //todo needs to convert timestamp to date och ska hur ska jag ta reda på iSME här?
                 serverMessage = new MsgChatMessage(jsonObject.getBoolean("isMe"), jsonObject.getString("message"),  jsonObject.getString("time"), jsonObject.getString("sender"), jsonObject.getInt("chatId"));
             }else if(type == MessageTypes.ROOM_CREATED_NOTIFICATION){
                 serverMessage = new MsgNewChatRoom(jsonObject.getInt("chatId"), jsonObject.getString("title"), jsonObject.getBoolean("isYours"));
@@ -57,10 +58,12 @@ public class JSONDecoder {
                 IUser user = new User(jsonObject.getString("sender"), jsonObject.getString("interests"));
                 serverMessage = new MsgLostUserInChat(jsonObject.getInt("chatId"), user);
             }else if(type == MessageTypes.LIST_OF_CHATROOMS_NOTIFICATION){
-                //todo fixa flera room created?
                 JSONArray array = jsonObject.getJSONArray("users");
+                MsgAvailableRooms rooms = new MsgAvailableRooms(jsonObject.getString("groupId"));
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject roomObject = array.getJSONObject(i);
+                    Chatroom chatroom = new Chatroom(roomObject.getInt("chatId"), roomObject.getString("title"));
+                    rooms.addRoomToList(chatroom);
                 }
             }
 

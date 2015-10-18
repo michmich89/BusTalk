@@ -14,10 +14,6 @@ public interface IChatroom {
 
     void setID(int chatID);
 
-    String getType();
-
-    void setType(String type);
-
     void setTitle(String title);
 
     String getTitle();
@@ -31,12 +27,6 @@ public interface IChatroom {
     int getNbrOfUsers();
 
     boolean isEmpty();
-
-    boolean isFull();
-
-    void setMaxUsers(int maxUsers);
-
-    int getMaxUsers();
 
     Collection<IUser> getUsers();
 

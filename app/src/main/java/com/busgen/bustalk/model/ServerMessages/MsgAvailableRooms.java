@@ -1,5 +1,7 @@
 package com.busgen.bustalk.model.ServerMessages;
 
+import com.busgen.bustalk.model.Chatroom;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,17 +9,23 @@ import java.util.List;
  * Created by nalex on 16/10/2015.
  */
 public class MsgAvailableRooms {
-    private List<MsgNewChatRoom> roomList;
+    private List<Chatroom> roomList;
+    private String groupId;
 
-    public MsgAvailableRooms(){
-        roomList = new ArrayList<MsgNewChatRoom>();
+    public MsgAvailableRooms(String groupId){
+        roomList = new ArrayList<Chatroom>();
+        this.groupId = groupId;
     }
 
-    public List<MsgNewChatRoom> getRoomList(){
+    public List<Chatroom> getRoomList(){
         return roomList;
     }
 
-    public void addMsgRoomToList(MsgNewChatRoom message){
-        roomList.add(message);
+    public void addRoomToList(Chatroom chatroom){
+        roomList.add(chatroom);
+    }
+
+    public String getGroupId(){
+        return groupId;
     }
 }
