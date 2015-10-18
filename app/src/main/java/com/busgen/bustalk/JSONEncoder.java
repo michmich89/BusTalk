@@ -66,7 +66,7 @@ public class JSONEncoder {
             }else if(clientMessage instanceof MsgSetGroupId){
                 MsgSetGroupId setGroupId = (MsgSetGroupId)clientMessage;
                 object.put("type", MessageTypes.CHANGE_GROUP_ID);
-                object.put("type", setGroupId.getGroupId());
+                object.put("groupId", setGroupId.getGroupId());
             }
         }catch(JSONException e){
             e.printStackTrace();
