@@ -12,7 +12,7 @@ import java.util.Observable;
 /**
  * Created by Johan on 2015-10-02.
  */
-public class Chatroom extends Observable implements IChatroom {
+public class Chatroom implements IChatroom {
 
     private int chatID;
     private String type;
@@ -29,6 +29,7 @@ public class Chatroom extends Observable implements IChatroom {
         users = new ArrayList<IUser>();
         messages = new ArrayList<MsgChatMessage>();
     }
+
 
     @Override
     public int getChatID() {
@@ -116,9 +117,7 @@ public class Chatroom extends Observable implements IChatroom {
 
     @Override
     public void addMessage(MsgChatMessage message) {
-        Log.d("MyTag", "Inside addMessage in Chatroom");
-        messages.add(message);
-        setChanged();
-        notifyObservers(message);
+       // Log.d("MyTag", "Inside addMessage in Chatroom");
+       // messages.add(message);
     }
 }
