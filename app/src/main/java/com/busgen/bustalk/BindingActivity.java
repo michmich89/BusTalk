@@ -23,7 +23,7 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, MainService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        eventBus.register(this);
+
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -41,7 +41,12 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
             isBound = false;
         }
     };
+@Override
+    protected void onDestroy(){
+    super.onDestroy();
+    unbindService(serviceConnection);
 
+    }
     @Override
     public void onEvent(Event event) {
 

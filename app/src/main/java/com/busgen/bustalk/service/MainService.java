@@ -24,19 +24,20 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        System.out.println("Service startad! (startCommand)");//
         return Service.START_REDELIVER_INTENT;
     }
 
     @Override
     public void onCreate(){
-
+        System.out.println("Service startad!");//
         client = Client.getInstance();
-        serverCommunicator = new ServerCommunicator();
+       // serverCommunicator = new ServerCommunicator();
         eventBus = EventBus.getInstance();
 
+        client.setEventBus(eventBus);
         eventBus.register(client);
-        eventBus.register(serverCommunicator);
+       // eventBus.register(serverCommunicator);
 
     }
 
@@ -47,9 +48,11 @@ public class MainService extends Service {
     }
 
     public class MainBinder extends Binder {
+
         public EventBus getEventBus() {
             return MainService.this.eventBus;
         }
+
     }
 
     @Nullable
