@@ -17,6 +17,8 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
+import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.service.EventBus;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
@@ -50,6 +52,7 @@ public class ServerCommunicator implements IEventBusListener {
 
     private final int SECOND = 1000;
     private Session session;
+    private EventBus eventBus;
 
     // URI is just simply new URI("ws://sandra.kottnet.net:8080/BusTalkServer/chat") (or whatever address to connect to)
     public ServerCommunicator(URI endpointURI) {
@@ -59,6 +62,9 @@ public class ServerCommunicator implements IEventBusListener {
         } catch (Exception e) { // Don't know what exception to expect...
             e.printStackTrace();
         }
+        eventBus = EventBus.getInstance();
+        eventBus.register(this);
+
     }
 
     @OnOpen
@@ -73,7 +79,8 @@ public class ServerCommunicator implements IEventBusListener {
 
     @OnMessage
     public void onMessage(IServerMessage message) {
-
+        ToClientEvent serverEvent = new ToClientEvent(message);
+        eventBus.postEvent(serverEvent);
     }
 
     public void sendMessage(IServerMessage message) {
@@ -178,9 +185,10 @@ public class ServerCommunicator implements IEventBusListener {
     @Override
     public void onEvent(Event event) {
 
-        IServerMessage message = event.getMessage();
-
         if (event instanceof ToServerEvent) {
+            IServerMessage message = event.getMessage();
+            sendMessage(message);
+            /*
             if (message instanceof MsgChatMessage) {
 
             } else if (message instanceof MsgChooseNickname) {
@@ -202,7 +210,7 @@ public class ServerCommunicator implements IEventBusListener {
             } else if (message instanceof MsgNewUserInChat) {
 
             } else if (message instanceof MsgNicknameAvailable) {
-            }
+            }*/
         }
     }
 }
