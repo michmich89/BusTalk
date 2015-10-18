@@ -38,12 +38,8 @@ public class MainService extends Service {
 
         eventBus = EventBus.getInstance();
         client = Client.getInstance();
-        try {
-            serverCommunicator = new ServerCommunicator(new URI("ws://sandra.kottnet.net:8080/BusTalkServer/chat"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
+        serverCommunicator = new ServerCommunicator("ws://sandra.kottnet.net:8080/BusTalkServer/chat");
+        
         platformCommunicator = new PlatformCommunicator();
         
         client.setEventBus(eventBus);
