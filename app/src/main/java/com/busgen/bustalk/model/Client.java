@@ -130,7 +130,7 @@ public class Client implements IClient, IEventBusListener {
 
             } else if (message instanceof MsgChooseNickname) {
                 setUserName(((MsgChooseNickname) message).getNickname());
-                System.out.println("client får ett event om choose nickname");
+               // System.out.println("client får ett event om choose nickname");
                IServerMessage serverMessage = new MsgChooseNickname(getUserName(), getInterest());
                 Event testEvent = new ToActivityEvent(serverMessage);
                 
@@ -140,6 +140,9 @@ public class Client implements IClient, IEventBusListener {
             } else if (message instanceof MsgCreateRoom) {
 
             } else if (message instanceof MsgJoinRoom) {
+
+                IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
+                chatrooms.add(chatroom);
 
             } else if (message instanceof MsgLeaveRoom) {
 
