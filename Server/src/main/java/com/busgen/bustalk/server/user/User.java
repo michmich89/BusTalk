@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Holds all important data related to a user.
+ *
  * Created by Kristoffer on 2015-09-29.
  */
 public class User implements IUser {

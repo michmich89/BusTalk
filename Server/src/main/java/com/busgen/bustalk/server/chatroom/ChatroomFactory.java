@@ -6,6 +6,8 @@ package com.busgen.bustalk.server.chatroom; /**
 import com.busgen.bustalk.server.util.Constants;
 
 /**
+ * Creates chat rooms on request.
+ *
  * This is a singleton, and Needs to be a singleton aswell, as the one instantiation of the class will take care of
  * assigning a unique ID-number to a chatroom.
  *

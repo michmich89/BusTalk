@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Handles incoming messages from client based on the type of message that was received.
+ *
  * A singleton, due to the fact that every session created will have their own instance of <b>BusTalkServerEndpoint</b>.
  * As a singleton, all instances of BusTalkServerEndpoint talk to the same object of BusTalkHandler.
  *

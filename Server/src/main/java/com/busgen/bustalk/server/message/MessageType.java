@@ -1,6 +1,8 @@
 package com.busgen.bustalk.server.message;
 
 /**
+ * Holds all different types of messages that can be sent to and received from a client.
+ *
  * Created by Kristoffer on 2015-10-08.
  */
 public class MessageType {

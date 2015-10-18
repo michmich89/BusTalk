@@ -7,6 +7,8 @@ import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
 /**
+ * Encodes messages sent to the client from a UserMessage to a string
+ *
  * Created by Kristoffer on 2015-09-30.
  */
 public class JsonEncoder implements Encoder.Text<UserMessage> {

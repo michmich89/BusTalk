@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 // TODO: Make sure disconnected users don't throw NullPointerException
 
 /**
- * This class handles all messages between users, acts like a post office.
+ * This class is responsible for sending messages to the clients, acts like a post office.
  */
 public class BusTalkSender {
 

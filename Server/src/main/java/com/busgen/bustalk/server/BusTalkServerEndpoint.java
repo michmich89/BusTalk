@@ -10,14 +10,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This class handles most of the communication related things with the client, such as when a connection is opened or
+ * closed or a message is received.
+ *
  * All session (connections between a user and the server) will create their own instance of this class, and uses
  * the singleton <b>BusTalkHandler</b> as their connection to their server logic.
  *
  * Created by Kristoffer on 2015-09-29.
  */
-
-
-
 @ServerEndpoint(value = "/chat", encoders = JsonEncoder.class, decoders = JsonDecoder.class)
 public class BusTalkServerEndpoint {
     private BusTalkHandler busTalkHandler;

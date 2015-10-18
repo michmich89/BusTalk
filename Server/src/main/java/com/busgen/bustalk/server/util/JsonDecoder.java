@@ -9,6 +9,8 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 /**
+ * Decodes received messages from client into a UserMessage
+ *
  * Created by Kristoffer on 2015-09-30.
  */
 public class JsonDecoder implements Decoder.Text<UserMessage> {

@@ -1,7 +1,6 @@
 package com.busgen.bustalk.server.user;
 
 import com.busgen.bustalk.server.chatroom.Chatroom;
-import com.busgen.bustalk.server.util.Constants;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -13,6 +12,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Handles all user related things, such as list of users (and their corresponding session), what names are allowed, etc.
+ */
 public class UserHandler {
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;

@@ -12,6 +12,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Handles all chat room related things, such as the id's of the chat rooms, the groups that the chat rooms are in, etc.
+ */
 public class ChatroomHandler {
 
     private final BiMap<Integer, Chatroom> idToChatroom;
