@@ -18,7 +18,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 
-public class MainChatActivity extends AppCompatActivity implements Observer {
+public class MainChatActivity extends BindingActivity implements Observer {
     private EditText messageInputLine;
     private ListView messageListView;
     private Button sendButton;
@@ -69,6 +69,7 @@ public class MainChatActivity extends AppCompatActivity implements Observer {
                     Random rand = new Random();
                     String date = DateFormat.getDateTimeInstance().format(new Date());
                     MsgChatMessage message = new MsgChatMessage(false, "" + rand.nextInt(1000), date, "Börje Plåt", myChatroom.getChatID());
+
                     client.addMessageToChatroom(message);
                     return;
                 }

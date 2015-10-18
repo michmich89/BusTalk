@@ -37,6 +37,8 @@ public class EventBus {
 
     public void postEvent(Event event){
         for (int i = 0; i < subscribers.size(); i++){
+
+            System.out.println("skickar event till " + subscribers.size() + " subscribers...");
             subscribers.get(i).onEvent(event);
         }
 
