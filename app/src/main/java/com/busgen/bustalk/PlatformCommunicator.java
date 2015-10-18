@@ -3,7 +3,12 @@ package com.busgen.bustalk;
 import android.util.Base64;
 
 import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
+import com.busgen.bustalk.model.IServerMessage;
+import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
+import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.service.EventBus;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -50,7 +55,7 @@ public class PlatformCommunicator implements IEventBusListener{
 
     }
 
-    public JSONObject getNextStopData() {
+    public String getNextStopData() {
 
         //todo Den här metoden ska brytas upp.
 
@@ -124,10 +129,18 @@ public class PlatformCommunicator implements IEventBusListener{
             //todo bättre error
             throw new RuntimeException("platformData could not be read");
         }
-        return platformData;
+        return platformData.toString();
     }
 
     public void onEvent(Event e){
-        //todo event som requestar att få info från platformen.
+        if(e instanceof ToServerEvent){
+            IServerMessage message = e.getMessage();
+            if(message instanceof MsgPlatformDataRequest){
+                //Här skulle man kunna välja att hämta utifrån data type som skulle kunna finnas i requestmeddelandet.
+                MsgPlatformData dataMessage = new MsgPlatformData(getNextStopData());
+                ToClientEvent platformEvent = new ToClientEvent(dataMessage);
+                eventBus.postEvent(platformEvent);
+            }
+        }
     }
 }
