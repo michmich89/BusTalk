@@ -1,18 +1,6 @@
-package com.busgen.bustalk;
+package app.platformtestapplication;
 
 import android.util.Base64;
-
-import com.busgen.bustalk.events.Event;
-import com.busgen.bustalk.events.ToClientEvent;
-import com.busgen.bustalk.events.ToServerEvent;
-import com.busgen.bustalk.model.IEventBusListener;
-import com.busgen.bustalk.model.IServerMessage;
-import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
-import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
-import com.busgen.bustalk.service.EventBus;
-import com.busgen.bustalk.utils.BussIDs;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,12 +20,11 @@ import javax.net.ssl.HttpsURLConnection;
 public class PlatformCommunicator{
 
     private final int SECOND = 1000;
-    private EventBus eventBus;
     private BussIDs bussIDs;
     private HashMap<String, String> regNrToDgw;
+    private String busStop;
 
     public PlatformCommunicator(){
-        eventBus = EventBus.getInstance();
         bussIDs = new BussIDs();
         regNrToDgw = bussIDs.getRegNrToDgwMap();
     }
@@ -47,7 +34,7 @@ public class PlatformCommunicator{
         byte[] bytePass = userNamePass.getBytes("UTF-8");
         String base64EncodedPass = Base64.encodeToString(bytePass, Base64.DEFAULT);
         System.out.println(base64EncodedPass);
-        return base64EncodedPass;
+        return "Basic " + base64EncodedPass;
     }
 
     private String getVerificationFromFile() throws IOException{
@@ -63,6 +50,7 @@ public class PlatformCommunicator{
 
     public String getNextStopData(String bussID) {
         //todo Den här metoden ska brytas upp.
+        busStop = null;
         String dgw = new String();
         if(regNrToDgw.containsValue(bussID)){
             dgw = regNrToDgw.get(bussID);
@@ -76,7 +64,7 @@ public class PlatformCommunicator{
 
         JSONObject platformData = null;
         long endTime = System.currentTimeMillis();
-        long durationTime = SECOND * 5;
+        long durationTime = SECOND * 10;
         long startTime = endTime - durationTime;
         //Todo fixa wifi mac-address antagligen till wifi objekt och hämta rätt bussid
         //todo ersätt vin med bussid utifrån mac address
@@ -108,14 +96,17 @@ public class PlatformCommunicator{
             in = new BufferedReader(inputStreamReader);
 
             String inputLine;
-            while (in.readLine() != null) {
-                inputLine = in.readLine();
+            while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            System.out.println(response.toString());
+            //System.out.println("while :" + inputLine);
+            //System.out.println("response :" + response.toString());
 
             try {
-                platformData = new JSONObject(response.toString());
+                String teststring = response.substring(1,response.length()-1);
+                System.out.println(teststring);
+                platformData = new JSONObject(teststring);
+                busStop = platformData.getString("value");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -139,6 +130,7 @@ public class PlatformCommunicator{
             }
 
         }
-        return platformData.toString();
+        System.out.print("Busstop: " + busStop);
+        return busStop;
     }
 }
