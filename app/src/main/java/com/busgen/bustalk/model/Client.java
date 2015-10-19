@@ -28,21 +28,10 @@ public class Client implements IClient, IEventBusListener {
     private List<IChatroom> chatrooms;
     private EventBus eventBus;
 
-    //Singleton pattern
-    private static Client client = null;
-
-    private Client(IUser user) {
-        this.user = user;
-        chatrooms = new ArrayList<IChatroom>();
+    public Client(){
+        this.user = new User();
+        eventBus = EventBus.getInstance();
     }
-
-    public static Client getInstance() {
-        if (client == null) {
-            client = new Client(new User());
-        }
-        return client;
-    }
-
 
     @Override
     public String getUserName() {
@@ -129,13 +118,12 @@ public class Client implements IClient, IEventBusListener {
             if (message instanceof MsgChatMessage) {
 
             } else if (message instanceof MsgChooseNickname) {
+                /*
+                sets username and alerts activities about it
+                 */
                 setUserName(((MsgChooseNickname) message).getNickname());
-               // System.out.println("client får ett event om choose nickname");
-               IServerMessage serverMessage = new MsgChooseNickname(getUserName(), getInterest());
-                Event testEvent = new ToActivityEvent(serverMessage);
-                
-
-                eventBus.postEvent(testEvent);
+                Event newEvent = new ToActivityEvent(message);
+                eventBus.postEvent(newEvent);
 
             } else if (message instanceof MsgCreateRoom) {
 
