@@ -23,6 +23,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
+import com.busgen.bustalk.service.EventBus;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class MainChatActivity extends BindingActivity {
         setContentView(R.layout.activity_main_chat);
         initVariables();
         initViews();
+
+        EventBus.getInstance().register(this);
     }
 
     private void initVariables(){
