@@ -16,25 +16,18 @@ import java.util.List;
 /**
  * Created by nalex on 19/10/2015.
  */
-public class WifiController extends Service{
+public class WifiController{
     private boolean isConnected;
     private WifiManager wifiManager;
     private BussIDs bussIDs;
     private HashMap<String, String> bssidToRegNr;
+    private Context context;
 
-
-    public WifiController(){
+    public WifiController(WifiManager wifiManager) {
         isConnected = false;
-        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        this.wifiManager = wifiManager;
         bussIDs = new BussIDs();
         bssidToRegNr = bussIDs.getBssidToRegNrMap();
-
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     public boolean  isConnected(){

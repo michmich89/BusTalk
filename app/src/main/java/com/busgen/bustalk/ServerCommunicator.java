@@ -1,7 +1,5 @@
 package com.busgen.bustalk;
 
-import android.os.AsyncTask;
-
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;

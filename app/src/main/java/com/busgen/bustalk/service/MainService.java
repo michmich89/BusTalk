@@ -2,7 +2,9 @@ package com.busgen.bustalk.service;
 
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -37,8 +39,8 @@ public class MainService extends Service {
 
         eventBus = EventBus.getInstance();
         client = new Client();
+        //connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
         connectionsHandler = new ConnectionsHandler();
-
         eventBus.register(client);
 
     }

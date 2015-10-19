@@ -1,5 +1,8 @@
 package com.busgen.bustalk;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
+
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
@@ -29,7 +32,7 @@ public class ConnectionsHandler implements IEventBusListener{
         super();
         serverCom = new ServerCommunicator("ws://sandra.kottnet.net:8080/BusTalkServer/chat");
         platformCom = new PlatformCommunicator();
-        wifiController = new WifiController();
+        //wifiController = new WifiController(wifiManager);
         eventBus = EventBus.getInstance();
         eventBus.register(this);
 
@@ -45,7 +48,8 @@ public class ConnectionsHandler implements IEventBusListener{
             }
 
             private boolean getConnectionStatus(){
-                return (isTest || wifiController.isConnected()) && serverCom.isConnected();
+                //return (isTest || wifiController.isConnected()) && serverCom.isConnected();
+                return serverCom.isConnected();
             }
 
             private void sendConnectionStatus(){
