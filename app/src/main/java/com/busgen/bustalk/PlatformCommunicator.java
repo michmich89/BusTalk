@@ -2,6 +2,8 @@ package com.busgen.bustalk;
 
 import android.util.Base64;
 
+import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.utils.BussIDs;
 
 import org.json.JSONArray;
@@ -20,7 +22,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Created by Alexander Kloutschek on 2015-10-18.
  */
-public class PlatformCommunicator{
+public class PlatformCommunicator implements IEventBusListener {
 
     private final int SECOND = 1000;
     private BussIDs bussIDs;
@@ -136,5 +138,10 @@ public class PlatformCommunicator{
         }
         System.out.println("Busstop: " + busStop);
         return busStop;
+    }
+
+    @Override
+    public void onEvent(Event event) {
+
     }
 }
