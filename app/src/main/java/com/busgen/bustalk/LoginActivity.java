@@ -14,9 +14,12 @@ import android.widget.Toast;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
+import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
+import com.busgen.bustalk.model.ServerMessages.MsgAvailableRoomsRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
 import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
@@ -36,44 +39,37 @@ public class LoginActivity extends BindingActivity {
     private Button loginButton;
     private Toast loginToast;
     private Toast testToast;
-    //private Client client;
+    private String interest;
+    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-      //  client = Client.getInstance();
         initViews();
-
 
         EventBus.getInstance().register(this);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userName = userNameInput.getText().toString();
+                userName = userNameInput.getText().toString();
                 if (TextUtils.isEmpty(userName)) {
                     loginToast.show();
                     return;
                 }
-                //TODO
-                /**
-                 * Here it should be checked with the serve (via the client) if
-                 * the userName is available.
-                 */
-                String interest = interestInput.getText().toString();
-        //        client.setUser(new User(userName, interest));
+                interest = interestInput.getText().toString();
 
                 IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
-                System.out.println(userName);//
-                Event event = new ToClientEvent(serverMessage); //
-
-                //EventBus.getInstance().postEvent(event); //
+                Event event = new ToClientEvent(serverMessage);
                 eventBus.postEvent(event);
-                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                startActivity(intent);
-                LoginActivity.this.finish();
+
+                //For testing purposes
+                Chatroom testChatroom = new Chatroom(10, "Mainchat", "Mainchat", 100);
+                MsgJoinRoom testMessage = new MsgJoinRoom(testChatroom);
+                Event testEvent = new ToActivityEvent(testMessage);
+                onEvent(testEvent);
             }
         });
     }
@@ -88,32 +84,38 @@ public class LoginActivity extends BindingActivity {
 
     @Override
     public void onEvent(Event event){
-
         IServerMessage message = event.getMessage();
 
         if (event instanceof ToActivityEvent) {
             if (message instanceof MsgChatMessage) {
-
             } else if (message instanceof MsgChooseNickname) {
                 testToast = Toast.makeText(LoginActivity.this, "The chosen username is: " + ((MsgChooseNickname) message).getNickname(),
                         Toast.LENGTH_SHORT);
                 testToast.show();
-
             } else if (message instanceof MsgCreateRoom) {
-
             } else if (message instanceof MsgJoinRoom) {
-
+                MsgJoinRoom joinRoomMessage = (MsgJoinRoom) message;
+                Chatroom myChatroom = (Chatroom) joinRoomMessage.getChatroom();
+                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+                intent.putExtra("Chatroom", myChatroom);
+                intent.putExtra("Username", userName);
+                intent.putExtra("Interest", interest);
+                startActivity(intent);
+                LoginActivity.this.finish();
             } else if (message instanceof MsgLeaveRoom) {
-
             } else if (message instanceof MsgLostChatRoom) {
-
             } else if (message instanceof MsgLostUserInChat) {
-
             } else if (message instanceof MsgNewChatRoom) {
-
             } else if (message instanceof MsgNewUserInChat) {
-
             } else if (message instanceof MsgNicknameAvailable) {
+                MsgNicknameAvailable nicknameAvailabileMessage = (MsgNicknameAvailable) message;
+                if(nicknameAvailabileMessage.getAvailability()){
+                    IServerMessage serverMessage = new MsgAvailableRoomsRequest();
+                    Event requestEvent = new ToClientEvent(serverMessage);
+                    eventBus.postEvent(requestEvent);
+                }
+            } else if (message instanceof MsgAvailableRooms) {
+
             }
         }
     }
