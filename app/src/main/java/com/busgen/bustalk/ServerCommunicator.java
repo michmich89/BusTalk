@@ -1,9 +1,13 @@
 package com.busgen.bustalk;
 
+import android.util.Log;
+
 import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
+import com.busgen.bustalk.service.EventBus;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFactory;
@@ -26,6 +30,8 @@ public class ServerCommunicator implements IEventBusListener {
     private final JSONDecoder jsonDecoder;
     private final JSONEncoder jsonEncoder;
 
+    private EventBus eventBus;
+
     // endpointURI is simply a string looking something like this:
     // "ws://sandra.kottnet.net:8080/BusTalkServer/chat" (or whatever address to connect to)
     public ServerCommunicator(String endpointUri) {
@@ -34,13 +40,16 @@ public class ServerCommunicator implements IEventBusListener {
         this.factory = new WebSocketFactory();
         this.serverAddress = endpointUri;
         new Thread(new CreateWebSocketThread()).start();
+        eventBus = EventBus.getInstance();
     }
 
     public void sendMessage(IServerMessage message) {
         if (webSocket != null) {
+            Log.d("MyTag", "sending message to server...");
             webSocket.sendText(jsonEncoder.encode(message));
         }
     }
+
 
     public void connect() {
         this.webSocket.connectAsynchronously();
@@ -54,6 +63,7 @@ public class ServerCommunicator implements IEventBusListener {
     public void onEvent(Event event) {
 
         if (event instanceof ToServerEvent) {
+            Log.d("MyTag", "Server received some sort of event");
             IServerMessage message = event.getMessage();
             sendMessage(message);
             /*
@@ -95,6 +105,8 @@ public class ServerCommunicator implements IEventBusListener {
                         // Handle incoming messages (decode them and such)
                         if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
                             IServerMessage serverMessage = jsonDecoder.decode(message);
+                            Event event = new ToClientEvent(serverMessage);
+                            eventBus.postEvent(event);
                         }
                     }
 

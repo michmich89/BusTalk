@@ -8,6 +8,7 @@ import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.busgen.bustalk.ConnectionsHandler;
 import com.busgen.bustalk.PlatformCommunicator;
@@ -38,6 +39,7 @@ public class MainService extends Service {
     public void onCreate(){
 
         eventBus = EventBus.getInstance();
+
         client = new Client();
         //connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
         connectionsHandler = new ConnectionsHandler();
@@ -63,5 +65,10 @@ public class MainService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
+    }
+
+    public Client getClient(){
+        Log.d("MyTag", "getting client from mainservice");
+        return client;
     }
 }

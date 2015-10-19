@@ -1,5 +1,7 @@
 package com.busgen.bustalk;
 
+import android.util.Log;
+
 import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
@@ -33,7 +35,7 @@ public class JSONDecoder {
     public boolean willDecode(String s) {
         try{
             jsonObject = new JSONObject(s);
-            IServerMessage serverMessage = null;
+            serverMessage = null;
             int type = jsonObject.getInt("type");
             if(type == MessageTypes.CHAT_MESSAGE_NOTIFICATION){
                 serverMessage = new MsgChatMessage(jsonObject.getBoolean("isMe"), jsonObject.getString("message"),  jsonObject.getString("time"), jsonObject.getString("sender"), jsonObject.getInt("chatId"));
@@ -42,6 +44,7 @@ public class JSONDecoder {
             }else if(type == MessageTypes.ROOM_DELETED_NOTIFICATION){
                 serverMessage = new MsgLostChatRoom(jsonObject.getInt("chatId"));
             } else if(type == MessageTypes.NAME_AND_INTEREST_SET){
+                Log.d("MyTag", "Creating nnava from json");
                 serverMessage = new MsgNicknameAvailable(jsonObject.getBoolean("succeeded"));
             }else if(type == MessageTypes.LIST_OF_USERS_IN_CHAT_NOTIFICATION){
                 JSONArray array = jsonObject.getJSONArray("users");
