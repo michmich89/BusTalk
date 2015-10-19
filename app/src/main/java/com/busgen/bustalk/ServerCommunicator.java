@@ -23,6 +23,8 @@ public class ServerCommunicator implements IEventBusListener {
 
     private final int SECOND = 1000;
     private WebSocket webSocket;
+    private WebSocketFactory factory;
+    private String serverAddress;
 
     private final JSONDecoder jsonDecoder;
     private final JSONEncoder jsonEncoder;
@@ -32,7 +34,9 @@ public class ServerCommunicator implements IEventBusListener {
     public ServerCommunicator(String endpointUri) {
         this.jsonEncoder = new JSONEncoder();
         this.jsonDecoder = new JSONDecoder();
-        new ConnectToServerTask().execute(endpointUri);
+        this.factory = new WebSocketFactory();
+        this.serverAddress = endpointUri;
+        new Thread(new CreateWebSocketThread()).start();
     }
 
     public void sendMessage(IServerMessage message) {
@@ -41,43 +45,12 @@ public class ServerCommunicator implements IEventBusListener {
         }
     }
 
-    // Has to connect on another thread, or else NetworkOnMainThreadException will be thrown
-    private class ConnectToServerTask extends AsyncTask<String, Void, Void> {
+    public void connect() {
+        this.webSocket.connectAsynchronously();
+    }
 
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                WebSocketFactory factory = new WebSocketFactory();
-                webSocket = factory.createSocket(params[0], 1800000);
-
-                webSocket.addListener(new WebSocketAdapter() {
-                    @Override
-                    public void onTextMessage(WebSocket websocket, String message) {
-                        // Handle incoming messages (decode them and such)
-                        if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
-                            IServerMessage serverMessage = jsonDecoder.decode(message);
-                        }
-                    }
-
-                    @Override
-                    public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
-                        // Do things when connection is established
-                    }
-
-                    @Override
-                    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
-                                               WebSocketFrame clientCloseFrame, boolean closedByServer) {
-                        webSocket = null;
-                        // Do things when disconnected from server
-                    }
-                });
-
-                webSocket.connectAsynchronously();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
+    public boolean isConnected() {
+        return this.webSocket.isOpen();
     }
 
 
@@ -112,6 +85,42 @@ public class ServerCommunicator implements IEventBusListener {
 
             } else if (message instanceof MsgNicknameAvailable) {
             }*/
+        }
+    }
+
+    private class CreateWebSocketThread implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                webSocket = factory.createSocket(serverAddress);
+
+                webSocket.addListener(new WebSocketAdapter() {
+                    @Override
+                    public void onTextMessage(WebSocket websocket, String message) {
+                        // Handle incoming messages (decode them and such)
+                        if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
+                            IServerMessage serverMessage = jsonDecoder.decode(message);
+                        }
+                    }
+
+                    @Override
+                    public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
+                        // Do things when connection is established
+                    }
+
+                    @Override
+                    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
+                                               WebSocketFrame clientCloseFrame, boolean closedByServer) {
+                        webSocket = null;
+                        // Do things when disconnected from server
+                    }
+                });
+
+                connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

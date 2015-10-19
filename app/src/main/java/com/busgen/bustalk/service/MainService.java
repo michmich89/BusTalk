@@ -7,6 +7,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.busgen.bustalk.ConnectionsHandler;
 import com.busgen.bustalk.PlatformCommunicator;
 import com.busgen.bustalk.ServerCommunicator;
 import com.busgen.bustalk.model.Client;
@@ -22,9 +23,8 @@ public class MainService extends Service {
 
     private final IBinder binder = new MainBinder();
     private Client client;
-    private ServerCommunicator serverCommunicator;
-    private PlatformCommunicator platformCommunicator;
     private EventBus eventBus;
+    private ConnectionsHandler connectionsHandler;
 
 
     @Override
@@ -37,12 +37,9 @@ public class MainService extends Service {
 
         eventBus = EventBus.getInstance();
         client = new Client();
-        serverCommunicator = new ServerCommunicator("ws://sandra.kottnet.net:8080/BusTalkServer/chat");
-        platformCommunicator = new PlatformCommunicator();
+        connectionsHandler = new ConnectionsHandler();
 
         eventBus.register(client);
-        eventBus.register(serverCommunicator);
-        eventBus.register(platformCommunicator);
 
     }
 
