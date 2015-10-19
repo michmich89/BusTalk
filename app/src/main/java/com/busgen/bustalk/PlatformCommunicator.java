@@ -4,6 +4,7 @@ import android.util.Base64;
 
 import com.busgen.bustalk.utils.BussIDs;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,12 +103,13 @@ public class PlatformCommunicator{
                 response.append(inputLine);
             }
             //System.out.println("while :" + inputLine);
-            //System.out.println("response :" + response.toString());
+            System.out.println("response :" + response.toString());
 
             try {
-                String teststring = response.substring(1,response.length()-1);
-                System.out.println(teststring);
-                platformData = new JSONObject(teststring);
+                //String teststring = response.substring(1,response.length()-1);
+                //System.out.println(teststring);
+                JSONArray platformArray = new JSONArray(response.toString());
+                platformData = platformArray.getJSONObject(platformArray.length()-1);
                 busStop = platformData.getString("value");
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -132,7 +134,7 @@ public class PlatformCommunicator{
             }
 
         }
-        System.out.print("Busstop: " + busStop);
+        System.out.println("Busstop: " + busStop);
         return busStop;
     }
 }
