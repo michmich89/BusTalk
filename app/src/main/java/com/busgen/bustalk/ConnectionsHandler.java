@@ -42,12 +42,12 @@ public class ConnectionsHandler implements IEventBusListener{
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (!getConnectionStatus()) {
-                    sendConnectionStatus();
+                if (getConnectionStatus()) {
                     //String wifiName = wifiController.getWifiName();
-                    String wifiName = null;
-                    String nextStop = platformCom.getNextStopData(wifiName);
-                    sendNextStopData(nextStop);
+                    //String nextStop = platformCom.getNextStopData(wifiName);
+                    //sendNextStopData(nextStop);
+                } else {
+                    sendConnectionStatus();
                 }
             }
 
@@ -65,7 +65,7 @@ public class ConnectionsHandler implements IEventBusListener{
             }
         };
 
-        timer.schedule(timerTask, 15000);
+        timer.scheduleAtFixedRate(timerTask, 5000, 15000);
     }
 
     @Override
