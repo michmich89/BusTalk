@@ -8,6 +8,9 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.busgen.bustalk.utils.BussIDs;
+
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,10 +19,15 @@ import java.util.List;
 public class WifiController extends Service{
     private boolean isConnected;
     private WifiManager wifiManager;
+    private BussIDs bussIDs;
+    private HashMap<String, String> bssidToRegNr;
+
 
     public WifiController(){
         isConnected = false;
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        bussIDs = new BussIDs();
+        bssidToRegNr = bussIDs.getBssidToRegNrMap();
 
     }
 
@@ -29,12 +37,14 @@ public class WifiController extends Service{
         return null;
     }
 
-    public void getScanResults(){
+    public boolean  isConnected(){
         List<ScanResult> scanResultList = wifiManager.getScanResults();
-        for(scanResultList : )
-
-
+        for(ScanResult result : scanResultList){
+            if(bssidToRegNr.containsKey(result.BSSID)){
+                return true;
+            }
+        }
+        return false;
     }
-
 
 }
