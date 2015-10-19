@@ -19,7 +19,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Created by Alexander Kloutschek on 2015-10-18.
  */
-public class PlatformCommunicator{
+public class PlatformCommunicator implements IEventBusListener{
 
     private final int SECOND = 1000;
     private BussIDs bussIDs;
@@ -134,5 +134,10 @@ public class PlatformCommunicator{
         }
         System.out.print("Busstop: " + busStop);
         return busStop;
+    }
+
+    @Override
+    public void onEvent(Event event) {
+
     }
 }
