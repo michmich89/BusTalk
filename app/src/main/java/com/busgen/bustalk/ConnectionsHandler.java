@@ -42,8 +42,10 @@ public class ConnectionsHandler implements IEventBusListener{
             public void run() {
                 if (!getConnectionStatus()) {
                     sendConnectionStatus();
-                    //String nextStop = platformCom.getNextStopData(wifiController.getWifiName());
-                    //sendNextStopData(nextStop);
+                    //String wifiName = wifiController.getWifiName();
+                    String wifiName = null;
+                    String nextStop = platformCom.getNextStopData(wifiName);
+                    sendNextStopData(nextStop);
                 }
             }
 
