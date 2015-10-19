@@ -33,6 +33,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.User;
 import com.busgen.bustalk.service.EventBus;
+import com.busgen.bustalk.service.MainService;
 
 import java.util.ArrayList;
 
@@ -49,10 +50,8 @@ public class LoginActivity extends BindingActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        startService(new Intent(this, MainService.class));
         initViews();
-
-        EventBus.getInstance().register(this);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
