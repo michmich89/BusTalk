@@ -56,29 +56,6 @@ public class ServerCommunicator implements IEventBusListener {
         if (event instanceof ToServerEvent) {
             IServerMessage message = event.getMessage();
             sendMessage(message);
-            /*
-            if (message instanceof MsgChatMessage) {
-
-            } else if (message instanceof MsgChooseNickname) {
-
-            } else if (message instanceof MsgChooseNickname) {
-
-            } else if (message instanceof MsgCreateRoom) {
-
-            } else if (message instanceof MsgJoinRoom) {
-
-            } else if (message instanceof MsgLeaveRoom) {
-
-            } else if (message instanceof MsgLostChatRoom) {
-
-            } else if (message instanceof MsgLostUserInChat) {
-
-            } else if (message instanceof MsgNewChatRoom) {
-
-            } else if (message instanceof MsgNewUserInChat) {
-
-            } else if (message instanceof MsgNicknameAvailable) {
-            }*/
         }
     }
 
@@ -95,6 +72,7 @@ public class ServerCommunicator implements IEventBusListener {
                         // Handle incoming messages (decode them and such)
                         if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
                             IServerMessage serverMessage = jsonDecoder.decode(message);
+
                         }
                     }
 
