@@ -18,9 +18,11 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
 
     EventBus eventBus = null;
     boolean isBound = false;
+    MainService mainService;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        eventBus = EventBus.getInstance();
         Intent intent = new Intent(this, MainService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -32,7 +34,7 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
         public void onServiceConnected(ComponentName className,
                                        IBinder binder) {
             MainService.MainBinder mainBinder = (MainService.MainBinder) binder;
-            eventBus = mainBinder.getEventBus();
+            mainService = mainBinder.getService();
             isBound = true;
         }
 
