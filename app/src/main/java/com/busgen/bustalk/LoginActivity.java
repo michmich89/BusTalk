@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,8 @@ import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.User;
 import com.busgen.bustalk.service.EventBus;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends BindingActivity {
     private EditText userNameInput;
@@ -67,7 +70,8 @@ public class LoginActivity extends BindingActivity {
 
                 //For testing purposes
                 Chatroom testChatroom = new Chatroom(10, "Mainchat");
-                MsgJoinRoom testMessage = new MsgJoinRoom(testChatroom);
+                MsgAvailableRooms testMessage = new MsgAvailableRooms("1");
+                testMessage.addRoomToList(testChatroom);
                 Event testEvent = new ToActivityEvent(testMessage);
                 onEvent(testEvent);
             }
@@ -116,7 +120,14 @@ public class LoginActivity extends BindingActivity {
                 }
             } else if (message instanceof MsgAvailableRooms) {
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
-                List<Chatroom> chatrooms = availableRoomsMesssage.getRoomList();
+                ArrayList<Chatroom> chatrooms = availableRoomsMesssage.getRoomList();
+                Chatroom myChatroom = chatrooms.get(0);
+                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+                intent.putExtra("Chatroom", myChatroom);
+                intent.putExtra("Username", userName);
+                intent.putExtra("Interest", interest);
+                startActivity(intent);
+                LoginActivity.this.finish();
             }
         }
     }
