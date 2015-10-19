@@ -10,6 +10,7 @@ import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
 
 import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.service.EventBus;
 import com.busgen.bustalk.service.MainService;
@@ -19,6 +20,8 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
     EventBus eventBus = null;
     boolean isBound = false;
     MainService mainService;
+    Client client;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +39,7 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
                                        IBinder binder) {
             MainService.MainBinder mainBinder = (MainService.MainBinder) binder;
             mainService = mainBinder.getService();
+            client = mainService.getClient();
             isBound = true;
         }
 

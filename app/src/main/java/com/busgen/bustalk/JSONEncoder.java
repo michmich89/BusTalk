@@ -55,8 +55,8 @@ public class JSONEncoder {
             }else if(clientMessage instanceof MsgChooseNickname){
                 MsgChooseNickname nickMessage = (MsgChooseNickname)clientMessage;
                 object.put("type", MessageTypes.CHOOSE_NICKNAME_REQUEST);
-                object.put("nickname", nickMessage.getNickname());
-                object.put("interets", nickMessage.getInterests());
+                object.put("name", nickMessage.getNickname());
+                object.put("interests", nickMessage.getInterests());
             }else if(clientMessage instanceof MsgAvailableRoomsRequest){
                 object.put("type", MessageTypes.LIST_OF_ALL_CHATROOMS_REQUEST);
             }else if(clientMessage instanceof MsgUsersInChatRequest){
