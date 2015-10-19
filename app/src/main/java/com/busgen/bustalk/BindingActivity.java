@@ -23,6 +23,7 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         eventBus = EventBus.getInstance();
+        eventBus.register(this);
         Intent intent = new Intent(this, MainService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
