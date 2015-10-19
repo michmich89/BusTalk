@@ -9,7 +9,7 @@ import java.util.List;
  * Created by nalex on 16/10/2015.
  */
 public class MsgAvailableRooms {
-    private List<Chatroom> roomList;
+    private ArrayList<Chatroom> roomList;
     private String groupId;
 
     public MsgAvailableRooms(String groupId){
@@ -17,7 +17,7 @@ public class MsgAvailableRooms {
         this.groupId = groupId;
     }
 
-    public List<Chatroom> getRoomList(){
+    public ArrayList<Chatroom> getRoomList(){
         return roomList;
     }
 

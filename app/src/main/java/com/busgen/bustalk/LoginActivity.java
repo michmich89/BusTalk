@@ -115,7 +115,8 @@ public class LoginActivity extends BindingActivity {
                     eventBus.postEvent(requestEvent);
                 }
             } else if (message instanceof MsgAvailableRooms) {
-
+                MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
+                List<Chatroom> chatrooms = availableRoomsMesssage.getRoomList();
             }
         }
     }
