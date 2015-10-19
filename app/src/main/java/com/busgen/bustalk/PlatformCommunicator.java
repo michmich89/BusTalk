@@ -10,6 +10,7 @@ import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.service.EventBus;
+import com.busgen.bustalk.utils.BussIDs;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
@@ -21,19 +22,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Alexander Kloutschek on 2015-10-18.
  */
-public class PlatformCommunicator implements IEventBusListener{
+public class PlatformCommunicator{
 
     private final int SECOND = 1000;
     private EventBus eventBus;
+    private BussIDs bussIDs;
+    private HashMap<String, String> regNrToDgw;
 
     public PlatformCommunicator(){
         eventBus = EventBus.getInstance();
+        bussIDs = new BussIDs();
+        regNrToDgw = bussIDs.getRegNrToDgwMap();
     }
 
     private String getLoginVerification() throws IOException {
@@ -55,19 +61,28 @@ public class PlatformCommunicator implements IEventBusListener{
 
     }
 
-    public String getNextStopData() {
-
+    public String getNextStopData(String bussID) {
         //todo Den här metoden ska brytas upp.
+        String dgw = new String();
+        if(regNrToDgw.containsValue(bussID)){
+            dgw = regNrToDgw.get(bussID);
+        }else if( bussID != null){
+            //hållplats
+            return bussID;
+        }else{
+            //If we don't have a legal bussID, the simulated buss will be used.
+            dgw = "Ericsson$Vin_Num_001";
+        }
 
         JSONObject platformData = null;
         long endTime = System.currentTimeMillis();
-        long durationTime = SECOND * 120;
+        long durationTime = SECOND * 5;
         long startTime = endTime - durationTime;
         //Todo fixa wifi mac-address antagligen till wifi objekt och hämta rätt bussid
         //todo ersätt vin med bussid utifrån mac address
 
         //simulerad bussresa nedan
-        String url = "https://ece01.ericsson.net:4443/ecity?dgw=Ericsson$Vin_Num_001&sensorSpec=Ericsson$Next_Stop&t1=" + startTime + "&t2=" + endTime;
+        String url = "https://ece01.ericsson.net:4443/ecity?dgw=" + dgw + "&sensorSpec=Ericsson$Next_Stop&t1=" + startTime + "&t2=" + endTime;
 
         /*Streams, initializing them to null so that we can easily check
         if they have been initialized in order to close them properly
@@ -97,7 +112,6 @@ public class PlatformCommunicator implements IEventBusListener{
                 inputLine = in.readLine();
                 response.append(inputLine);
             }
-            in.close();
             System.out.println(response.toString());
 
             try {
@@ -125,22 +139,6 @@ public class PlatformCommunicator implements IEventBusListener{
             }
 
         }
-        if(platformData == null){
-            //todo bättre error
-            throw new RuntimeException("platformData could not be read");
-        }
         return platformData.toString();
-    }
-
-    public void onEvent(Event e){
-        if(e instanceof ToServerEvent){
-            IServerMessage message = e.getMessage();
-            if(message instanceof MsgPlatformDataRequest){
-                //Här skulle man kunna välja att hämta utifrån data type som skulle kunna finnas i requestmeddelandet.
-                MsgPlatformData dataMessage = new MsgPlatformData(getNextStopData());
-                ToClientEvent platformEvent = new ToClientEvent(dataMessage);
-                eventBus.postEvent(platformEvent);
-            }
-        }
     }
 }
