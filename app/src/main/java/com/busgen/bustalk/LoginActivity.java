@@ -66,7 +66,7 @@ public class LoginActivity extends BindingActivity {
                 eventBus.postEvent(event);
 
                 //For testing purposes
-                Chatroom testChatroom = new Chatroom(10, "Mainchat", "Mainchat", 100);
+                Chatroom testChatroom = new Chatroom(10, "Mainchat");
                 MsgJoinRoom testMessage = new MsgJoinRoom(testChatroom);
                 Event testEvent = new ToActivityEvent(testMessage);
                 onEvent(testEvent);
