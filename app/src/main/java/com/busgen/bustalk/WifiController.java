@@ -47,4 +47,13 @@ public class WifiController extends Service{
         return false;
     }
 
+    public String getWifiName(){
+        List<ScanResult> scanResultList = wifiManager.getScanResults();
+        for(ScanResult result : scanResultList){
+            if(bssidToRegNr.containsKey(result.BSSID)){
+                return bssidToRegNr.get(result.BSSID);
+            }
+        }
+        return null;
+    }
 }
