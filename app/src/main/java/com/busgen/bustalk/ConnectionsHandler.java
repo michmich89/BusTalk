@@ -35,6 +35,8 @@ public class ConnectionsHandler implements IEventBusListener{
         //wifiController = new WifiController(wifiManager);
         eventBus = EventBus.getInstance();
         eventBus.register(this);
+        eventBus.register(serverCom);
+        eventBus.register(platformCom);
 
         timer = new Timer("wifiCheck");
         timerTask = new TimerTask() {
