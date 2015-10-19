@@ -29,7 +29,6 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       // System.out.println("Service startad! (startCommand)");//
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -37,14 +36,13 @@ public class MainService extends Service {
     public void onCreate(){
 
         eventBus = EventBus.getInstance();
-        client = Client.getInstance();
+        client = new Client();
         serverCommunicator = new ServerCommunicator("ws://sandra.kottnet.net:8080/BusTalkServer/chat");
-        
         platformCommunicator = new PlatformCommunicator();
-        
-        client.setEventBus(eventBus);
+
         eventBus.register(client);
         eventBus.register(serverCommunicator);
+        eventBus.register(platformCommunicator);
 
     }
 
@@ -56,8 +54,8 @@ public class MainService extends Service {
 
     public class MainBinder extends Binder {
 
-        public EventBus getEventBus() {
-            return MainService.this.eventBus;
+        public MainService getService() {
+            return MainService.this;
         }
 
     }
