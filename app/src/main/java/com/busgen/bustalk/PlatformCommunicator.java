@@ -1,4 +1,4 @@
-package app.platformtestapplication;
+package com.busgen.bustalk;
 
 import android.util.Base64;
 
