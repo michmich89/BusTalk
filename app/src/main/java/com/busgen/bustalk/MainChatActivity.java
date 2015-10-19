@@ -152,6 +152,7 @@ public class MainChatActivity extends BindingActivity {
         }
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -159,5 +160,5 @@ public class MainChatActivity extends BindingActivity {
         this.usersPresent = menu.findItem(R.id.action_users);
         this.usersPresent.setTitle("" + myChatroom.getNbrOfUsers());
         return true;
-    }
+    }*/
 }

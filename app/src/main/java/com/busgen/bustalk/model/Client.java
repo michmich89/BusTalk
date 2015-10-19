@@ -1,5 +1,7 @@
 package com.busgen.bustalk.model;
 
+import android.util.Log;
+
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
@@ -50,11 +52,13 @@ public class Client implements IClient, IEventBusListener {
 
     @Override
     public void setUserName(String userName) {
+        Log.d("MyTag", "inside setusername");
         user.setUserName(userName);
     }
 
     @Override
     public void setInterest(String interest) {
+        Log.d("MyTag", "inside setinterest");
         user.setInterest(interest);
     }
 
@@ -115,9 +119,17 @@ public class Client implements IClient, IEventBusListener {
         IServerMessage message = event.getMessage();
 
         if (event instanceof ToClientEvent) {
+            Log.d("MyTag", "Client received some sort of event");
+            Log.d("MyTag", "message type: ");
             if (message instanceof MsgChatMessage) {
 
-            } else if (message instanceof MsgChooseNickname) {
+
+            } else if(message == null){
+                Log.d("MyTag", "null message");
+            }
+
+            else if (message instanceof MsgChooseNickname) {
+                Log.d("MyTag", "1");
                 /*
                 sets username and alerts activities about it
                  */
@@ -126,23 +138,29 @@ public class Client implements IClient, IEventBusListener {
                 eventBus.postEvent(newEvent);
 
             } else if (message instanceof MsgCreateRoom) {
-
+                Log.d("MyTag", "2");
             } else if (message instanceof MsgJoinRoom) {
-
+                Log.d("MyTag", "3");
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
                 chatrooms.add(chatroom);
 
             } else if (message instanceof MsgLeaveRoom) {
-
+                Log.d("MyTag", "4");
             } else if (message instanceof MsgLostChatRoom) {
-
+                Log.d("MyTag", "5");
             } else if (message instanceof MsgLostUserInChat) {
-
+                Log.d("MyTag", "6");
             } else if (message instanceof MsgNewChatRoom) {
-
+                Log.d("MyTag", "7");
             } else if (message instanceof MsgNewUserInChat) {
-
+                Log.d("MyTag", "8");
             } else if (message instanceof MsgNicknameAvailable) {
+                Log.d("MyTag", "9");
+                Log.d("MyTag", "Sending availability info to activity");
+                Event newEvent = new ToActivityEvent(message);
+
+                eventBus.postEvent(newEvent);
+
             }
         }
     }
