@@ -10,6 +10,7 @@ import android.widget.*;
 
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
+import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IServerMessage;
@@ -77,7 +78,12 @@ public class MainChatActivity extends BindingActivity {
                     String date = DateFormat.getDateTimeInstance().format(new Date());
                     MsgChatMessage message = new MsgChatMessage(false, "" + rand.nextInt(1000), date, "Börje Plåt", myChatroom.getChatID());
 
+                    /**Old way that worked without problems, remove later
                     displayMessage(message);
+                    return;
+                     */
+                    Event event = new ToActivityEvent(message);
+                    onEvent(event);
                     return;
                 }
                 String date = DateFormat.getDateTimeInstance().format(new Date());
@@ -92,6 +98,10 @@ public class MainChatActivity extends BindingActivity {
     public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
+        if (message.getIsMe()) {
+            Event event = new ToServerEvent(message);
+            eventBus.postEvent(event);
+        }
         /** Maybe not relevant anymore
          //If the user sent the message, then put the message in the Chatroom-object
          if(message.getIsMe()){
