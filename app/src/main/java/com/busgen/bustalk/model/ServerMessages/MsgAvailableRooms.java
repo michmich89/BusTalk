@@ -1,6 +1,7 @@
 package com.busgen.bustalk.model.ServerMessages;
 
 import com.busgen.bustalk.model.Chatroom;
+import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
 
 import java.util.ArrayList;
@@ -10,15 +11,15 @@ import java.util.List;
  * Created by nalex on 16/10/2015.
  */
 public class MsgAvailableRooms implements IServerMessage{
-    private ArrayList<Chatroom> roomList;
+    private List<IChatroom> roomList;
     private String groupId;
 
     public MsgAvailableRooms(String groupId){
-        roomList = new ArrayList<Chatroom>();
+        roomList = new ArrayList<IChatroom>();
         this.groupId = groupId;
     }
 
-    public ArrayList<Chatroom> getRoomList(){
+    public List<IChatroom> getRoomList(){
         return roomList;
     }
 

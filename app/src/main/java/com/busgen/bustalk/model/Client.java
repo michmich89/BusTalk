@@ -5,6 +5,7 @@ import android.util.Log;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
 import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
@@ -29,10 +30,13 @@ public class Client implements IClient, IEventBusListener {
     private IUser user;
     private List<IChatroom> chatrooms;
     private EventBus eventBus;
+    private String groupId;
 
     public Client(){
         this.user = new User();
         eventBus = EventBus.getInstance();
+        groupId = "1";
+
     }
 
     @Override
@@ -113,6 +117,14 @@ public class Client implements IClient, IEventBusListener {
         }
     }
 
+    public void setGroupId(String groupId){
+        this.groupId = groupId;
+    }
+
+    public String getGroupId(){
+        return groupId;
+    }
+
     @Override
     public void onEvent(Event event) {
 
@@ -161,6 +173,10 @@ public class Client implements IClient, IEventBusListener {
 
                 eventBus.postEvent(newEvent);
 
+            } else if (message instanceof MsgAvailableRooms) {
+                chatrooms = ((MsgAvailableRooms) message).getRoomList();
+                Log.d("MyTag", "chatrooms blabla");
+                //Log.d("MyTag", "" + chatrooms.size());
             }
         }
     }

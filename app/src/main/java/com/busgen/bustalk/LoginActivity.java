@@ -131,13 +131,14 @@ public class LoginActivity extends BindingActivity {
                     Log.d("MyTag", "nickname is available, setting user info...");
                     client.setUserName(userName);
                     client.setInterest(interest);
-                   /* IServerMessage serverMessage = new MsgAvailableRoomsRequest();
-                    Event requestEvent = new ToClientEvent(serverMessage);
-                    eventBus.postEvent(requestEvent);*/
 
-                    IServerMessage serverMessage = new MsgSetGroupId("0");
+                    IServerMessage serverMessage = new MsgSetGroupId(client.getGroupId());
                     Event setGroupIdEvent = new ToServerEvent(serverMessage);
                     eventBus.postEvent(setGroupIdEvent);
+
+                    serverMessage = new MsgAvailableRoomsRequest();
+                    Event requestEvent = new ToServerEvent(serverMessage);
+                    eventBus.postEvent(requestEvent);
 
                     Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                     intent.putExtra("Username", client.getUserName());
