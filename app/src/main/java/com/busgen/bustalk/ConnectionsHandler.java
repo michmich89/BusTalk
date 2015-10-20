@@ -1,12 +1,11 @@
 package com.busgen.bustalk;
 
-import android.content.Context;
-import android.net.wifi.WifiManager;
-
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
+import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
 import com.busgen.bustalk.service.EventBus;
@@ -64,12 +63,25 @@ public class ConnectionsHandler implements IEventBusListener{
                 eventBus.postEvent(new ToActivityEvent(new MsgPlatformData(nextStop)));
             }
         };
+    }
 
+    private void startTimer() {
         timer.scheduleAtFixedRate(timerTask, 5000, 15000);
+    }
+
+    private void stopTimer() {
+        timer.cancel();
     }
 
     @Override
     public void onEvent(Event e){
-
+        if (e instanceof ToServerEvent) {
+            IServerMessage message = e.getMessage();
+            if (message instanceof MsgConnectionEstablished) {
+                startTimer();
+            } else if (message instanceof MsgConnectionLost) {
+                stopTimer();
+            }
+        }
     }
 }
