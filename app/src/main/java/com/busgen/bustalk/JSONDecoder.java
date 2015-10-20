@@ -61,7 +61,7 @@ public class JSONDecoder {
                 IUser user = new User(jsonObject.getString("sender"), jsonObject.getString("interests"));
                 serverMessage = new MsgLostUserInChat(jsonObject.getInt("chatId"), user);
             }else if(type == MessageTypes.LIST_OF_CHATROOMS_NOTIFICATION){
-                JSONArray array = jsonObject.getJSONArray("users");
+                JSONArray array = jsonObject.getJSONArray("chatrooms");
                 MsgAvailableRooms rooms = new MsgAvailableRooms(jsonObject.getString("groupId"));
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject roomObject = array.getJSONObject(i);

@@ -136,6 +136,7 @@ public class PlatformCommunicator implements IEventBusListener {
             }
 
         }
+        //todo hantera null om servern inte skickar meddelande
         System.out.println("Busstop: " + busStop);
         return busStop;
     }
