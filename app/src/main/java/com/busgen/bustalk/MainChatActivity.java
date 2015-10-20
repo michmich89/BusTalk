@@ -87,9 +87,8 @@ public class MainChatActivity extends BindingActivity {
                     //random message has been sent to the user
                     Random rand = new Random();
                     String date = DateFormat.getDateTimeInstance().format(new Date());
-                    MsgChatMessage message = new MsgChatMessage(true, "Det är bra, själv då? ^_^", date, "", myChatroom.getChatID());
+                    MsgChatMessage message = new MsgChatMessage(false, "" + "Det är bra, själv då? ^_^", date, "Kalle Jönsson", myChatroom.getChatID());
 
-                    //Test 2 of receiving of messages
                     Event event = new ToServerEvent(message);
                     eventBus.postEvent(event);
 
@@ -120,20 +119,6 @@ public class MainChatActivity extends BindingActivity {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
         //messageListView.setSelection(messageListView.getCount() - 1);
-        /*This should be used, commented out for the moment
-        if (message.getNickname().equals(client.getUserName())) {
-         */
-
-        /*
-        if (message.getIsMe()) {
-            Event event = new ToServerEvent(message);
-            eventBus.postEvent(event);
-            //For testing purposes, should be replaced with client.getChatroom().add... etc.
-            myChatroom.addMessage(message);
-        }
-        */
-
-
     }
 
     //Makes it seem like there has already been messages sent when the app launches
