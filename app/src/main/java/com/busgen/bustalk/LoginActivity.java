@@ -1,6 +1,8 @@
 package com.busgen.bustalk;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +27,9 @@ import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRoomsRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectToServer;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLeaveRoom;
@@ -45,6 +50,7 @@ public class LoginActivity extends BindingActivity {
     private EditText interestInput;
     private Button loginButton;
     private Toast loginToast;
+    private Toast noConnectionToast;
     private Toast testToast;
     private String interest;
     private String userName;
@@ -68,21 +74,19 @@ public class LoginActivity extends BindingActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userName = userNameInput.getText().toString();
-                if (TextUtils.isEmpty(userName)) {
-                    loginToast.show();
-                    return;
-                }
-                interest = interestInput.getText().toString();
-
-                IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
-                Event event = new ToServerEvent(serverMessage);
-                eventBus.postEvent(event);
                 progress = new ProgressDialog(LoginActivity.this);
                 progress.setTitle("Loading");
                 progress.setMessage("Wait while loading...");
+                    /*progress.setButton("Cancel", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            // Use either finish() or return() to either close the activity or just the dialog
+                            return;
+                        }
+                    });*/
                 progress.show();
-
+                eventBus.postEvent(new ToServerEvent(new MsgConnectToServer()));
                 //For testing purposes
                 /*
                 Chatroom testChatroom = new Chatroom(10, "Mainchat");
@@ -101,6 +105,7 @@ public class LoginActivity extends BindingActivity {
         loginButton = (Button) findViewById(R.id.login_button);
         loginToast = Toast.makeText(LoginActivity.this, "You have to choose a nickname",
                 Toast.LENGTH_SHORT);
+        noConnectionToast = Toast.makeText(LoginActivity.this, "Connection to server failed", Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -157,7 +162,7 @@ public class LoginActivity extends BindingActivity {
                 } else{
                     Log.d("MyTag", "Tried to start Mainchatactivity");
                     progress.dismiss();
-                    //Make a toast of unavailability, reset input field
+                    //todo Make a toast of unavailability, reset input field
                 }
             } else if (message instanceof MsgAvailableRooms) {
                 /*
@@ -171,6 +176,23 @@ public class LoginActivity extends BindingActivity {
                 startActivity(intent);
                 LoginActivity.this.finish();
                 */
+            } else if (message instanceof MsgConnectionStatus){
+                MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;
+                if(!connectionMessage.isConnected()){
+                    progress.dismiss();
+                    noConnectionToast.show();
+                }else {
+                    userName = userNameInput.getText().toString();
+                    if (TextUtils.isEmpty(userName)) {
+                        loginToast.show();
+                        return;
+                    }
+                    interest = interestInput.getText().toString();
+
+                    IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
+                    Event nameEvent = new ToServerEvent(serverMessage);
+                    eventBus.postEvent(nameEvent);
+                }
             }
         }
     }

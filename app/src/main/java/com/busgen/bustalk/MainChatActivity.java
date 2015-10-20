@@ -1,5 +1,7 @@
 package com.busgen.bustalk;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLeaveRoom;
@@ -151,8 +154,26 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLostUserInChat) {
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
+            } else if (message instanceof MsgConnectionLost){
+                connectionLostAlert();
             }
         }
+    }
+
+    public void connectionLostAlert(){
+        AlertDialog alertDialog = new AlertDialog.Builder(MainChatActivity.this).create();
+        alertDialog.setTitle("Connection Error");
+        alertDialog.setMessage("Your connection to the server has been lost");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        MainChatActivity.this.finish();
+                    }
+                });
+        alertDialog.show();
     }
 
     @Override

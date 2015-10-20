@@ -3,10 +3,13 @@ package com.busgen.bustalk;
 import android.util.Log;
 
 import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectToServer;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.service.EventBus;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -65,7 +68,15 @@ public class ServerCommunicator implements IEventBusListener {
         if (event instanceof ToServerEvent) {
             Log.d("MyTag", "Server received some sort of event");
             IServerMessage message = event.getMessage();
-            sendMessage(message);
+            if(message instanceof MsgConnectToServer){
+               if(!isConnected()){
+                   connect();
+                   //Thread.join()
+               }
+                eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
+            }else {
+                sendMessage(message);
+            }
         }
     }
 
@@ -92,13 +103,15 @@ public class ServerCommunicator implements IEventBusListener {
                     @Override
                     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
                         // Do things when connection is established
+                        //todo starta timer sen
                     }
 
                     @Override
                     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
                                                WebSocketFrame clientCloseFrame, boolean closedByServer) {
-                        webSocket = null;
+
                         // Do things when disconnected from server
+                        //todo stoppa timer, skicka connectionlost
                     }
                 });
 
