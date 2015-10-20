@@ -44,6 +44,7 @@ public class ConnectionsHandler implements IEventBusListener{
         timerTask = new TimerTask() {
             @Override
             public void run() {
+                System.out.println("Running timertask...");
                 sendNextStopData();
                 if (getConnectionStatus()) {
                     //String wifiName = wifiController.getWifiName();
