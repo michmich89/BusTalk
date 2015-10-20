@@ -5,19 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.busgen.bustalk.MainChatActivity">
+
+    <TextView
+        android:id="@+id/nextStopLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/nextStop"
+        android:textSize="20sp"
+        android:inputType="textAutoCorrect"
+        android:hint="@string/nextStop"/>
     
     <RelativeLayout
-        android:layout_width="366dp"
-        android:layout_height="278dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/nextStop"
-            android:id="@+id/nextStopLabel"
-            android:layout_above="@+id/message_list_view"
-            android:layout_gravity="center_horizontal" />
         <EditText
             android:id="@+id/message_input_line"
             android:layout_width="match_parent"

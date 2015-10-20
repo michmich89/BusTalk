@@ -186,8 +186,8 @@ public class MainChatActivity extends BindingActivity {
                         @Override
                         public void run() {
                             String nextStop = nextStopMessage.getData();
-                            ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop);
-                            System.out.println("Texten i labeln är: " + ((TextView) findViewById(R.id.nextStopLabel)).getText());
+                            ((TextView) findViewById(R.id.nextStopLabel)).setText("Nästa hållplats: " + nextStop);
+                            //System.out.println("Texten i labeln är: " + ((TextView) findViewById(R.id.nextStopLabel)).getText());
                         }
                     });
 
