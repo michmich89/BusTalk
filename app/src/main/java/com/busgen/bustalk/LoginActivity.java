@@ -51,6 +51,7 @@ public class LoginActivity extends BindingActivity {
     private Button loginButton;
     private Toast loginToast;
     private Toast noConnectionToast;
+    private Toast nameUnavailableToast;
     private Toast testToast;
     private String interest;
     private String userName;
@@ -106,6 +107,7 @@ public class LoginActivity extends BindingActivity {
         loginToast = Toast.makeText(LoginActivity.this, "You have to choose a nickname",
                 Toast.LENGTH_SHORT);
         noConnectionToast = Toast.makeText(LoginActivity.this, "Connection to server failed", Toast.LENGTH_SHORT);
+        nameUnavailableToast = Toast.makeText(LoginActivity.this, "Name was already taken", Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -162,7 +164,10 @@ public class LoginActivity extends BindingActivity {
                 } else{
                     Log.d("MyTag", "Tried to start Mainchatactivity");
                     progress.dismiss();
-                    //todo Make a toast of unavailability, reset input field
+                    nameUnavailableToast.show();
+                    userNameInput.setText("");
+                    interestInput.setText("");
+
                 }
             } else if (message instanceof MsgAvailableRooms) {
                 /*
