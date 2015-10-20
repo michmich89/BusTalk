@@ -82,6 +82,7 @@ public class LoginActivity extends BindingActivity {
                         }
                     });*/
                 progress.show();
+                eventBus.postEvent(new ToServerEvent(new MsgConnectToServer()));
             }
         });
     }
