@@ -104,6 +104,9 @@ public class MainChatActivity extends BindingActivity {
     public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
+        /*This should be used, commented out for the moment
+        if (message.getNickname().equals(client.getUserName())) {
+         */
         if (message.getNickname().equals(client.getUserName())) {
             Event event = new ToServerEvent(message);
             eventBus.postEvent(event);
