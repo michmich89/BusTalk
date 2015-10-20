@@ -78,7 +78,7 @@ public class LoginActivity extends BindingActivity {
                 IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
                 Event event = new ToServerEvent(serverMessage);
                 eventBus.postEvent(event);
-                progress = new ProgressDialog(this);
+                progress = new ProgressDialog(LoginActivity.this);
                 progress.setTitle("Loading");
                 progress.setMessage("Wait while loading...");
                 progress.show();
