@@ -141,17 +141,12 @@ public class Client implements IClient, IEventBusListener {
         if (event instanceof ToClientEvent) {
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                chatMessage.setMe(false);
-                chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
-                Event newEvent = new ToActivityEvent(chatMessage);
-                eventBus.postEvent(newEvent);
-                Log.d("MyTag", "event posted, on its way to mainchatactivity");
-            } else if(message == null){
-                Log.d("MyTag", "null message");
-            }
-
-            else if (message instanceof MsgChooseNickname) {
-                Log.d("MyTag", "1");
+                if(!chatMessage.getNickname().equals(getUserName())){
+                    chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
+                    Event newEvent = new ToActivityEvent(chatMessage);
+                    eventBus.postEvent(newEvent);
+                }
+            } else if (message instanceof MsgChooseNickname) {
                 /*
                 sets username and alerts activities about it
                  */

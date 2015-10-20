@@ -82,7 +82,6 @@ public class LoginActivity extends BindingActivity {
                         }
                     });*/
                 progress.show();
-
             }
         });
     }
