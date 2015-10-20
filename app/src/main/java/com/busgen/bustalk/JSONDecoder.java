@@ -68,6 +68,7 @@ public class JSONDecoder {
                     Chatroom chatroom = new Chatroom(roomObject.getInt("chatId"), roomObject.getString("title"));
                     rooms.addRoomToList(chatroom);
                 }
+                serverMessage = rooms;
             }
 
             //Kanske onödig
