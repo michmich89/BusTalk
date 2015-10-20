@@ -1,5 +1,7 @@
 package com.busgen.bustalk;
 
+import android.util.Log;
+
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRoomsRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
@@ -59,6 +61,7 @@ public class JSONEncoder {
                 object.put("interests", nickMessage.getInterests());
             }else if(clientMessage instanceof MsgAvailableRoomsRequest){
                 object.put("type", MessageTypes.LIST_OF_ALL_CHATROOMS_REQUEST);
+                Log.d("MyTag", "" + "encoder LIST_OF_ALL_CHATROOMS_REQUEST");
             }else if(clientMessage instanceof MsgUsersInChatRequest){
                 MsgUsersInChatRequest usersInChat = (MsgUsersInChatRequest)clientMessage;
                 object.put("type", MessageTypes.LIST_OF_USERS_IN_ROOM_REQUEST);
