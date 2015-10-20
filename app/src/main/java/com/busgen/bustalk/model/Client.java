@@ -144,7 +144,7 @@ public class Client implements IClient, IEventBusListener {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 chatMessage.setMe(false);
                 chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
-                Event newEvent = new ToActivityEvent(message);
+                Event newEvent = new ToActivityEvent(chatMessage);
                 eventBus.postEvent(newEvent);
                 Log.d("MyTag", "event posted, on its way to mainchatactivity");
             } else if(message == null){

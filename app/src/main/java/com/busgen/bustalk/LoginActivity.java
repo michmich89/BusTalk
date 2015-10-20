@@ -178,6 +178,13 @@ public class LoginActivity extends BindingActivity {
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
                 List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
                 IChatroom myChatroom = chatrooms.get(0);
+<<<<<<< 21bac057cb9d370e2c3152fe84fd28a34769926b
+=======
+                IServerMessage joinMessage = new MsgJoinRoom(myChatroom);
+                Event joinEvent = new ToServerEvent(joinMessage);
+                eventBus.postEvent(joinEvent);
+
+>>>>>>> Continued on testbranch
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("Chatroom", myChatroom);
                 intent.putExtra("Username", client.getUserName());
@@ -185,6 +192,7 @@ public class LoginActivity extends BindingActivity {
                 startActivity(intent);
                 LoginActivity.this.finish();
 
+<<<<<<< 21bac057cb9d370e2c3152fe84fd28a34769926b
             } else if (message instanceof MsgConnectionStatus){
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;
                 System.out.println("Got message status: " + connectionMessage.isConnected());
@@ -207,6 +215,9 @@ public class LoginActivity extends BindingActivity {
                 }
 
 
+=======
+                /*
+>>>>>>> Continued on testbranch
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("Username", client.getUserName());
                 intent.putExtra("Interest", client.getInterest());
@@ -214,6 +225,7 @@ public class LoginActivity extends BindingActivity {
                 progress.dismiss();
                 startActivity(intent);
                 LoginActivity.this.finish();
+                */
             }
         }
     }

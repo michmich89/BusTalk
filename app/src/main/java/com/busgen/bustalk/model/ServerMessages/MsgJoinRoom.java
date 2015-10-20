@@ -12,7 +12,7 @@ public class MsgJoinRoom implements IServerMessage {
     private IChatroom chatroom;
 
     public MsgJoinRoom(IChatroom chatroom){
-     //   this.chatID = chatID;
+        this.chatID = chatroom.getChatID();
         this.chatroom = chatroom;
     }
 
