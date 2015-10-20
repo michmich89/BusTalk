@@ -2,6 +2,7 @@ package com.busgen.bustalk.model;
 
 import android.util.Log;
 
+import com.busgen.bustalk.MainChatActivity;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
@@ -137,7 +138,6 @@ public class Client implements IClient, IEventBusListener {
     @Override
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
-
         if (event instanceof ToClientEvent) {
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
