@@ -25,8 +25,7 @@ public class MsgAvailableRooms implements IServerMessage{
         return roomList;
     }
 
-    public void addRoomToList(Chatroom chatroom){
-        Log.d("MyTag", "" + "Adding chatroom to list");
+    public void addRoomToList(IChatroom chatroom){
         roomList.add(chatroom);
     }
 
