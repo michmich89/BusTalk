@@ -155,17 +155,17 @@ public class MainChatActivity extends BindingActivity {
                 connectionLostAlert();
             } else if (message instanceof MsgPlatformData) {
                 /*skriver ut nästa hållplats i en label*/
-                System.out.println("skriver nästa hållplats mannen");
                 if (((MsgPlatformData) message).getDataType().equals("nextStop")){
 
                     final MsgPlatformData nextStopMessage = (MsgPlatformData) message;
-
+                    System.out.println("Getting the busstop event");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            System.out.println("Running the run");
                             String nextStop = nextStopMessage.getData();
+                            setTitle("Buss 55");
                             ((TextView) findViewById(R.id.nextStopLabel)).setText("Nästa hållplats: " + nextStop);
-                            //System.out.println("Texten i labeln är: " + ((TextView) findViewById(R.id.nextStopLabel)).getText());
                         }
                     });
 

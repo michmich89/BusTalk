@@ -87,6 +87,11 @@ public class LoginActivity extends BindingActivity {
         });
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+        progress.dismiss();
+    }
     private void initViews() {
         userNameInput = (EditText) findViewById(R.id.user_name_input);
         interestInput = (EditText) findViewById(R.id.interest_input);
