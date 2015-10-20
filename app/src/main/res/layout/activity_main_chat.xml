@@ -10,6 +10,14 @@
         android:layout_width="366dp"
         android:layout_height="278dp">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/nextStop"
+            android:id="@+id/nextStopLabel"
+            android:layout_above="@+id/message_list_view"
+            android:layout_gravity="center_horizontal" />
         <EditText
             android:id="@+id/message_input_line"
             android:layout_width="match_parent"
@@ -41,12 +49,4 @@
 
 
     </RelativeLayout>
-
-    <TextView
-        android:layout_width="172dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/nextStop"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
 </LinearLayout>

@@ -163,12 +163,12 @@ public class PlatformCommunicator implements IEventBusListener{
 
         if (event instanceof ToPlatformEvent) {
             Log.d("MyLog", "platformevent");
-            /* Skickar bara nästa hållplats tills vidare*/
+            /* Skickar endast nästa hållplats tills vidare*/
             if (message instanceof MsgPlatformDataRequest) {
                 String nextStop = getNextStopData(null);
                 System.out.println("Nextstop = " + nextStop);
-                
-                MsgPlatformData newMessage = new MsgPlatformData("busStop", nextStop);
+
+                MsgPlatformData newMessage = new MsgPlatformData("nextStop", nextStop);
                 Event newEvent = new ToActivityEvent(newMessage);
                 eventBus.postEvent(newEvent);
             }
