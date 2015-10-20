@@ -6,6 +6,7 @@ import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
 import com.busgen.bustalk.service.EventBus;
