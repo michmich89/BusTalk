@@ -9,8 +9,13 @@ public class MsgPlatformData implements IServerMessage{
     private String data;
     private String dataType;
 
-    public MsgPlatformData(String data){
+    public MsgPlatformData(String dataType, String data){
+        this.dataType = dataType;
         this.data = data;
+    }
+
+    public String getDataType(){
+        return dataType;
     }
 
     public String getData(){

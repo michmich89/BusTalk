@@ -16,6 +16,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
+import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.service.EventBus;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class Client implements IClient, IEventBusListener {
     private List<IChatroom> chatrooms;
     private EventBus eventBus;
     private String groupId;
+    private String nextBusStop = "Nästa hållplats";
 
     private static Client client = null;
 
@@ -169,6 +171,8 @@ public class Client implements IClient, IEventBusListener {
                 chatrooms = ((MsgAvailableRooms) message).getRoomList();
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
+            } else if (message instanceof MsgPlatformDataRequest){
+
             }
         }
     }

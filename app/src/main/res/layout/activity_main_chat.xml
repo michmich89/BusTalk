@@ -7,8 +7,8 @@
     tools:context="com.busgen.bustalk.MainChatActivity">
     
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="366dp"
+        android:layout_height="278dp">
 
         <EditText
             android:id="@+id/message_input_line"
@@ -34,13 +34,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="false"
-            android:layout_alignParentTop="false"
             android:layout_marginBottom="20dp"
             android:layout_above="@+id/message_input_line"
-            android:layout_marginTop="10dp"
             android:transcriptMode="alwaysScroll"
             android:divider="@null" />
 
 
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="172dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/nextStop"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

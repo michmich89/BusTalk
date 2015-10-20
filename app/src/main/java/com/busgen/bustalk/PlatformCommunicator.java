@@ -1,9 +1,18 @@
 package com.busgen.bustalk;
 
 import android.util.Base64;
+import android.util.Log;
 
 import com.busgen.bustalk.events.Event;
+import com.busgen.bustalk.events.ToActivityEvent;
+import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.events.ToPlatformEvent;
 import com.busgen.bustalk.model.IEventBusListener;
+import com.busgen.bustalk.model.IServerMessage;
+import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
+import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
+import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
+import com.busgen.bustalk.service.EventBus;
 import com.busgen.bustalk.utils.BussIDs;
 
 import org.json.JSONArray;
@@ -28,21 +37,23 @@ public class PlatformCommunicator implements IEventBusListener {
     private BussIDs bussIDs;
     private HashMap<String, String> regNrToDgw;
     private String busStop;
+    private EventBus eventBus;
 
-    public PlatformCommunicator(){
+    public PlatformCommunicator() {
         bussIDs = new BussIDs();
         regNrToDgw = bussIDs.getRegNrToDgwMap();
+        eventBus = EventBus.getInstance();
+
     }
 
     private String getLoginVerification() throws IOException {
         String userNamePass = getVerificationFromFile();
         byte[] bytePass = userNamePass.getBytes("UTF-8");
         String base64EncodedPass = Base64.encodeToString(bytePass, Base64.DEFAULT);
-        System.out.println(base64EncodedPass);
         return "Basic " + base64EncodedPass;
     }
 
-    private String getVerificationFromFile() throws IOException{
+    private String getVerificationFromFile() throws IOException {
         /*String filePath = new String("app/src/main/res/InnovationPlatformVerification.txt");
         File apiKeyFile = new File(filePath);
         String apiKey = Files.toString(apiKeyFile, Charset.UTF_8);
@@ -57,26 +68,28 @@ public class PlatformCommunicator implements IEventBusListener {
         //todo Den här metoden ska brytas upp.
         busStop = null;
         String dgw = new String();
-        if(regNrToDgw.containsValue(bussID)){
+        if (regNrToDgw.containsValue(bussID)) {
             dgw = regNrToDgw.get(bussID);
-        }else if( bussID != null){
+        } else if (bussID != null) {
             //hållplats
             return bussID;
-        }else{
+        } else {
+
             //If we don't have a legal bussID, the simulated buss will be used.
             dgw = "Ericsson$Vin_Num_001";
         }
 
         JSONObject platformData = null;
         long endTime = System.currentTimeMillis();
-        long durationTime = SECOND * 10;
+        long durationTime = SECOND * 30l;
         long startTime = endTime - durationTime;
+
         //Todo fixa wifi mac-address antagligen till wifi objekt och hämta rätt bussid
         //todo ersätt vin med bussid utifrån mac address
 
         //simulerad bussresa nedan
         String url = "https://ece01.ericsson.net:4443/ecity?dgw=" + dgw + "&sensorSpec=Ericsson$Next_Stop&t1=" + startTime + "&t2=" + endTime;
-
+        //System.out.println(url);
         /*Streams, initializing them to null so that we can easily check
         if they have been initialized in order to close them properly
         */
@@ -105,14 +118,15 @@ public class PlatformCommunicator implements IEventBusListener {
                 response.append(inputLine);
             }
             //System.out.println("while :" + inputLine);
-            System.out.println("response :" + response.toString());
+            //System.out.println("response :" + response.toString());
 
             try {
                 //String teststring = response.substring(1,response.length()-1);
                 //System.out.println(teststring);
                 JSONArray platformArray = new JSONArray(response.toString());
-                platformData = platformArray.getJSONObject(platformArray.length()-1);
+                platformData = platformArray.getJSONObject(platformArray.length() - 1);
                 busStop = platformData.getString("value");
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -121,28 +135,42 @@ public class PlatformCommunicator implements IEventBusListener {
         } catch (IOException ex) {
             //todo needs proper exception handling and probably display an error message in the app
             ex.printStackTrace();
-        }
-        finally {
-            try{
-                if (in != null){
+        } finally {
+            try {
+                if (in != null) {
                     in.close();
-                }else if(inputStreamReader != null){
+                } else if (inputStreamReader != null) {
                     inputStreamReader.close();
-                }else if(inputStream != null){
+                } else if (inputStream != null) {
                     inputStream.close();
                 }
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
         //todo hantera null om servern inte skickar meddelande
-        System.out.println("Busstop: " + busStop);
+        if (busStop == null){
+            busStop = "Nästa hållplats ej tillgänglig";
+        }
         return busStop;
     }
 
     @Override
     public void onEvent(Event event) {
+        IServerMessage message = event.getMessage();
 
+        if (event instanceof ToPlatformEvent) {
+            Log.d("MyLog", "platformevent");
+            /* Skickar bara nästa hållplats tills vidare*/
+            if (message instanceof MsgPlatformDataRequest) {
+                String nextStop = getNextStopData(null);
+                System.out.println("Nextstop = " + nextStop);
+                
+                MsgPlatformData newMessage = new MsgPlatformData("busStop", nextStop);
+                Event newEvent = new ToActivityEvent(newMessage);
+                eventBus.postEvent(newEvent);
+            }
+        }
     }
 }
