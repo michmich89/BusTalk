@@ -67,12 +67,13 @@ public class ServerCommunicator implements IEventBusListener {
             public void run() {
                 try {
                     if (webSocket == null) {
+                        System.out.println("Websocket was null, creating websocket...");
                         createWebsocket();
                     }
                     if (webSocket != null) {
+                        System.out.println("Websocket wasn't null anymore, connecting to server");
                         webSocket.connect();
                     }
-                    eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
 
                 } catch (WebSocketException e) {
                     e.printStackTrace();
@@ -80,6 +81,7 @@ public class ServerCommunicator implements IEventBusListener {
             }
         };
         try {
+            openConnectionThread.start();
             openConnectionThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -88,7 +90,10 @@ public class ServerCommunicator implements IEventBusListener {
 
     public boolean isConnected() {
         if (webSocket != null) {
+            System.out.println("Websocket existed and was :" + this.webSocket.isOpen());
             return this.webSocket.isOpen();
+        } else {
+            System.out.println("Websocket is null!");
         }
         return false;
     }
@@ -103,7 +108,9 @@ public class ServerCommunicator implements IEventBusListener {
             Log.d("MyTag", "Server received some sort of event");
             IServerMessage message = event.getMessage();
             if(message instanceof MsgConnectToServer){
+                System.out.println("Want to connect to server");
                 if(!isConnected()){
+                    System.out.println("Wasn't connected to server, trying to connect...");
                     connect();
                 }
                 eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
@@ -116,6 +123,7 @@ public class ServerCommunicator implements IEventBusListener {
     private void createWebsocket() {
         try {
             webSocket = factory.createSocket(serverAddress);
+            System.out.println("Websocket created");
 
             webSocket.addListener(new WebSocketAdapter() {
                 @Override
@@ -149,6 +157,7 @@ public class ServerCommunicator implements IEventBusListener {
                     eventBus.postEvent(new ToClientEvent(connectionLost));
                 }
             });
+            System.out.println("Added listener to the websocket");
         } catch (IOException e) {
             e.printStackTrace();
         }

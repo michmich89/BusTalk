@@ -183,10 +183,13 @@ public class LoginActivity extends BindingActivity {
                 */
             } else if (message instanceof MsgConnectionStatus){
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;
+                System.out.println("Got message status: " + connectionMessage.isConnected());
                 if(!connectionMessage.isConnected()){
+                    System.out.println("Wasn't connected");
                     progress.dismiss();
                     noConnectionToast.show();
                 }else {
+                    System.out.println("Connected to server! Set username and interests");
                     userName = userNameInput.getText().toString();
                     if (TextUtils.isEmpty(userName)) {
                         loginToast.show();
