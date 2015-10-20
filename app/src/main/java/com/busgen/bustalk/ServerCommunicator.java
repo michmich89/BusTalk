@@ -9,10 +9,13 @@ import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectToServer;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
+import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.service.EventBus;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
@@ -36,6 +39,8 @@ public class ServerCommunicator implements IEventBusListener {
 
     private EventBus eventBus;
 
+    private Thread openConnectionThread;
+
     // endpointURI is simply a string looking something like this:
     // "ws://sandra.kottnet.net:8080/BusTalkServer/chat" (or whatever address to connect to)
     public ServerCommunicator(String endpointUri) {
@@ -43,8 +48,8 @@ public class ServerCommunicator implements IEventBusListener {
         this.jsonDecoder = new JSONDecoder();
         this.factory = new WebSocketFactory();
         this.serverAddress = endpointUri;
-        new Thread(new CreateWebSocketThread()).start();
         eventBus = EventBus.getInstance();
+        connect();
     }
 
     public void sendMessage(IServerMessage message) {
@@ -56,11 +61,36 @@ public class ServerCommunicator implements IEventBusListener {
 
 
     public void connect() {
-        this.webSocket.connectAsynchronously();
+        //this.webSocket.connectAsynchronously();
+        openConnectionThread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    if (webSocket == null) {
+                        createWebsocket();
+                    }
+                    if (webSocket != null) {
+                        webSocket.connect();
+                    }
+                    eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
+
+                } catch (WebSocketException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        try {
+            openConnectionThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isConnected() {
-        return this.webSocket.isOpen();
+        if (webSocket != null) {
+            return this.webSocket.isOpen();
+        }
+        return false;
     }
 
 
@@ -73,10 +103,9 @@ public class ServerCommunicator implements IEventBusListener {
             Log.d("MyTag", "Server received some sort of event");
             IServerMessage message = event.getMessage();
             if(message instanceof MsgConnectToServer){
-               if(!isConnected()){
-                   connect();
-                   //Thread.join()
-               }
+                if(!isConnected()){
+                    connect();
+                }
                 eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
             }else {
                 sendMessage(message);
@@ -84,46 +113,44 @@ public class ServerCommunicator implements IEventBusListener {
         }
     }
 
-    private class CreateWebSocketThread implements Runnable {
+    private void createWebsocket() {
+        try {
+            webSocket = factory.createSocket(serverAddress);
 
-        @Override
-        public void run() {
-            try {
-                webSocket = factory.createSocket(serverAddress);
+            webSocket.addListener(new WebSocketAdapter() {
+                @Override
+                public void onTextMessage(WebSocket websocket, String message) {
+                    // Handle incoming messages (decode them and such)
+                    Log.d("MyTag", "" + "Receiving decodable(?) message from server...");
+                    if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
+                        Log.d("MyTag", "" + "Receiving decodable message from server...");
+                        IServerMessage serverMessage = jsonDecoder.decode(message);
+                        Event event = new ToClientEvent(serverMessage);
+                        eventBus.postEvent(event);
 
-                webSocket.addListener(new WebSocketAdapter() {
-                    @Override
-                    public void onTextMessage(WebSocket websocket, String message) {
-                        // Handle incoming messages (decode them and such)
-                        Log.d("MyTag", "" + "Receiving decodable(?) message from server...");
-                        if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
-                            Log.d("MyTag", "" + "Receiving decodable message from server...");
-                            IServerMessage serverMessage = jsonDecoder.decode(message);
-                            Event event = new ToClientEvent(serverMessage);
-                            eventBus.postEvent(event);
-
-                        }
                     }
+                }
 
-                    @Override
-                    public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
-                        // Do things when connection is established
-                        //todo starta timer sen
-                    }
+                @Override
+                public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
+                    // Do things when connection is established
+                    //todo starta timer sen
+                    eventBus.postEvent(new ToServerEvent(new MsgConnectionEstablished()));
+                }
 
-                    @Override
-                    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
-                                               WebSocketFrame clientCloseFrame, boolean closedByServer) {
+                @Override
+                public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
+                                           WebSocketFrame clientCloseFrame, boolean closedByServer) {
 
-                        // Do things when disconnected from server
-                        //todo stoppa timer, skicka connectionlost
-                    }
-                });
-
-                connect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    // Do things when disconnected from server
+                    //todo stoppa timer, skicka connectionlost
+                    IServerMessage connectionLost = new MsgConnectionLost();
+                    eventBus.postEvent(new ToServerEvent(connectionLost));
+                    eventBus.postEvent(new ToClientEvent(connectionLost));
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
