@@ -136,7 +136,6 @@ public class LoginActivity extends BindingActivity {
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
                 List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
                 IChatroom myChatroom = chatrooms.get(0);
-
                 IServerMessage joinMessage = new MsgJoinRoom(myChatroom);
                 Event joinEvent = new ToServerEvent(joinMessage);
                 eventBus.postEvent(joinEvent);
@@ -147,6 +146,7 @@ public class LoginActivity extends BindingActivity {
                 intent.putExtra("Interest", client.getInterest());
                 startActivity(intent);
                 LoginActivity.this.finish();
+
             } else if (message instanceof MsgConnectionStatus){
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;
                 System.out.println("Got message status: " + connectionMessage.isConnected());
