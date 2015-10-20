@@ -1,5 +1,6 @@
 package com.busgen.bustalk.model.ServerMessages;
 
+import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.User;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by nalex on 16/10/2015.
  */
-public class MsgUsersInChat {
+public class MsgUsersInChat implements IServerMessage{
     private List<IUser> userList;
     private int chatId;
 

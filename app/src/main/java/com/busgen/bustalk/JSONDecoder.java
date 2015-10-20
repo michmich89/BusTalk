@@ -54,6 +54,7 @@ public class JSONDecoder {
                     IUser user = new User(userObject.getString("sender"), userObject.getString("interests"));
                     usersInChat.addUserToList(user);
                 }
+                serverMessage = usersInChat;
             }else if(type == MessageTypes.NEW_USER_IN_CHAT_NOTIFICATION) {
                 IUser user = new User(jsonObject.getString("sender"), jsonObject.getString("interests"));
                 serverMessage = new MsgNewUserInChat(user, jsonObject.getInt("chatId"));
