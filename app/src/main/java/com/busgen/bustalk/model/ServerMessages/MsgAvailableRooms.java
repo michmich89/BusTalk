@@ -23,7 +23,7 @@ public class MsgAvailableRooms implements IServerMessage{
         return roomList;
     }
 
-    public void addRoomToList(Chatroom chatroom){
+    public void addRoomToList(IChatroom chatroom){
         roomList.add(chatroom);
     }
 
