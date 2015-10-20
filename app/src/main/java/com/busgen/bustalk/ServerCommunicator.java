@@ -80,7 +80,9 @@ public class ServerCommunicator implements IEventBusListener {
                     @Override
                     public void onTextMessage(WebSocket websocket, String message) {
                         // Handle incoming messages (decode them and such)
+                        Log.d("MyTag", "" + "Receiving decodable(?) message from server...");
                         if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
+                            Log.d("MyTag", "" + "Receiving decodable message from server...");
                             IServerMessage serverMessage = jsonDecoder.decode(message);
                             Event event = new ToClientEvent(serverMessage);
                             eventBus.postEvent(event);
