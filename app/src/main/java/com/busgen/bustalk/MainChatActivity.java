@@ -15,6 +15,7 @@ import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.Client;
+import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
@@ -41,7 +42,7 @@ public class MainChatActivity extends BindingActivity {
     private ListView messageListView;
     private Button sendButton;
     private MessageAdapter messageAdapter;
-    private Chatroom myChatroom;
+    private IChatroom myChatroom;
     private MenuItem usersPresent;
     private String userName;
     private String interest;
@@ -63,9 +64,9 @@ public class MainChatActivity extends BindingActivity {
     private void initVariables(){
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
-        //myChatroom = (Chatroom) getIntent().getSerializableExtra("Chatroom");
+        myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
         //For testing
-        myChatroom = new Chatroom(1, "Mainchat");
+        //myChatroom = new Chatroom(1, "Mainchat");
     }
 
     private void initViews(){
@@ -87,6 +88,7 @@ public class MainChatActivity extends BindingActivity {
                     String date = DateFormat.getDateTimeInstance().format(new Date());
                     MsgChatMessage message = new MsgChatMessage(false, "" + "Det är bra, själv då? ^_^", date, "Kalle Jönsson", myChatroom.getChatID());
 
+                    Log.d("IdTag", "" + myChatroom.getChatID());
                     //Test 1 of receiving of messages
                     /*
                     Event event = new ToActivityEvent(message);
@@ -116,12 +118,13 @@ public class MainChatActivity extends BindingActivity {
         if (message.getNickname().equals(client.getUserName())) {
          */
 
-        if (client.getUserName().equals(message.getNickname())) {
+        if (message.getIsMe()) {
             Event event = new ToServerEvent(message);
             eventBus.postEvent(event);
             //For testing purposes, should be replaced with client.getChatroom().add... etc.
             myChatroom.addMessage(message);
         }
+
 
     }
 
