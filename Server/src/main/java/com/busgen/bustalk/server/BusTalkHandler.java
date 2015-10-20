@@ -57,6 +57,8 @@ public class BusTalkHandler {
      * @param session Session from which the UserMessage came from
      */
     public void handleInput(UserMessage userMessage, Session session){
+        logger.log(Level.INFO, String.format("Message received from client: {0}"),
+                new Object[]{userMessage.toString()});
         try {
             int type = userMessage.getInt("type");
             User user = userHandler.getUser(session);
