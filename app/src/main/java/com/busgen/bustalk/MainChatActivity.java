@@ -34,8 +34,6 @@ import com.busgen.bustalk.service.EventBus;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Random;
 
 public class MainChatActivity extends BindingActivity {
@@ -51,23 +49,16 @@ public class MainChatActivity extends BindingActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("HEJ");
         setContentView(R.layout.activity_main_chat);
         initVariables();
         initViews();
-
-
-        eventBus.register(this);
-
-        System.out.println("TAGGG4" + client);
+        //eventBus.register(this);
     }
 
     private void initVariables(){
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
         myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
-        //For testing
-        //myChatroom = new Chatroom(1, "Mainchat");
     }
 
     private void initViews(){
@@ -83,15 +74,11 @@ public class MainChatActivity extends BindingActivity {
             public void onClick(View v) {
                 String messageText = messageInputLine.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
-                    //For testing purposes, an empty messageInputLine now makes it seem like a
-                    //random message has been sent to the user
-                    Random rand = new Random();
+                    /*
                     String date = DateFormat.getDateTimeInstance().format(new Date());
-                    MsgChatMessage message = new MsgChatMessage(true, "Det är bra, själv då? ^_^", date, "", myChatroom.getChatID());
-
-                    /*Test 2 of receiving of messages
-                    Event event = new ToServerEvent(message);
-                    eventBus.postEvent(event);
+                    MsgChatMessage message = new MsgChatMessage(false, "Tjena ^_^", date, "rune", myChatroom.getChatID());
+                    Event testEvent = new ToActivityEvent(message);
+                    eventBus.postEvent(testEvent);
                     */
                     return;
                 }
@@ -115,10 +102,11 @@ public class MainChatActivity extends BindingActivity {
         System.out.println("displayTag " + message.getChatId());
         System.out.println("displayTag " + message.getIsMe());
         System.out.println("displayTag " + message.toString());
-        System.out.println("displayTag " + client.getUserName());
 
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
+        //messageListView.setAdapter(messageAdapter);
+        //messageListView.invalidateViews();
         //messageListView.setSelection(messageListView.getCount() - 1);
     }
 
@@ -147,11 +135,15 @@ public class MainChatActivity extends BindingActivity {
         IServerMessage message = event.getMessage();
         if (event instanceof ToActivityEvent) {
             if (message instanceof MsgChatMessage) {
-                MsgChatMessage chatMessage = (MsgChatMessage) message;
-                //if(!chatMessage.getIsMe()){
-                    Log.d("MyTag", "Inside onEvent of MainChatActivity");
-                    displayMessage(chatMessage);
-                //}
+                final MsgChatMessage chatMessage = (MsgChatMessage) message;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayMessage(chatMessage);
+                    }
+                });
+                //displayMessage(chatMessage);
+                myChatroom.addMessage(chatMessage);
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {
