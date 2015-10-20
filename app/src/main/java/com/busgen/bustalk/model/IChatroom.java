@@ -2,13 +2,14 @@ package com.busgen.bustalk.model;
 
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Interface representing a Chatroom.
  */
-public interface IChatroom {
+public interface IChatroom extends Serializable{
 
     int getChatID();
 

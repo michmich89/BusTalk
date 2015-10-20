@@ -32,11 +32,18 @@ public class Client implements IClient, IEventBusListener {
     private EventBus eventBus;
     private String groupId;
 
-    public Client(){
+    private static Client client = null;
+
+    private Client(){
         this.user = new User();
         eventBus = EventBus.getInstance();
         groupId = "1";
+    }
 
+    public static Client getInstance(){
+        if(client == null){
+            client = new Client();
+        }return client;
     }
 
     @Override
@@ -139,6 +146,7 @@ public class Client implements IClient, IEventBusListener {
                 chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
+                Log.d("MyTag", "event posted, on its way to mainchatactivity");
             } else if(message == null){
                 Log.d("MyTag", "null message");
             }
@@ -179,6 +187,8 @@ public class Client implements IClient, IEventBusListener {
             } else if (message instanceof MsgAvailableRooms) {
                 chatrooms = ((MsgAvailableRooms) message).getRoomList();
                 Log.d("MyTag", "chatrooms blabla");
+                Event newEvent = new ToActivityEvent(message);
+                eventBus.postEvent(newEvent);
                 //Log.d("MyTag", "" + chatrooms.size());
             }
         }
