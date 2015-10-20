@@ -137,7 +137,6 @@ public class ServerCommunicator implements IEventBusListener {
                         IServerMessage serverMessage = jsonDecoder.decode(message);
                         Event event = new ToClientEvent(serverMessage);
                         eventBus.postEvent(event);
-
                     }
                 }
 

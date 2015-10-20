@@ -82,18 +82,7 @@ public class LoginActivity extends BindingActivity {
                         }
                     });*/
                 progress.show();
-<<<<<<< bf462fc1d6bbad17e30f36d32fcf0ac19a343d8b
-                eventBus.postEvent(new ToServerEvent(new MsgConnectToServer()));
-                //For testing purposes
-                /*
-                Chatroom testChatroom = new Chatroom(10, "Mainchat");
-                MsgAvailableRooms testMessage = new MsgAvailableRooms("1");
-                testMessage.addRoomToList(testChatroom);
-                Event testEvent = new ToActivityEvent(testMessage);
-                onEvent(testEvent);
-                */
-=======
->>>>>>> Cleaned up Activities a bit
+
             }
         });
     }
@@ -147,22 +136,17 @@ public class LoginActivity extends BindingActivity {
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
                 List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
                 IChatroom myChatroom = chatrooms.get(0);
-<<<<<<< 21bac057cb9d370e2c3152fe84fd28a34769926b
-=======
+
                 IServerMessage joinMessage = new MsgJoinRoom(myChatroom);
                 Event joinEvent = new ToServerEvent(joinMessage);
                 eventBus.postEvent(joinEvent);
 
->>>>>>> Continued on testbranch
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("Chatroom", myChatroom);
                 intent.putExtra("Username", client.getUserName());
                 intent.putExtra("Interest", client.getInterest());
                 startActivity(intent);
                 LoginActivity.this.finish();
-<<<<<<< bf462fc1d6bbad17e30f36d32fcf0ac19a343d8b
-
-<<<<<<< 21bac057cb9d370e2c3152fe84fd28a34769926b
             } else if (message instanceof MsgConnectionStatus){
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;
                 System.out.println("Got message status: " + connectionMessage.isConnected());
@@ -183,21 +167,6 @@ public class LoginActivity extends BindingActivity {
                     Event nameEvent = new ToServerEvent(serverMessage);
                     eventBus.postEvent(nameEvent);
                 }
-
-
-=======
-                /*
->>>>>>> Continued on testbranch
-                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                intent.putExtra("Username", client.getUserName());
-                intent.putExtra("Interest", client.getInterest());
-                Log.d("MyTag", "Trying to start Mainchatactivity");
-                progress.dismiss();
-                startActivity(intent);
-                LoginActivity.this.finish();
-                */
-=======
->>>>>>> Cleaned up Activities a bit
             }
         }
     }
