@@ -1,5 +1,6 @@
 package com.busgen.bustalk;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class LoginActivity extends BindingActivity {
     private Toast testToast;
     private String interest;
     private String userName;
+    ProgressDialog progress;
     //private Client client;
 
     @Override
@@ -76,6 +78,10 @@ public class LoginActivity extends BindingActivity {
                 IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
                 Event event = new ToServerEvent(serverMessage);
                 eventBus.postEvent(event);
+                progress = new ProgressDialog(this);
+                progress.setTitle("Loading");
+                progress.setMessage("Wait while loading...");
+                progress.show();
 
                 //For testing purposes
                 /*
@@ -144,11 +150,13 @@ public class LoginActivity extends BindingActivity {
                     intent.putExtra("Username", client.getUserName());
                     intent.putExtra("Interest", client.getInterest());
                     Log.d("MyTag", "Trying to start Mainchatactivity");
+                    progress.dismiss();
                     startActivity(intent);
                     LoginActivity.this.finish();
 
                 } else{
                     Log.d("MyTag", "Tried to start Mainchatactivity");
+                    progress.dismiss();
                     //Make a toast of unavailability, reset input field
                 }
             } else if (message instanceof MsgAvailableRooms) {
