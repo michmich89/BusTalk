@@ -134,8 +134,11 @@ public class Client implements IClient, IEventBusListener {
             Log.d("MyTag", "Client received some sort of event");
             Log.d("MyTag", "message type: ");
             if (message instanceof MsgChatMessage) {
-
-
+                MsgChatMessage chatMessage = (MsgChatMessage) message;
+                chatMessage.setMe(false);
+                chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
+                Event newEvent = new ToActivityEvent(message);
+                eventBus.postEvent(newEvent);
             } else if(message == null){
                 Log.d("MyTag", "null message");
             }
