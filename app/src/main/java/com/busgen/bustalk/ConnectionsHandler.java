@@ -4,11 +4,13 @@ import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
+import com.busgen.bustalk.events.ToPlatformEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
+import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.service.EventBus;
 
 import java.util.Timer;
@@ -42,6 +44,7 @@ public class ConnectionsHandler implements IEventBusListener{
         timerTask = new TimerTask() {
             @Override
             public void run() {
+                sendNextStopData();
                 if (getConnectionStatus()) {
                     //String wifiName = wifiController.getWifiName();
                     //String nextStop = platformCom.getNextStopData(wifiName);
@@ -60,8 +63,8 @@ public class ConnectionsHandler implements IEventBusListener{
                 eventBus.postEvent(new ToClientEvent(new MsgConnectionLost()));
             }
 
-            private void sendNextStopData(String nextStop) {
-                eventBus.postEvent(new ToActivityEvent(new MsgPlatformData(nextStop)));
+            private void sendNextStopData() {
+                eventBus.postEvent(new ToPlatformEvent(new MsgPlatformDataRequest()));
             }
         };
     }
