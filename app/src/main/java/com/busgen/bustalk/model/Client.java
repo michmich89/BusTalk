@@ -134,62 +134,41 @@ public class Client implements IClient, IEventBusListener {
 
     @Override
     public void onEvent(Event event) {
-
         IServerMessage message = event.getMessage();
 
         if (event instanceof ToClientEvent) {
-            Log.d("MyTag", "Client received some sort of event");
-            Log.d("MyTag", "message type: ");
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                //chatMessage.setMe(false);
-                chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
-                Event newEvent = new ToActivityEvent(chatMessage);
-                eventBus.postEvent(newEvent);
-                Log.d("MyTag", "event posted, on its way to mainchatactivity");
-            } else if(message == null){
-                Log.d("MyTag", "null message");
-            }
-
-            else if (message instanceof MsgChooseNickname) {
-                Log.d("MyTag", "1");
+                if(!chatMessage.getNickname().equals(getUserName())){
+                    chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
+                    Event newEvent = new ToActivityEvent(chatMessage);
+                    eventBus.postEvent(newEvent);
+                }
+            } else if (message instanceof MsgChooseNickname) {
                 /*
                 sets username and alerts activities about it
                  */
                 setUserName(((MsgChooseNickname) message).getNickname());
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
-
             } else if (message instanceof MsgCreateRoom) {
-                Log.d("MyTag", "2");
             } else if (message instanceof MsgJoinRoom) {
-                Log.d("MyTag", "3");
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
                 chatrooms.add(chatroom);
-
             } else if (message instanceof MsgLeaveRoom) {
-                Log.d("MyTag", "4");
             } else if (message instanceof MsgLostChatRoom) {
-                Log.d("MyTag", "5");
             } else if (message instanceof MsgLostUserInChat) {
-                Log.d("MyTag", "6");
             } else if (message instanceof MsgNewChatRoom) {
-                Log.d("MyTag", "7");
             } else if (message instanceof MsgNewUserInChat) {
-                Log.d("MyTag", "8");
             } else if (message instanceof MsgNicknameAvailable) {
                 Log.d("MyTag", "9");
                 Log.d("MyTag", "Sending availability info to activity");
                 Event newEvent = new ToActivityEvent(message);
-
                 eventBus.postEvent(newEvent);
-
             } else if (message instanceof MsgAvailableRooms) {
                 chatrooms = ((MsgAvailableRooms) message).getRoomList();
-                Log.d("MyTag", "chatrooms blabla");
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
-                //Log.d("MyTag", "" + chatrooms.size());
             }
         }
     }

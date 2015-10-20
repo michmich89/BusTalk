@@ -86,15 +86,7 @@ public class MainChatActivity extends BindingActivity {
                     //random message has been sent to the user
                     Random rand = new Random();
                     String date = DateFormat.getDateTimeInstance().format(new Date());
-                    MsgChatMessage message = new MsgChatMessage(true, "Det är bra, själv då? ^_^", date, userName, myChatroom.getChatID());
-
-                    Log.d("IdTag", "" + myChatroom.getChatID());
-                    //Test 1 of receiving of messages
-                    /*
-                    Event event = new ToActivityEvent(message);
-                    onEvent(event);
-                    return;
-                    */
+                    MsgChatMessage message = new MsgChatMessage(true, "Det är bra, själv då? ^_^", date, "", myChatroom.getChatID());
 
                     //Test 2 of receiving of messages
                     Event event = new ToServerEvent(message);
@@ -107,6 +99,7 @@ public class MainChatActivity extends BindingActivity {
 
                 messageInputLine.setText("");
                 displayMessage(message);
+                myChatroom.addMessage(message);
 
                 Event event = new ToServerEvent(message);
                 eventBus.postEvent(event);
@@ -121,6 +114,8 @@ public class MainChatActivity extends BindingActivity {
         System.out.println("displayTag " + message.getChatId());
         System.out.println("displayTag " + message.getIsMe());
         System.out.println("displayTag " + message.toString());
+        System.out.println("displayTag " + client.getUserName());
+
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
         //messageListView.setSelection(messageListView.getCount() - 1);

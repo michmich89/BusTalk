@@ -58,19 +58,12 @@ public class LoginActivity extends BindingActivity {
     private String interest;
     private String userName;
     ProgressDialog progress;
-    //private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         startService(new Intent(this, MainService.class));
-//        client = mainService.getClient();
-
-        /*String groupId = "1";
-        IServerMessage serverMessage = new MsgSetGroupId(groupId);
-        Event event = new ToServerEvent(serverMessage);
-        eventBus.postEvent(event);*/
 
         initViews();
 
@@ -89,6 +82,7 @@ public class LoginActivity extends BindingActivity {
                         }
                     });*/
                 progress.show();
+<<<<<<< bf462fc1d6bbad17e30f36d32fcf0ac19a343d8b
                 eventBus.postEvent(new ToServerEvent(new MsgConnectToServer()));
                 //For testing purposes
                 /*
@@ -98,6 +92,8 @@ public class LoginActivity extends BindingActivity {
                 Event testEvent = new ToActivityEvent(testMessage);
                 onEvent(testEvent);
                 */
+=======
+>>>>>>> Cleaned up Activities a bit
             }
         });
     }
@@ -117,24 +113,10 @@ public class LoginActivity extends BindingActivity {
         IServerMessage message = event.getMessage();
 
         if (event instanceof ToActivityEvent) {
-            Log.d("MyTag", "Activity received some sort of event");
             if (message instanceof MsgChatMessage) {
             } else if (message instanceof MsgChooseNickname) {
-               /* testToast = Toast.makeText(LoginActivity.this, "The chosen username is: " + ((MsgChooseNickname) message).getNickname(),
-                        Toast.LENGTH_SHORT);
-                testToast.show();*/
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
-                /*
-                MsgJoinRoom joinRoomMessage = (MsgJoinRoom) message;
-                Chatroom myChatroom = (Chatroom) joinRoomMessage.getChatroom();
-                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                intent.putExtra("Chatroom", myChatroom);
-                intent.putExtra("Username", client.getUserName());
-                intent.putExtra("Interest", client.getInterest());
-                startActivity(intent);
-                LoginActivity.this.finish();
-                */
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
@@ -154,19 +136,7 @@ public class LoginActivity extends BindingActivity {
                     serverMessage = new MsgAvailableRoomsRequest();
                     Event requestEvent = new ToServerEvent(serverMessage);
                     eventBus.postEvent(requestEvent);
-
-                    /*
-                    Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                    intent.putExtra("Username", client.getUserName());
-                    intent.putExtra("Interest", client.getInterest());
-                    Log.d("MyTag", "Trying to start Mainchatactivity");
-                    progress.dismiss();
-                    startActivity(intent);
-                    LoginActivity.this.finish();
-                    */
-
                 } else{
-                    Log.d("MyTag", "Tried to start Mainchatactivity");
                     progress.dismiss();
                     nameUnavailableToast.show();
                     userNameInput.setText("");
@@ -174,7 +144,6 @@ public class LoginActivity extends BindingActivity {
 
                 }
             } else if (message instanceof MsgAvailableRooms) {
-                Log.d("MyTag", "Final stage");
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
                 List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
                 IChatroom myChatroom = chatrooms.get(0);
@@ -191,6 +160,7 @@ public class LoginActivity extends BindingActivity {
                 intent.putExtra("Interest", client.getInterest());
                 startActivity(intent);
                 LoginActivity.this.finish();
+<<<<<<< bf462fc1d6bbad17e30f36d32fcf0ac19a343d8b
 
 <<<<<<< 21bac057cb9d370e2c3152fe84fd28a34769926b
             } else if (message instanceof MsgConnectionStatus){
@@ -226,6 +196,8 @@ public class LoginActivity extends BindingActivity {
                 startActivity(intent);
                 LoginActivity.this.finish();
                 */
+=======
+>>>>>>> Cleaned up Activities a bit
             }
         }
     }

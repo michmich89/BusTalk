@@ -8,14 +8,11 @@ import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
-<<<<<<< 21bac057cb9d370e2c3152fe84fd28a34769926b
 import com.busgen.bustalk.model.ServerMessages.MsgConnectToServer;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
-=======
 import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
->>>>>>> Continued on testbranch
 import com.busgen.bustalk.service.EventBus;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
