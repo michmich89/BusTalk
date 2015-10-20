@@ -86,7 +86,7 @@ public class MainChatActivity extends BindingActivity {
                     //random message has been sent to the user
                     Random rand = new Random();
                     String date = DateFormat.getDateTimeInstance().format(new Date());
-                    MsgChatMessage message = new MsgChatMessage(false, "" + "Det är bra, själv då? ^_^", date, "Kalle Jönsson", myChatroom.getChatID());
+                    MsgChatMessage message = new MsgChatMessage(true, "Det är bra, själv då? ^_^", date, userName, myChatroom.getChatID());
 
                     Log.d("IdTag", "" + myChatroom.getChatID());
                     //Test 1 of receiving of messages
@@ -103,27 +103,39 @@ public class MainChatActivity extends BindingActivity {
                     return;
                 }
                 String date = DateFormat.getDateTimeInstance().format(new Date());
-                MsgChatMessage message = new MsgChatMessage(true, messageText, date, userName, 1);
+                MsgChatMessage message = new MsgChatMessage(true, messageText, date, userName, myChatroom.getChatID());
 
                 messageInputLine.setText("");
                 displayMessage(message);
+
+                Event event = new ToServerEvent(message);
+                eventBus.postEvent(event);
             }
         });
     }
 
     public void displayMessage(MsgChatMessage message) {
+        System.out.println("displayTag " + message.getNickname());
+        System.out.println("displayTag " + message.getDate());
+        System.out.println("displayTag " + message.getMessage());
+        System.out.println("displayTag " + message.getChatId());
+        System.out.println("displayTag " + message.getIsMe());
+        System.out.println("displayTag " + message.toString());
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
+        //messageListView.setSelection(messageListView.getCount() - 1);
         /*This should be used, commented out for the moment
         if (message.getNickname().equals(client.getUserName())) {
          */
 
+        /*
         if (message.getIsMe()) {
             Event event = new ToServerEvent(message);
             eventBus.postEvent(event);
             //For testing purposes, should be replaced with client.getChatroom().add... etc.
             myChatroom.addMessage(message);
         }
+        */
 
 
     }
@@ -154,10 +166,10 @@ public class MainChatActivity extends BindingActivity {
         if (event instanceof ToActivityEvent) {
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                if(!chatMessage.getIsMe()){
+                //if(!chatMessage.getIsMe()){
                     Log.d("MyTag", "Inside onEvent of MainChatActivity");
                     displayMessage(chatMessage);
-                }
+                //}
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {

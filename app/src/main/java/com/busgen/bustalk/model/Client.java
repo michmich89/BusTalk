@@ -142,7 +142,7 @@ public class Client implements IClient, IEventBusListener {
             Log.d("MyTag", "message type: ");
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                chatMessage.setMe(false);
+                //chatMessage.setMe(false);
                 chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
                 Event newEvent = new ToActivityEvent(chatMessage);
                 eventBus.postEvent(newEvent);
