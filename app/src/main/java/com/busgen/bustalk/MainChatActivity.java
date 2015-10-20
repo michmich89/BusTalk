@@ -50,13 +50,15 @@ public class MainChatActivity extends BindingActivity {
         initVariables();
         initViews();
 
-        EventBus.getInstance().register(this);
+        eventBus.register(this);
     }
 
     private void initVariables(){
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
-        myChatroom = (Chatroom) getIntent().getSerializableExtra("Chatroom");
+        //myChatroom = (Chatroom) getIntent().getSerializableExtra("Chatroom");
+        //For testing
+        myChatroom = new Chatroom(1, "Mainchat");
     }
 
     private void initViews(){
@@ -78,10 +80,6 @@ public class MainChatActivity extends BindingActivity {
                     String date = DateFormat.getDateTimeInstance().format(new Date());
                     MsgChatMessage message = new MsgChatMessage(false, "" + rand.nextInt(1000), date, "Börje Plåt", myChatroom.getChatID());
 
-                    /**Old way that worked without problems, remove later
-                    displayMessage(message);
-                    return;
-                     */
                     Event event = new ToActivityEvent(message);
                     onEvent(event);
                     return;
@@ -98,16 +96,12 @@ public class MainChatActivity extends BindingActivity {
     public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
-        if (message.getIsMe()) {
+        if (message.getNickname().equals(client.getUserName())) {
             Event event = new ToServerEvent(message);
             eventBus.postEvent(event);
+            //For testing purposes, should be replaced with client.getChatroom().add... etc.
+            myChatroom.addMessage(message);
         }
-        /** Maybe not relevant anymore
-         //If the user sent the message, then put the message in the Chatroom-object
-         if(message.getIsMe()){
-         client.addMessageToChatroom(message);
-         }
-         */
     }
 
     //Makes it seem like there has already been messages sent when the app launches
@@ -139,7 +133,6 @@ public class MainChatActivity extends BindingActivity {
                 if(!chatMessage.getIsMe()){
                     displayMessage(chatMessage);
                 }
-            } else if (message instanceof MsgChooseNickname) {
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {
@@ -147,12 +140,10 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLostUserInChat) {
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
-            } else if (message instanceof MsgNicknameAvailable) {
             }
         }
     }
 
-    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -160,5 +151,5 @@ public class MainChatActivity extends BindingActivity {
         this.usersPresent = menu.findItem(R.id.action_users);
         this.usersPresent.setTitle("" + myChatroom.getNbrOfUsers());
         return true;
-    }*/
+    }
 }
