@@ -89,10 +89,10 @@ public class MainChatActivity extends BindingActivity {
                     String date = DateFormat.getDateTimeInstance().format(new Date());
                     MsgChatMessage message = new MsgChatMessage(true, "Det är bra, själv då? ^_^", date, "", myChatroom.getChatID());
 
-                    //Test 2 of receiving of messages
+                    /*Test 2 of receiving of messages
                     Event event = new ToServerEvent(message);
                     eventBus.postEvent(event);
-
+                    */
                     return;
                 }
                 String date = DateFormat.getDateTimeInstance().format(new Date());
