@@ -49,11 +49,15 @@ public class MainChatActivity extends BindingActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("HEJ");
         setContentView(R.layout.activity_main_chat);
         initVariables();
         initViews();
 
+
         eventBus.register(this);
+
+        System.out.println("TAGGG4" + client);
     }
 
     private void initVariables(){
@@ -70,7 +74,7 @@ public class MainChatActivity extends BindingActivity {
         sendButton = (Button) findViewById(R.id.send_button);
         messageAdapter = new MessageAdapter(MainChatActivity.this, new ArrayList<MsgChatMessage>());
         messageListView.setAdapter(messageAdapter);
-        loadDummyHistory();
+        //loadDummyHistory();
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +85,7 @@ public class MainChatActivity extends BindingActivity {
                     //random message has been sent to the user
                     Random rand = new Random();
                     String date = DateFormat.getDateTimeInstance().format(new Date());
-                    MsgChatMessage message = new MsgChatMessage(false, "" + rand.nextInt(1000), date, "Börje Plåt", myChatroom.getChatID());
+                    MsgChatMessage message = new MsgChatMessage(false, "" + "Det är bra, själv då? ^_^", date, "Kalle Jönsson", myChatroom.getChatID());
 
                     //Test 1 of receiving of messages
                     /*
@@ -91,8 +95,9 @@ public class MainChatActivity extends BindingActivity {
                     */
 
                     //Test 2 of receiving of messages
-                    Event event = new ToActivityEvent(message);
+                    Event event = new ToServerEvent(message);
                     eventBus.postEvent(event);
+
                     return;
                 }
                 String date = DateFormat.getDateTimeInstance().format(new Date());
@@ -110,24 +115,26 @@ public class MainChatActivity extends BindingActivity {
         /*This should be used, commented out for the moment
         if (message.getNickname().equals(client.getUserName())) {
          */
-        if (message.getNickname().equals(client.getUserName())) {
+
+        if (client.getUserName().equals(message.getNickname())) {
             Event event = new ToServerEvent(message);
             eventBus.postEvent(event);
             //For testing purposes, should be replaced with client.getChatroom().add... etc.
             myChatroom.addMessage(message);
         }
+
     }
 
     //Makes it seem like there has already been messages sent when the app launches
     private void loadDummyHistory(){
         ArrayList<MsgChatMessage> messageHistory = new ArrayList<MsgChatMessage>();
 
-        String messageText1 = "YO! bla bla bla bla bla bla bla bla bla bla blabla bla bla";
+        String messageText1 = "Tjena mannen! Hur är läget? xD";
         String date1 = DateFormat.getDateTimeInstance().format(new Date());
-        MsgChatMessage dummyMessage1 = new MsgChatMessage(false, messageText1, date1, "Börje Plåt", 1);
+        MsgChatMessage dummyMessage1 = new MsgChatMessage(false, messageText1, date1, "Kalle Jönsson", 1);
         messageHistory.add(dummyMessage1);
 
-        String messageText2 = "Wadup bro!";
+        String messageText2 = "Hallå där!";
         String date2 = DateFormat.getDateTimeInstance().format(new Date());
         MsgChatMessage dummyMessage2 = new MsgChatMessage(true, messageText2, date2, userName, 1);
         messageHistory.add(dummyMessage2);
@@ -145,6 +152,7 @@ public class MainChatActivity extends BindingActivity {
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
                 if(!chatMessage.getIsMe()){
+                    Log.d("MyTag", "Inside onEvent of MainChatActivity");
                     displayMessage(chatMessage);
                 }
             } else if (message instanceof MsgCreateRoom) {

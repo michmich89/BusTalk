@@ -21,6 +21,7 @@ import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.Client;
+import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
@@ -44,6 +45,7 @@ import com.busgen.bustalk.service.EventBus;
 import com.busgen.bustalk.service.MainService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends BindingActivity {
     private EditText userNameInput;
@@ -153,6 +155,7 @@ public class LoginActivity extends BindingActivity {
                     Event requestEvent = new ToServerEvent(serverMessage);
                     eventBus.postEvent(requestEvent);
 
+                    /*
                     Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                     intent.putExtra("Username", client.getUserName());
                     intent.putExtra("Interest", client.getInterest());
@@ -160,6 +163,7 @@ public class LoginActivity extends BindingActivity {
                     progress.dismiss();
                     startActivity(intent);
                     LoginActivity.this.finish();
+                    */
 
                 } else{
                     Log.d("MyTag", "Tried to start Mainchatactivity");
@@ -170,17 +174,17 @@ public class LoginActivity extends BindingActivity {
 
                 }
             } else if (message instanceof MsgAvailableRooms) {
-                /*
+                Log.d("MyTag", "Final stage");
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
-                ArrayList<Chatroom> chatrooms = availableRoomsMesssage.getRoomList();
-                Chatroom myChatroom = chatrooms.get(0);
+                List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
+                IChatroom myChatroom = chatrooms.get(0);
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("Chatroom", myChatroom);
                 intent.putExtra("Username", client.getUserName());
                 intent.putExtra("Interest", client.getInterest());
                 startActivity(intent);
                 LoginActivity.this.finish();
-                */
+
             } else if (message instanceof MsgConnectionStatus){
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;
                 System.out.println("Got message status: " + connectionMessage.isConnected());
@@ -201,6 +205,15 @@ public class LoginActivity extends BindingActivity {
                     Event nameEvent = new ToServerEvent(serverMessage);
                     eventBus.postEvent(nameEvent);
                 }
+
+
+                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+                intent.putExtra("Username", client.getUserName());
+                intent.putExtra("Interest", client.getInterest());
+                Log.d("MyTag", "Trying to start Mainchatactivity");
+                progress.dismiss();
+                startActivity(intent);
+                LoginActivity.this.finish();
             }
         }
     }
