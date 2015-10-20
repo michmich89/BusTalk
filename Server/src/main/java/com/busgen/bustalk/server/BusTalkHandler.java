@@ -71,6 +71,8 @@ public class BusTalkHandler {
 
                 switch(type){
                 case MessageType.CHAT_MESSAGE:
+                    logger.log(Level.INFO, String.format("[{0}:{1}] Got message: {2}"),
+                            new Object[]{session.getId(), user.getName(), userMessage.toString()});
                     sendChatMessage(userMessage, session);
                     break;
 
@@ -153,6 +155,9 @@ public class BusTalkHandler {
 
         if (chatroom.getChatroomUsers().contains(sender)) {
             messageSender.chatMessage(sender, chatroom, message);
+        } else {
+            logger.log(Level.INFO, String.format("[{0}:{1}] Could not send message to chat. User is not in chat room!"),
+                    new Object[]{session.getId(), sender.getName()});
         }
     }
 

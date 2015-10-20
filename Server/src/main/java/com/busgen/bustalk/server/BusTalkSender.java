@@ -180,17 +180,22 @@ public class BusTalkSender {
         jsonObject.put("isMe", false);
 
 
+
         System.out.println(chatroom.getChatroomUsers().toString());
         for (User u : chatroom.getChatroomUsers()) {
             if (!u.equals(sender)) {
                 Session s = userHandler.getSession(u);
                 s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
+                LOGGER.log(Level.INFO, String.format("Sent message to {0}: {1}"),
+                        new Object[]{u.getName(), jsonObject.toString()});
             }
         }
 
         jsonObject.put("isMe", true);
         Session session = userHandler.getSession(sender);
         session.getAsyncRemote().sendObject(new UserMessage(jsonObject));
+        LOGGER.log(Level.INFO, String.format("Sent message to {0}: {1}"),
+                new Object[]{sender.getName(), jsonObject.toString()});
     }
 
     /**
