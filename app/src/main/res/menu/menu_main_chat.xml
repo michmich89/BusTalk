@@ -11,6 +11,7 @@
     <item
         android:id="@+id/action_users"
         android:title="0"
+        android:visible="false"
         android:orderInCategory="1"
         app:showAsAction="ifRoom" />
 </menu>
