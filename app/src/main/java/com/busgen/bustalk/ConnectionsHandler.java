@@ -40,7 +40,7 @@ public class ConnectionsHandler implements IEventBusListener{
         eventBus.register(serverCom);
         eventBus.register(platformCom);
 
-        timer = new Timer("wifiCheck");
+        //timer = new Timer("wifiCheck");
         timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -71,7 +71,8 @@ public class ConnectionsHandler implements IEventBusListener{
     }
 
     private void startTimer() {
-        timer.scheduleAtFixedRate(timerTask, 5000, 15000);
+        this.timer = new Timer("wifiCheck");
+        timer.scheduleAtFixedRate(timerTask, 0, 15000);
     }
 
     private void stopTimer() {
@@ -83,8 +84,10 @@ public class ConnectionsHandler implements IEventBusListener{
         if (e instanceof ToServerEvent) {
             IServerMessage message = e.getMessage();
             if (message instanceof MsgConnectionEstablished) {
+                System.out.println("CONNECTION ESTABLISHED");
                 startTimer();
             } else if (message instanceof MsgConnectionLost) {
+                System.out.println("CONNECTION LOST");
                 stopTimer();
             }
         }

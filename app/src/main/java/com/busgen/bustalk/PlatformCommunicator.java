@@ -81,7 +81,7 @@ public class PlatformCommunicator implements IEventBusListener {
 
         JSONObject platformData = null;
         long endTime = System.currentTimeMillis();
-        long durationTime = SECOND * 30l;
+        long durationTime = SECOND * 60l;
         long startTime = endTime - durationTime;
 
         //Todo fixa wifi mac-address antagligen till wifi objekt och hämta rätt bussid
@@ -151,7 +151,7 @@ public class PlatformCommunicator implements IEventBusListener {
         }
         //todo hantera null om servern inte skickar meddelande
         if (busStop == null){
-            busStop = "Nästa hållplats ej tillgänglig";
+            busStop = "NisseTerminalen";
         }
         return busStop;
     }
