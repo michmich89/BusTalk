@@ -70,7 +70,7 @@ public class ChatroomHandlerTest {
     @Test
     public void testIfServerCreatedChatroomsAreNotDeletedWhenLastUserLeaves() {
         int chatId = 0;
-        chatroomHandler.createChatroom("server chat", chatId, "testGroup");
+        //chatroomHandler.createChatroom("server chat", chatId, "testGroup");
         Chatroom newChatroom = chatroomHandler.getChatroom(chatId);
         chatroomHandler.joinChatroom(user, newChatroom);
         chatroomHandler.leaveChatroom(user, newChatroom);

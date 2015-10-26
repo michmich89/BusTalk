@@ -66,28 +66,6 @@ public class ChatroomHandler {
     }
 
     /**
-     * Creates a chatroom with a group ID (Used for testing purpose?)
-     *
-     * @param name The name/title of the chatroom
-     * @param chatId The specific ID of the chatroom
-     * @param groupId The specific group ID
-     */
-    public void createChatroom(String name, int chatId, String groupId) {
-        Chatroom chatroom = chatroomFactory.createChatroom(name, chatId);
-        if (chatroom != null) {
-            idToChatroom.put(chatroom.getIdNbr(), chatroom);
-            List<Chatroom> listChatroom= groupToListOfChatrooms.get(groupId);
-            if(listChatroom == null){
-                ArrayList<Chatroom> tempList = new ArrayList<Chatroom>();
-                tempList.add(chatroom);
-                groupToListOfChatrooms.put(groupId, tempList);
-            }else{
-                listChatroom.add(chatroom);
-            }
-        }
-    }
-
-    /**
      * Checks if a user is in a chatroom
      *
      * @param user
@@ -122,6 +100,7 @@ public class ChatroomHandler {
                 new Object[]{userHandler.getSession(user).getId(), chatroom.getTitle(), chatroom.getIdNbr()});
         if(chatroom.getChatroomUsers().isEmpty() && chatroom.getIdNbr() > Constants.NBR_OF_RESERVED_CHAT_IDS - 1){
             deleteChatroom(chatroom.getIdNbr(), user.getGroupId());
+
         }
     }
 
@@ -130,7 +109,6 @@ public class ChatroomHandler {
         Chatroom chatroom = idToChatroom.get(chatId);
         idToChatroom.remove(chatId);
         groupToListOfChatrooms.get(groupId).remove(chatroom);
-
         LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
     }
 
@@ -143,7 +121,7 @@ public class ChatroomHandler {
 
     /**
      *
-     * @param chatId The ID number of the chatroom a user list is requested
+     * @param chatroom The chatroom for which a user list is requested
      * @return A list of users in the room
      */
     public List<User> getListOfUsersInChatroom(Chatroom chatroom) {
@@ -166,4 +144,32 @@ public class ChatroomHandler {
         return groupToListOfChatrooms.get(groupId);
     }
 
+
+    public void createMainChatroom(String groupId){
+        try{
+            Chatroom chatroom = chatroomFactory.createMainChatroom(groupId);
+            ArrayList<Chatroom> chatroomList = new ArrayList<Chatroom>();
+            chatroomList.add(chatroom);
+            idToChatroom.put(chatroom.getIdNbr(), chatroom);
+            groupToListOfChatrooms.put(groupId, chatroomList);
+
+            LOGGER.log(Level.INFO, String.format("Main chatroom with title {0} and group ID {1} was created with ID-number {2}"),
+                    new Object[]{chatroom.getTitle(), groupId, chatroom.getIdNbr()});
+        }catch(ChatIdNbrFullException e){
+            e.printStackTrace();
+            /*
+            TODO: Some actual exception handling...
+             */
+        }
+    }
+
+    public void removeGroup(String groupId){
+        List<Chatroom> chatroomsToRemove = new ArrayList<Chatroom>(groupToListOfChatrooms.get(groupId));
+        for(Chatroom c : chatroomsToRemove){
+            deleteChatroom(c.getIdNbr(), groupId);
+        }
+        groupToListOfChatrooms.remove(groupId);
+        LOGGER.log(Level.INFO, String.format("Group {0} was deleted"), groupId);
+
+    }
 }

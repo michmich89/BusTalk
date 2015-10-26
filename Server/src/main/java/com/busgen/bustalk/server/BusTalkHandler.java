@@ -42,11 +42,11 @@ public class BusTalkHandler {
         this.messageSender = new BusTalkSender();
 
 
-        this.chatroomHandler.createChatroom("test1", 0, "1");
-        this.chatroomHandler.createChatroom("test2", 1, "2");
-        this.chatroomHandler.createChatroom("test3", 2, "3");
-        this.chatroomHandler.createChatroom("test4", 3, "4");
-        this.chatroomHandler.createChatroom("test5", 4, "5");
+//        this.chatroomHandler.createChatroom("test1", 0, "1");
+//        this.chatroomHandler.createChatroom("test2", 1, "2");
+//        this.chatroomHandler.createChatroom("test3", 2, "3");
+//        this.chatroomHandler.createChatroom("test4", 3, "4");
+//        this.chatroomHandler.createChatroom("test5", 4, "5");
 
     }
 
@@ -123,14 +123,25 @@ public class BusTalkHandler {
                     break;
 
                 case MessageType.CHANGE_GROUP_ID: {
+                    String oldIdNbr = user.getGroupId();
                     String id = userMessage.getString("groupId");
-                    if(user.getGroupId() == null || !user.getGroupId().equalsIgnoreCase(id)) {
-                        user.setGroupId(id);
+                    if(user.getGroupId() == null || !user.getGroupId().equals(id)) {
+
                         logger.log(Level.INFO, String.format("[{0}:{1}] Group ID changed to {2}"),
                                 new Object[]{session.getId(), user.getName(), user.getGroupId()});
 
                         for (Chatroom c : user.getCurrentChatrooms()) {
                             leaveRoom(user, c);
+                        }
+                        user.setGroupId(id);
+                        if(chatroomHandler.getGroupOfChatrooms(id) == null ||
+                                chatroomHandler.getGroupOfChatrooms(id).isEmpty()) {
+
+                            chatroomHandler.createMainChatroom(id);
+
+                        }
+                        if(oldIdNbr != null) {
+                            removeGroupIfNeeded(oldIdNbr);
                         }
                     }
                     break;
@@ -176,6 +187,7 @@ public class BusTalkHandler {
             leaveRoom(user, c);
         }
         userHandler.removeUser(user);
+        removeGroupIfNeeded(user.getGroupId());
     }
 
     private boolean canJoinRoom(User user, Chatroom chatroom){
@@ -207,4 +219,14 @@ public class BusTalkHandler {
             }
         }
     }
+
+    private void removeGroupIfNeeded(String groupId){
+        for(User u : userHandler.getUsers()){
+            if (u.getGroupId().equals(groupId)){
+                return;
+            }
+        }
+        chatroomHandler.removeGroup(groupId);
+    }
+
 }

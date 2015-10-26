@@ -7,6 +7,6 @@ package com.busgen.bustalk.server.util;
  */
 public class Constants {
 
-    public static final int NBR_OF_RESERVED_CHAT_IDS = 100;
+    public static final int NBR_OF_RESERVED_CHAT_IDS = 10000;
 
 }

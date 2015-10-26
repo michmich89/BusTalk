@@ -13,19 +13,21 @@ import com.busgen.bustalk.server.util.Constants;
  *
  * The first 100 id numbers are reserved for rooms that should never be removed, for example a main room for a bus
  *
- * TODO: Hantera ID-nummer på ett hållbart sett (Hållbarare...)
+ * TODO: Handle ID-number in a more efficient way, IE using a stack of old(removed) id-numbers to get IDs from first
  */
 public class ChatroomFactory {
 
     private static ChatroomFactory chatroomFactory;
-    private int idNbr;
+    private int normalChatIdNbr;
+    private int mainChatIdNbr;
 
     private static class Holder {
         static final ChatroomFactory INSTANCE = new ChatroomFactory();
     }
 
     private ChatroomFactory(){
-        idNbr = Constants.NBR_OF_RESERVED_CHAT_IDS;
+        normalChatIdNbr = Constants.NBR_OF_RESERVED_CHAT_IDS;
+        mainChatIdNbr = 0;
     }
 
     public static ChatroomFactory getFactory(){
@@ -33,16 +35,25 @@ public class ChatroomFactory {
     }
 
     public Chatroom createChatroom(String chatroomSubject){
-        Chatroom temporaryReference = new Chatroom(this.idNbr, chatroomSubject);
-        this.idNbr++;
+        Chatroom temporaryReference = new Chatroom(this.normalChatIdNbr, chatroomSubject);
+        this.normalChatIdNbr++;
         return temporaryReference;
     }
 
-    public Chatroom createChatroom(String name, int chatId) {
-        if (chatId < Constants.NBR_OF_RESERVED_CHAT_IDS - 1) {
-            return new Chatroom(chatId, name);
+    /**
+     *
+     * @param title the title of the room
+     * @return the newly created main chatroom
+     * @throws ChatIdNbrFullException if no ID-numbers is available
+     */
+    public Chatroom createMainChatroom(String title) throws ChatIdNbrFullException{
+
+        if(mainChatIdNbr < Constants.NBR_OF_RESERVED_CHAT_IDS){
+            Chatroom temporaryReference = new Chatroom(this.mainChatIdNbr, title);
+            this.mainChatIdNbr++;
+            return temporaryReference;
         }
-        return null;
+        throw new ChatIdNbrFullException("All main chat id-number taken");
     }
 
 }

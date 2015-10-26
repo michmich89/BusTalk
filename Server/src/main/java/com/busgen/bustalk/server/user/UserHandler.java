@@ -19,12 +19,14 @@ public class UserHandler {
     private final BiMap<User, Session> userToSession;
     private final List<String> disallowedNames;
     private static final Logger LOGGER = Logger.getLogger(UserHandler.class.getName());
+    private UserFactory userFactory;
 
     private static class Holder {
         static final UserHandler INSTANCE = new UserHandler();
     }
 
     private UserHandler() {
+        this.userFactory = new UserFactory();
         this.userToSession = Maps.synchronizedBiMap(HashBiMap.<User, Session>create());
         this.disallowedNames = Collections.synchronizedList(new ArrayList<String>());
 
@@ -130,16 +132,13 @@ public class UserHandler {
         if (user != null && (isNameAllowed(name) || user.getName().equalsIgnoreCase(name))) {
             String oldName = user.getName();
             String oldInterests = user.getInterests();
-
             user.setName(name);
             user.setInterests(interests);
-
-            //addUser(user, session);
 
             LOGGER.log(Level.INFO, String.format("[{0}:{1}] Name changed to \"{2}\" and interest changed from \"{3}\" to \"{4}\""),
                     new Object[]{session.getId(), oldName, user.getName(), oldInterests, user.getInterests()});
         } else if (isNameAllowed(name)) {
-            user = new User(name, interests);
+            user = userFactory.createUser(name, interests);
             addUser(user, session);
 
             LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created with interests \"{2}\""),
