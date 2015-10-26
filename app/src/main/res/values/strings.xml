@@ -13,4 +13,6 @@
     <string name="login_interest_hint">Intressen (valfritt)</string>
     <string name="login_button_text">Logga in</string>
     <string name="nextStop">Hämtar hållplats...</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_users">Users</string>
 </resources>
