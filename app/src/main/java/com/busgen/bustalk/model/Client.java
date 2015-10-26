@@ -34,16 +34,17 @@ public class Client implements IClient, IEventBusListener {
 
     private static Client client = null;
 
-    private Client(){
+    private Client() {
         this.user = new User();
         eventBus = EventBus.getInstance();
         groupId = "1";
     }
 
-    public static Client getInstance(){
-        if(client == null){
+    public static Client getInstance() {
+        if (client == null) {
             client = new Client();
-        }return client;
+        }
+        return client;
     }
 
     @Override
@@ -105,7 +106,7 @@ public class Client implements IClient, IEventBusListener {
 
     @Override
     public void joinRoom(IChatroom chatroom) {
-        if (chatroom != null && !chatrooms.contains(chatroom)){
+        if (chatroom != null && !chatrooms.contains(chatroom)) {
             chatrooms.add(chatroom);
         }
     }
@@ -126,11 +127,11 @@ public class Client implements IClient, IEventBusListener {
         }
     }
 
-    public void setGroupId(String groupId){
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
-    public String getGroupId(){
+    public String getGroupId() {
         return groupId;
     }
 
@@ -138,17 +139,20 @@ public class Client implements IClient, IEventBusListener {
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
         if (event instanceof ToClientEvent) {
+            Log.d("MyTag", "Client receiving some sort of event");
+            Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                if(!chatMessage.getNickname().equals(getUserName())){
+                if (!chatMessage.getNickname().equals(getUserName())) {
                     chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
                     Event newEvent = new ToActivityEvent(chatMessage);
                     eventBus.postEvent(newEvent);
                 }
             } else if (message instanceof MsgChooseNickname) {
                 /*
-                sets username and alerts activities about it
+                sets username and alerts activities about it (Not used atm)
                  */
+                Log.d("MyTag", "choosing nickname in Client event response");
                 setUserName(((MsgChooseNickname) message).getNickname());
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
@@ -158,7 +162,7 @@ public class Client implements IClient, IEventBusListener {
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
 
                 //Skala bort kod här sedan, joinRoom innehåller det mesta
-                if (!chatrooms.contains(chatroom)){
+                if (!chatrooms.contains(chatroom)) {
                     joinRoom(chatroom);
                     Event newEvent = new ToActivityEvent(message);
                     eventBus.postEvent(newEvent);
@@ -169,7 +173,7 @@ public class Client implements IClient, IEventBusListener {
 
                 /** Check if client is connected to the room and if so remove it from list**/
                 for (IChatroom c : chatrooms) {
-                    if (c.getChatID() == chatId){
+                    if (c.getChatID() == chatId) {
                         leaveRoom(c);
                         Event newEvent = new ToActivityEvent(message);
                         eventBus.postEvent(newEvent);
@@ -180,7 +184,7 @@ public class Client implements IClient, IEventBusListener {
                 int chatId = ((MsgLostChatRoom) message).getChatID();
 
                 for (IChatroom c : chatrooms) {
-                    if (c.getChatID() == chatId){
+                    if (c.getChatID() == chatId) {
                         this.chatrooms.remove(c);
                         Event newEvent = new ToActivityEvent(message);
                         eventBus.postEvent(newEvent);
@@ -196,8 +200,8 @@ public class Client implements IClient, IEventBusListener {
                  * Could be extracted to separate method. **/
 
                 for (IChatroom c : chatrooms) {
-                    if (c.getChatID() == chatId){
-                        if(user.equals(this.user)) {
+                    if (c.getChatID() == chatId) {
+                        if (user.equals(this.user)) {
                             leaveRoom(c);
                         } else {
                             c.removeUser(user);
@@ -207,7 +211,6 @@ public class Client implements IClient, IEventBusListener {
                     }
                 }
 
-            }
 
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
@@ -215,11 +218,11 @@ public class Client implements IClient, IEventBusListener {
                 IUser user = ((MsgNewUserInChat) message).getUser();
 
                 /** Check if user is me and if so join room (add room to local list of rooms)
-                * Could be extracted to separate method. **/
+                 * Could be extracted to separate method. **/
 
                 for (IChatroom c : chatrooms) {
-                    if (c.getChatID() == chatId){
-                        if(user.equals(this.user)){
+                    if (c.getChatID() == chatId) {
+                        if (user.equals(this.user)) {
                             joinRoom(c);
                         } else {
                             c.addUser(user);
@@ -230,17 +233,16 @@ public class Client implements IClient, IEventBusListener {
                 }
 
             } else if (message instanceof MsgNicknameAvailable) {
-                Log.d("MyTag", "9");
                 Log.d("MyTag", "Sending availability info to activity");
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
             } else if (message instanceof MsgAvailableRooms) {
-                chatrooms = ((MsgAvailableRooms) message).getRoomList();
+                // chatrooms = ((MsgAvailableRooms) message).getRoomList();
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
-            } else if (message instanceof MsgPlatformDataRequest){
+            } else if (message instanceof MsgPlatformDataRequest) {
             }
         }
     }
-
+}
 

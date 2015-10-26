@@ -13,6 +13,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
+import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.service.EventBus;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -100,15 +101,16 @@ public class ServerCommunicator implements IEventBusListener {
 
     @Override
     public void onEvent(Event event) {
-        IServerMessage tempMessage = event.getMessage();
-        Log.d("MyTag", tempMessage.toString());
-        if(tempMessage instanceof MsgJoinRoom){
-            //Log.d("MyTag", tempMessage.toString());
-            Log.d("MyTag", "blagaha");
-        }
+        //IServerMessage tempMessage = event.getMessage();
+        //Log.d("MyTag", tempMessage.toString());
+        //if(tempMessage instanceof MsgJoinRoom){
+        //    //Log.d("MyTag", tempMessage.toString());
+        //    Log.d("MyTag", "blagaha");
+        //}
+        IServerMessage message = event.getMessage();
         if (event instanceof ToServerEvent) {
-            Log.d("MyTag", "Server received some sort of event");
-            IServerMessage message = event.getMessage();
+            Log.d("MyTag", "Server received some sort of event, namely");
+            Log.d("MyTag", message.getClass().getName());
             if(message instanceof MsgConnectToServer){
                 System.out.println("Want to connect to server");
                 if(!isConnected()){
@@ -116,6 +118,8 @@ public class ServerCommunicator implements IEventBusListener {
                     connect();
                 }
                 eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
+            }else if (message instanceof MsgNicknameAvailable) {
+                eventBus.postEvent(new ToActivityEvent(message));
             }else {
                 sendMessage(message);
             }
@@ -133,7 +137,6 @@ public class ServerCommunicator implements IEventBusListener {
                     // Handle incoming messages (decode them and such)
                     Log.d("MyTag", "" + "Receiving decodable(?) message from server...");
                     if (jsonDecoder.willDecode(message)) { // Maybe it's possible to skip the whole willDecode()
-                        Log.d("MyTag", "" + "Receiving decodable message from server...");
                         IServerMessage serverMessage = jsonDecoder.decode(message);
                         Event event = new ToClientEvent(serverMessage);
                         eventBus.postEvent(event);
