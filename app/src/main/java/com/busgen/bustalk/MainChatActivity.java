@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -40,6 +41,7 @@ public class MainChatActivity extends BindingActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("MyTag", "Started main chat");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chat);
         initVariables();
@@ -51,6 +53,7 @@ public class MainChatActivity extends BindingActivity {
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
         myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
+        Log.d("MyTag", "myChatroom in mainchat activity has ID " + myChatroom.getChatID());
     }
 
     private void initViews(){
@@ -88,11 +91,23 @@ public class MainChatActivity extends BindingActivity {
         //messageListView.setSelection(messageListView.getCount() - 1);
     }
 
+    public void updateRoom(int chatId){
+
+        for (IChatroom c : client.getChatrooms()) {
+            if (c.getChatID() == chatId) {
+                myChatroom = c;
+            }
+        }
+    }
+
     @Override
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
         if (event instanceof ToActivityEvent) {
+            Log.d("MyTag", "MainChat got an event" );
+            Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
+                Log.d("MyTag", "MainChat got a message!");
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
                 runOnUiThread(new Runnable() {
                     @Override
@@ -106,8 +121,14 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
+                int chatId = ((MsgLostUserInChat) message).getChatID();
+                updateRoom(chatId);
+
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
+                int chatId = ((MsgNewUserInChat) message).getChatID();
+                updateRoom(chatId);
+
             } else if (message instanceof MsgConnectionLost){
                 connectionLostAlert();
             } else if (message instanceof MsgPlatformData) {
@@ -145,6 +166,7 @@ public class MainChatActivity extends BindingActivity {
                 });
         alertDialog.show();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

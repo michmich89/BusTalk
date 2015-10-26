@@ -50,12 +50,22 @@ public class Chatroom implements IChatroom, Serializable {
 
     @Override
     public void addUser(IUser user) {
-        users.add(user);
+        if (user != null && !users.contains(user)){
+            users.add(user);
+        }
     }
 
     @Override
     public void removeUser(IUser user) {
-        users.remove(user);
+        if (user != null && users.contains(user)){
+
+            users.remove(user);
+        }
+    }
+
+    @Override
+    public void setUsers(List<IUser> users){
+        this.users = users;
     }
 
     @Override
@@ -91,5 +101,21 @@ public class Chatroom implements IChatroom, Serializable {
     public void addMessage(MsgChatMessage message) {
        // Log.d("MyTag", "Inside addMessage in Chatroom");
        // messages.add(message);
+    }
+
+    @Override
+    public boolean equals(Object object){
+
+        //Borde den kolla något annat?
+        if ((object instanceof IChatroom) && this.getChatID() == ((IChatroom)object).getChatID()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = chatID * 11;
+        return hashCode;
     }
 }

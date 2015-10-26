@@ -23,6 +23,8 @@ public interface IChatroom extends Serializable{
 
     void removeUser(IUser user);
 
+    void setUsers(List<IUser> users);
+
     boolean containsUser(IUser user);
 
     int getNbrOfUsers();
