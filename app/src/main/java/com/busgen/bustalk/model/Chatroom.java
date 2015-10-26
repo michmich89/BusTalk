@@ -74,7 +74,7 @@ public class Chatroom implements IChatroom, Serializable {
     }
 
     @Override
-    public Collection<IUser> getUsers() {
+    public List<IUser> getUsers() {
         return users;
     }
 
