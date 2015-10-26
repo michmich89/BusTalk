@@ -4,14 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.busgen.bustalk.MainChatActivity">
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_users"
-        android:title="0"
-        android:visible="false"
+        android:title="Users"
+        android:visible="true"
         android:orderInCategory="1"
+        android:icon="@drawable/ic_menu_allfriends"
         app:showAsAction="ifRoom" />
 </menu>

@@ -199,7 +199,14 @@ public class MainChatActivity extends BindingActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_chat, menu);
         this.usersPresent = menu.findItem(R.id.action_users);
-        this.usersPresent.setTitle("" + myChatroom.getNbrOfUsers());
+        usersPresent.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(MainChatActivity.this, UsersActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
         return true;
     }
 }
