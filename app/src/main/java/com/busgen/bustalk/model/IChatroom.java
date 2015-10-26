@@ -29,7 +29,7 @@ public interface IChatroom extends Serializable{
 
     boolean isEmpty();
 
-    Collection<IUser> getUsers();
+    List<IUser> getUsers();
 
     List<MsgChatMessage> getMessages();
 
