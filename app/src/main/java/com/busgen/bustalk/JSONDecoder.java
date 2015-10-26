@@ -51,6 +51,9 @@ public class JSONDecoder {
                 Log.d("MyTag", "" + "ROOM_DELETED_NOTIFICATION");
             } else if(type == MessageTypes.NAME_AND_INTEREST_SET){
                 Log.d("MyTag", "NAME_AND_INTEREST_SET");
+                if (jsonObject.getBoolean("succeeded")){
+                    Log.d("MyTag", "nickname was available and name choice succeeded");
+                }
                 serverMessage = new MsgNicknameAvailable(jsonObject.getBoolean("succeeded"));
             }else if(type == MessageTypes.LIST_OF_USERS_IN_CHAT_NOTIFICATION){
                 Log.d("MyTag", "" + "LIST_OF_USERS_IN_CHAT_NOTIFICATION");

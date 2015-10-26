@@ -70,16 +70,16 @@ public class LoginActivity extends BindingActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userName = userNameInput.getText().toString();
-                if (TextUtils.isEmpty(userName)) {
+                //userName = userNameInput.getText().toString();
+                if (TextUtils.isEmpty(userNameInput.getText().toString())) {
                     loginToast.show();
                     return;
                 }
-                interest = interestInput.getText().toString();
+                //interest = interestInput.getText().toString();
 
-                IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
-                Event event = new ToServerEvent(serverMessage);
-                eventBus.postEvent(event);
+                //IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
+                //Event event = new ToServerEvent(serverMessage);
+                //eventBus.postEvent(event);
                 progress = new ProgressDialog(LoginActivity.this);
                 progress.setTitle("Loading");
                 progress.setMessage("Wait while loading...");
@@ -100,7 +100,9 @@ public class LoginActivity extends BindingActivity {
     @Override
     protected void onPause(){
         super.onPause();
-        progress.dismiss();
+        if (progress != null) {
+            progress.dismiss();
+        }
     }
     private void initViews() {
         userNameInput = (EditText) findViewById(R.id.user_name_input);
@@ -117,8 +119,11 @@ public class LoginActivity extends BindingActivity {
         IServerMessage message = event.getMessage();
 
         if (event instanceof ToActivityEvent) {
+            Log.d("MyTag", "LoginActivity receiving some sort of event, namely");
+            Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
             } else if (message instanceof MsgChooseNickname) {
+
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {
@@ -128,6 +133,7 @@ public class LoginActivity extends BindingActivity {
             } else if (message instanceof MsgNewUserInChat) {
             } else if (message instanceof MsgNicknameAvailable) {
                 MsgNicknameAvailable nicknameAvailableMessage = (MsgNicknameAvailable) message;
+                Log.d("MyTag", "is nickname is available?...");
                 if(nicknameAvailableMessage.getAvailability()){
                     Log.d("MyTag", "nickname is available, setting user info...");
                     client.setUserName(userName);
@@ -141,6 +147,7 @@ public class LoginActivity extends BindingActivity {
                     Event requestEvent = new ToServerEvent(serverMessage);
                     eventBus.postEvent(requestEvent);
                 } else{
+                    Log.d("MyTag", "nickname is NOT available");
                     progress.dismiss();
                     nameUnavailableToast.show();
                     userNameInput.setText("");
@@ -149,11 +156,16 @@ public class LoginActivity extends BindingActivity {
                 }
             } else if (message instanceof MsgAvailableRooms) {
                 MsgAvailableRooms availableRoomsMesssage = (MsgAvailableRooms) message;
-                List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
-                IChatroom myChatroom = chatrooms.get(0);
+                //List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
+                //IChatroom myChatroom = chatrooms.get(0);
+                List<IChatroom> availableChatrooms = availableRoomsMesssage.getRoomList();
+                IChatroom myChatroom = availableChatrooms.get(0);
+
+                Log.d("MyTag", "JOINING CHATROOM");
                 IServerMessage joinMessage = new MsgJoinRoom(myChatroom);
                 Event joinEvent = new ToServerEvent(joinMessage);
                 eventBus.postEvent(joinEvent);
+                Log.d("MyTag", "JOINED CHATROOM");
 
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("Chatroom", myChatroom);
@@ -172,15 +184,18 @@ public class LoginActivity extends BindingActivity {
                 }else {
                     System.out.println("Connected to server! Set username and interests");
                     userName = userNameInput.getText().toString();
-                    if (TextUtils.isEmpty(userName)) {
+                    if (TextUtils.isEmpty(userName)) {  //Onödigt? kollas redan i onClickListener
                         loginToast.show();
                         return;
                     }
                     interest = interestInput.getText().toString();
 
-                    IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
-                    Event nameEvent = new ToServerEvent(serverMessage);
-                    eventBus.postEvent(nameEvent);
+                   IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
+                   Event nameEvent = new ToServerEvent(serverMessage);
+                   eventBus.postEvent(nameEvent);
+
+                    /** test**/
+
                 }
             }
         }
