@@ -66,15 +66,4 @@ public class ChatroomHandlerTest {
 
         assertTrue(chatroomHandler.getGroupOfChatrooms(user.getGroupId()).contains(chatroom));
     }
-
-    @Test
-    public void testIfServerCreatedChatroomsAreNotDeletedWhenLastUserLeaves() {
-        int chatId = 0;
-        //chatroomHandler.createChatroom("server chat", chatId, "testGroup");
-        Chatroom newChatroom = chatroomHandler.getChatroom(chatId);
-        chatroomHandler.joinChatroom(user, newChatroom);
-        chatroomHandler.leaveChatroom(user, newChatroom);
-
-        assertTrue(chatroomHandler.getListOfOpenChatrooms().contains(newChatroom));
-    }
 }
