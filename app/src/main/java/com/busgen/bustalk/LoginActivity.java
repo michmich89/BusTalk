@@ -70,6 +70,16 @@ public class LoginActivity extends BindingActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                userName = userNameInput.getText().toString();
+                if (TextUtils.isEmpty(userName)) {
+                    loginToast.show();
+                    return;
+                }
+                interest = interestInput.getText().toString();
+
+                IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
+                Event event = new ToServerEvent(serverMessage);
+                eventBus.postEvent(event);
                 progress = new ProgressDialog(LoginActivity.this);
                 progress.setTitle("Loading");
                 progress.setMessage("Wait while loading...");
