@@ -36,4 +36,19 @@ public class User implements IUser{
         return interest;
     }
 
+    @Override
+    public boolean equals(Object object){
+
+        if ((object instanceof IUser) && this.getUserName() == ((IUser)object).getUserName()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = userName.hashCode() + interest.hashCode();
+        return hashCode;
+    }
+
 }
