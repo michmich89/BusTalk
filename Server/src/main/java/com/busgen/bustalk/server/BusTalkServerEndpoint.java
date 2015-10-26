@@ -39,7 +39,9 @@ public class BusTalkServerEndpoint {
 
     @OnError
     public void onError(Throwable exception, Session session){
-
+        if(exception instanceof SessionException){
+            busTalkHandler.removeSession(session);
+        }
     }
 
 
