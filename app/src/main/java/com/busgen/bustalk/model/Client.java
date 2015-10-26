@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by Johan on 2015-10-05.
- */
 public class Client implements IClient, IEventBusListener {
 
     private IUser user;
@@ -180,6 +177,16 @@ public class Client implements IClient, IEventBusListener {
                 }
 
             } else if (message instanceof MsgLostChatRoom) {
+                int chatId = ((MsgLostChatRoom) message).getChatID();
+
+                for (IChatroom c : chatrooms) {
+                    if (c.getChatID() == chatId){
+                        this.chatrooms.remove(c);
+                        Event newEvent = new ToActivityEvent(message);
+                        eventBus.postEvent(newEvent);
+                    }
+                }
+
             } else if (message instanceof MsgLostUserInChat) {
 
                 int chatId = ((MsgLostUserInChat) message).getChatID();
@@ -187,15 +194,20 @@ public class Client implements IClient, IEventBusListener {
 
                 /** Check if user is me and if so leave room (remove room from local list of rooms)
                  * Could be extracted to separate method. **/
-                if(user.equals(this.user)){
-                    for (IChatroom c : chatrooms) {
-                        if (c.getChatID() == chatId){
+
+                for (IChatroom c : chatrooms) {
+                    if (c.getChatID() == chatId){
+                        if(user.equals(this.user)) {
                             leaveRoom(c);
+                        } else {
+                            c.removeUser(user);
                         }
+                        Event newEvent = new ToActivityEvent(message);
+                        eventBus.postEvent(newEvent);
                     }
-                } else {
-                    //TODO: code for removing user from local user list
                 }
+
+            }
 
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
@@ -203,15 +215,18 @@ public class Client implements IClient, IEventBusListener {
                 IUser user = ((MsgNewUserInChat) message).getUser();
 
                 /** Check if user is me and if so join room (add room to local list of rooms)
-                 * Could be extracted to separate method. **/
-                if(user.equals(this.user)){
-                    for (IChatroom c : chatrooms) {
-                        if (c.getChatID() == chatId){
+                * Could be extracted to separate method. **/
+
+                for (IChatroom c : chatrooms) {
+                    if (c.getChatID() == chatId){
+                        if(user.equals(this.user)){
                             joinRoom(c);
+                        } else {
+                            c.addUser(user);
                         }
+                        Event newEvent = new ToActivityEvent(message);
+                        eventBus.postEvent(newEvent);
                     }
-                } else {
-                    //TODO: code for adding user to local user list
                 }
 
             } else if (message instanceof MsgNicknameAvailable) {
@@ -228,4 +243,4 @@ public class Client implements IClient, IEventBusListener {
         }
     }
 
-}
+

@@ -50,12 +50,16 @@ public class Chatroom implements IChatroom, Serializable {
 
     @Override
     public void addUser(IUser user) {
-        users.add(user);
+        if (user != null && !users.contains(user)){
+            users.add(user);
+        }
     }
 
     @Override
     public void removeUser(IUser user) {
-        users.remove(user);
+        if (user != null && users.contains(user)){
+            users.remove(user);
+        }
     }
 
     @Override
