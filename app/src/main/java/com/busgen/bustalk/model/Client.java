@@ -156,12 +156,17 @@ public class Client implements IClient, IEventBusListener {
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
-                chatrooms.add(chatroom);
+                if (!chatrooms.contains(chatroom)){
+                    joinRoom(chatroom);
+                    Event newEvent = new ToActivityEvent(message);
+                    eventBus.postEvent(newEvent);
+                }
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
+                int chatId = ((MsgNewUserInChat) message).getChatID();
             } else if (message instanceof MsgNicknameAvailable) {
                 Log.d("MyTag", "9");
                 Log.d("MyTag", "Sending availability info to activity");
