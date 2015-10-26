@@ -18,4 +18,8 @@ public class MsgNewUserInChat implements IServerMessage {
     public int getChatID(){
         return chatID;
     }
+
+    public IUser getUser(){
+        return user;
+    }
 }

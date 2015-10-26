@@ -92,4 +92,15 @@ public class Chatroom implements IChatroom, Serializable {
        // Log.d("MyTag", "Inside addMessage in Chatroom");
        // messages.add(message);
     }
+
+
+    public boolean equals(Object object){
+        boolean equals = false;
+
+        //Borde den kolla något annat?
+        if ((object instanceof IChatroom) && this.getChatID() == ((IChatroom)object).getChatID()){
+            equals = true;
+        }
+        return equals;
+    }
 }
