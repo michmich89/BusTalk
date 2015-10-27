@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class UserAdapter extends BaseAdapter{
 
-	private final List<IUser> users;
+	private List<IUser> users;
 	private Activity context;
 	private LayoutInflater inflater;
 
@@ -33,6 +33,10 @@ public class UserAdapter extends BaseAdapter{
 
 	public void add(List<IUser> users){
 		this.users.addAll(users);
+	}
+
+	public void setUsers(List<IUser> users){
+		this.users = users;
 	}
 
 	@Override
