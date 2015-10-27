@@ -30,9 +30,9 @@ public class BusTalkHandlerTest {
     private User user;
 
     public BusTalkHandlerTest(){
-        chatroomHandler = ChatroomHandler.getInstance();
-        userHandler = UserHandler.getInstance();
         busTalkHandler = BusTalkHandler.getInstance();
+        chatroomHandler = busTalkHandler.getChatroomHandler();
+        userHandler = busTalkHandler.getUserHandler();
     }
 
     @Test

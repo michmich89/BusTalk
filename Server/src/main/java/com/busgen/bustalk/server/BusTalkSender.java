@@ -30,9 +30,9 @@ public class BusTalkSender {
 
 
 
-    public BusTalkSender() {
-        this.userHandler = UserHandler.getInstance();
-        this.chatroomHandler = ChatroomHandler.getInstance();
+    public BusTalkSender(UserHandler userHandler, ChatroomHandler chatroomHandler) {
+        this.userHandler = userHandler;
+        this.chatroomHandler = chatroomHandler;
     }
 
     /**

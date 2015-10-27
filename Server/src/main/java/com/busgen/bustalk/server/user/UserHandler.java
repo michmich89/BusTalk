@@ -21,20 +21,12 @@ public class UserHandler {
     private static final Logger LOGGER = Logger.getLogger(UserHandler.class.getName());
     private UserFactory userFactory;
 
-    private static class Holder {
-        static final UserHandler INSTANCE = new UserHandler();
-    }
-
-    private UserHandler() {
+    public UserHandler() {
         this.userFactory = new UserFactory();
         this.userToSession = Maps.synchronizedBiMap(HashBiMap.<User, Session>create());
         this.disallowedNames = Collections.synchronizedList(new ArrayList<String>());
 
         disallowedNames.add("Alexander Kloutschek");
-    }
-
-    public static UserHandler getInstance() {
-        return Holder.INSTANCE;
     }
 
     /**

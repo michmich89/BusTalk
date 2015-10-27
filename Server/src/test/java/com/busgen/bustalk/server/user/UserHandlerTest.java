@@ -23,8 +23,8 @@ public class UserHandlerTest {
     private User user;
 
     public UserHandlerTest () {
-        chatroomHandler = ChatroomHandler.getInstance();
-        userHandler = UserHandler.getInstance();
+        chatroomHandler = new ChatroomHandler();
+        userHandler = new UserHandler();
     }
 
     @Test

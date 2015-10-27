@@ -28,8 +28,8 @@ public class ChatroomHandlerTest {
     private User user;
 
     public ChatroomHandlerTest () {
-        chatroomHandler = ChatroomHandler.getInstance();
-        userHandler = UserHandler.getInstance();
+        chatroomHandler = new ChatroomHandler();
+        userHandler = new UserHandler();
 
         user = new User("username", "interests");
         user.setGroupId("testGroup");

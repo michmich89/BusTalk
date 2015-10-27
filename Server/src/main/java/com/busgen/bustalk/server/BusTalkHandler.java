@@ -37,9 +37,9 @@ public class BusTalkHandler {
 
     private BusTalkHandler(){
 
-        this.userHandler = UserHandler.getInstance();
-        this.chatroomHandler = ChatroomHandler.getInstance();
-        this.messageSender = new BusTalkSender();
+        this.userHandler = new UserHandler();
+        this.chatroomHandler = new ChatroomHandler();
+        this.messageSender = new BusTalkSender(userHandler ,chatroomHandler);
 
 
 //        this.chatroomHandler.createChatroom("test1", 0, "1");
@@ -227,6 +227,15 @@ public class BusTalkHandler {
             }
         }
         chatroomHandler.removeGroup(groupId);
+    }
+
+    //GETTERS FOR TESTING PURPOSE
+    public UserHandler getUserHandler(){
+        return this.userHandler;
+    }
+
+    public ChatroomHandler getChatroomHandler(){
+        return this.chatroomHandler;
     }
 
 }
