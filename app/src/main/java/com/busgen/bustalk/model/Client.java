@@ -149,10 +149,21 @@ public class Client implements IClient, IEventBusListener {
             Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
+                Log.d("MyTag", "sender of message: " + chatMessage.getNickname());
+                Log.d("MyTag", "And I am: " + getUserName());
+                Log.d("MyTag", "Is it me who sent it? " + chatMessage.getNickname().equals(getUserName()));
                 if (!chatMessage.getNickname().equals(getUserName())) {
-                    chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
-                    Event newEvent = new ToActivityEvent(chatMessage);
-                    eventBus.postEvent(newEvent);
+
+                    for (IChatroom c : chatrooms) {
+                        if (c.getChatID() == chatMessage.getChatId()) {
+                            c.addMessage(chatMessage);
+                            Event newEvent = new ToActivityEvent(chatMessage);
+                            eventBus.postEvent(newEvent);
+                        }
+                    }
+                    //chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
+                    //Event newEvent = new ToActivityEvent(chatMessage);
+                    //eventBus.postEvent(newEvent);
                 }
             } else if (message instanceof MsgChooseNickname) {
                 /*
