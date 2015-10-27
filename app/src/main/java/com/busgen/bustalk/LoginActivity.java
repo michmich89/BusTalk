@@ -161,11 +161,10 @@ public class LoginActivity extends BindingActivity {
                 List<IChatroom> availableChatrooms = availableRoomsMesssage.getRoomList();
                 IChatroom myChatroom = availableChatrooms.get(0);
 
-                Log.d("MyTag", "JOINING CHATROOM");
+                Log.d("MyTag", "JOINING CHATROOM " + myChatroom.getChatID());
                 IServerMessage joinMessage = new MsgJoinRoom(myChatroom);
                 Event joinEvent = new ToServerEvent(joinMessage);
                 eventBus.postEvent(joinEvent);
-                Log.d("MyTag", "JOINED CHATROOM");
 
                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                 intent.putExtra("Chatroom", myChatroom);

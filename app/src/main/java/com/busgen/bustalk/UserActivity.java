@@ -2,6 +2,7 @@ package com.busgen.bustalk;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.busgen.bustalk.model.IChatroom;
@@ -26,6 +27,7 @@ public class UserActivity extends AppCompatActivity {
 		userListView.setAdapter(userAdapter);
 
 		userAdapter.add(myChatroom.getUsers());
+		Log.d("MyTag", "users in myChatroom: " + myChatroom.getUsers().size());
 		userAdapter.add(new User("Nisse", "Glida"));
 		userAdapter.notifyDataSetChanged();
 	}

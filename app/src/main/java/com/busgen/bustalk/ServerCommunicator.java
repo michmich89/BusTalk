@@ -122,7 +122,7 @@ public class ServerCommunicator implements IEventBusListener {
                     connect();
                 }
                 eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
-            }else if (message instanceof MsgNicknameAvailable) {
+            }else if (message instanceof MsgNicknameAvailable) { //Should maybe be deleted, check later
                 eventBus.postEvent(new ToActivityEvent(message));
             }else {
                 sendMessage(message);
