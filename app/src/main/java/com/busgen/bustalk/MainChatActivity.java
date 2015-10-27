@@ -36,6 +36,7 @@ public class MainChatActivity extends BindingActivity {
     private MessageAdapter messageAdapter;
     private IChatroom myChatroom;
     private MenuItem usersPresent;
+    private MenuItem userActivityMenuItem;
     private String userName;
     private String interest;
 
@@ -123,12 +124,12 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLostUserInChat) {
                 int chatId = ((MsgLostUserInChat) message).getChatID();
                 updateRoom(chatId);
-
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
                 int chatId = ((MsgNewUserInChat) message).getChatID();
                 updateRoom(chatId);
-
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgConnectionLost){
                 connectionLostAlert();
             } else if (message instanceof MsgPlatformData) {
@@ -167,13 +168,21 @@ public class MainChatActivity extends BindingActivity {
         alertDialog.show();
     }
 
+    private void updateNumOfUsersMenuItem(){
+        String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
+        usersPresent.setTitle(numOfUsers);
+        Log.d("MichTag", numOfUsers);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_chat, menu);
-        this.usersPresent = menu.findItem(R.id.action_users);
-        usersPresent.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        this.usersPresent = menu.findItem(R.id.num_of_users_menu_item);
+        updateNumOfUsersMenuItem();
+
+        this.userActivityMenuItem = menu.findItem(R.id.user_activity_menu_item);
+        userActivityMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = new Intent(MainChatActivity.this, UserActivity.class);
