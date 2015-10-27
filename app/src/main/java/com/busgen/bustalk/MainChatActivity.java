@@ -121,7 +121,7 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
-                int chatId = ((MsgNewUserInChat) message).getChatID();
+                int chatId = ((MsgLostUserInChat) message).getChatID();
                 updateRoom(chatId);
 
             } else if (message instanceof MsgNewChatRoom) {

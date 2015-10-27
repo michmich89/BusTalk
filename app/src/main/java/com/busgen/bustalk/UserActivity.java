@@ -82,13 +82,14 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
         if (event instanceof ToActivityEvent) {
+            Log.d("MyTag", "UserActivity got an event, namely " + message.getClass().getName());
             if (message instanceof MsgChatMessage) {
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
-                if(((MsgNewUserInChat) message).getChatID() == chatId) {
+                if(((MsgLostUserInChat) message).getChatID() == chatId) {
                     refreshUserList();
                 }
 

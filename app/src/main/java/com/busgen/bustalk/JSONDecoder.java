@@ -57,6 +57,9 @@ public class JSONDecoder {
             }else if(type == MessageTypes.LIST_OF_USERS_IN_CHAT_NOTIFICATION){
                 Log.d("MyTag", "" + "LIST_OF_USERS_IN_CHAT_NOTIFICATION");
                 JSONArray array = jsonObject.getJSONArray("users");
+                if (array == null){
+                    Log.d("MyTag", "" + "user array är null!");
+                }
                 MsgUsersInChat usersInChat = new MsgUsersInChat(jsonObject.getInt("chatId"));
                 Log.d("MyTag", "" + "user array length: " + array.length());
                 for (int i = 0; i < array.length(); i++) {
@@ -71,7 +74,7 @@ public class JSONDecoder {
                 serverMessage = new MsgNewUserInChat(user, jsonObject.getInt("chatId"));
                 Log.d("MyTag", "NEW_USER_IN_CHAT_NOTIFICATION");
             }else if(type == MessageTypes.USER_LEFT_ROOM_NOTIFICATION){
-                IUser user = new User(jsonObject.getString("name"), jsonObject.getString("interests"));
+                IUser user = new User(jsonObject.getString("name"), "");
                 serverMessage = new MsgLostUserInChat(jsonObject.getInt("chatId"), user);
                 Log.d("MyTag", "USER_LEFT_ROOM_NOTIFICATION");
             }else if(type == MessageTypes.LIST_OF_CHATROOMS_NOTIFICATION){
