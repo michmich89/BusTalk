@@ -91,6 +91,15 @@ public class MainChatActivity extends BindingActivity {
         //messageListView.setSelection(messageListView.getCount() - 1);
     }
 
+    public void updateRoom(int chatId){
+
+        for (IChatroom c : client.getChatrooms()) {
+            if (c.getChatID() == chatId) {
+                myChatroom = c;
+            }
+        }
+    }
+
     @Override
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
@@ -112,8 +121,14 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
+                int chatId = ((MsgNewUserInChat) message).getChatID();
+                updateRoom(chatId);
+
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
+                int chatId = ((MsgNewUserInChat) message).getChatID();
+                updateRoom(chatId);
+
             } else if (message instanceof MsgConnectionLost){
                 connectionLostAlert();
             } else if (message instanceof MsgPlatformData) {
