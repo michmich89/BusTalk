@@ -64,6 +64,11 @@ public class Chatroom implements IChatroom, Serializable {
     }
 
     @Override
+    public void setUsers(List<IUser> users){
+        this.users = users;
+    }
+
+    @Override
     public boolean containsUser(IUser user) {
         return users.contains(user);
     }
