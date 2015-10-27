@@ -6,6 +6,7 @@ import com.busgen.bustalk.MainChatActivity;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
+import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
@@ -18,6 +19,8 @@ import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
+import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
+import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 import com.busgen.bustalk.service.EventBus;
 
 import java.util.ArrayList;
@@ -107,7 +110,6 @@ public class Client implements IClient, IEventBusListener {
 
     @Override
     public void joinRoom(IChatroom chatroom) {
-
 
         if (chatroom != null && !chatrooms.contains(chatroom)) {
             chatrooms.add(chatroom);
@@ -209,7 +211,6 @@ public class Client implements IClient, IEventBusListener {
                 }
 
             } else if (message instanceof MsgLostUserInChat) {
-                Log.d("MyTag", "It was me who joined a room, adding the room to my list");
                 int chatId = ((MsgLostUserInChat) message).getChatID();
                 IUser user = ((MsgLostUserInChat) message).getUser();
 
@@ -242,7 +243,12 @@ public class Client implements IClient, IEventBusListener {
                     Log.d("MyTag", "It was me who joined a room, adding the room to my list");
                     IChatroom chatroom = new Chatroom(chatId, "");
                     joinRoom(chatroom);
+
+                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+                    Event newEvent = new ToServerEvent(userReqMsg);
+                    eventBus.postEvent(newEvent);
                 }
+
                 if (user != null){
                     Log.d("MyTag", "Someone joined a room, updating chatroom");
                    for (IChatroom c : chatrooms) {
@@ -268,6 +274,16 @@ public class Client implements IClient, IEventBusListener {
                 //        eventBus.postEvent(newEvent);
                 //    }
                 //}
+
+            } else if (message instanceof MsgUsersInChat) {
+                int chatId = ((MsgUsersInChat) message).getChatID();
+                List<IUser> userList = ((MsgUsersInChat) message).getUserList();
+
+                for (IChatroom c : chatrooms) {
+                    if (c.getChatID() == chatId) {
+                        c.setUsers(userList);
+                    }
+                }
 
             } else if (message instanceof MsgNicknameAvailable) {
                 Log.d("MyTag", "Sending availability info to activity");

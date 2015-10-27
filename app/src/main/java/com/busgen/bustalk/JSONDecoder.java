@@ -58,11 +58,13 @@ public class JSONDecoder {
                 Log.d("MyTag", "" + "LIST_OF_USERS_IN_CHAT_NOTIFICATION");
                 JSONArray array = jsonObject.getJSONArray("users");
                 MsgUsersInChat usersInChat = new MsgUsersInChat(jsonObject.getInt("chatId"));
+                Log.d("MyTag", "" + "user array length: " + array.length());
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject userObject = array.getJSONObject(i);
                     IUser user = new User(userObject.getString("name"), userObject.getString("interests"));
                     usersInChat.addUserToList(user);
                 }
+                Log.d("MyTag", "" + "Number of users in room " + usersInChat.getChatID() + ": " + usersInChat.getUserList().size());
                 serverMessage = usersInChat;
             }else if(type == MessageTypes.NEW_USER_IN_CHAT_NOTIFICATION) {
                 IUser user = new User(jsonObject.getString("name"), jsonObject.getString("interests"));
