@@ -150,6 +150,7 @@ public class BusTalkSender {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("type", MessageType.LIST_OF_USERS_IN_CHAT_NOTIFICATION);
+        jsonObject.put("chatId", chatroom.getIdNbr());
         for (User u : chatroom.getChatroomUsers()) {
             JSONObject jsonUser = new JSONObject();
             jsonUser.put("name", u.getName());
