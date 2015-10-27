@@ -198,7 +198,7 @@ public class Client implements IClient, IEventBusListener {
                 }
 
             } else if (message instanceof MsgLostUserInChat) {
-
+                Log.d("MyTag", "It was me who joined a room, adding the room to my list");
                 int chatId = ((MsgLostUserInChat) message).getChatID();
                 IUser user = ((MsgLostUserInChat) message).getUser();
 
