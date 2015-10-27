@@ -58,13 +58,14 @@ public class LoginActivity extends BindingActivity {
     private String interest;
     private String userName;
     ProgressDialog progress;
+    private boolean hasLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         startService(new Intent(this, MainService.class));
-
+        hasLoggedIn = false;
         initViews();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +121,7 @@ public class LoginActivity extends BindingActivity {
     public void onEvent(Event event){
         IServerMessage message = event.getMessage();
 
-        if (event instanceof ToActivityEvent) {
+        if (event instanceof ToActivityEvent && !hasLoggedIn) {
             Log.d("MyTag", "LoginActivity receiving some sort of event, namely");
             Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
@@ -147,6 +148,7 @@ public class LoginActivity extends BindingActivity {
                 intent.putExtra("Interest", client.getInterest());
 
                 startActivity(intent);
+                hasLoggedIn = true;
                 LoginActivity.this.finish();
             } else if (message instanceof MsgNicknameAvailable) {
                 MsgNicknameAvailable nicknameAvailableMessage = (MsgNicknameAvailable) message;
