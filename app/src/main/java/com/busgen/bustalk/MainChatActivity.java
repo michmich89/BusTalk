@@ -95,7 +95,10 @@ public class MainChatActivity extends BindingActivity {
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
         if (event instanceof ToActivityEvent) {
+            Log.d("MyTag", "MainChat got an event" );
+            Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
+                Log.d("MyTag", "MainChat got a message!");
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
                 runOnUiThread(new Runnable() {
                     @Override
