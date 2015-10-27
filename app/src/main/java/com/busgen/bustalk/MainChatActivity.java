@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -40,6 +41,7 @@ public class MainChatActivity extends BindingActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("MyTag", "Started main chat");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_chat);
         initVariables();
@@ -51,6 +53,7 @@ public class MainChatActivity extends BindingActivity {
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
         myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
+        Log.d("MyTag", "myChatroom in mainchat activity has ID " + myChatroom.getChatID());
     }
 
     private void initViews(){
