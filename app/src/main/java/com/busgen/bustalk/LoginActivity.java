@@ -141,9 +141,11 @@ public class LoginActivity extends BindingActivity {
                 Log.d("MyTag", "intents put in: " + "chatroom: " + client.getChatrooms().get(0).getChatID());
                 Log.d("MyTag", "intents put in: " + "Username: " + client.getUserName());
                 Log.d("MyTag", "intents put in: " + "Interest: " + client.getInterest());
+
                 intent.putExtra("Chatroom", client.getChatrooms().get(0));
                 intent.putExtra("Username", client.getUserName());
                 intent.putExtra("Interest", client.getInterest());
+
                 startActivity(intent);
                 LoginActivity.this.finish();
             } else if (message instanceof MsgNicknameAvailable) {
