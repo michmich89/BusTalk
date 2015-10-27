@@ -218,19 +218,33 @@ public class Client implements IClient, IEventBusListener {
                 IUser user = ((MsgNewUserInChat) message).getUser();
 
                 /** Check if user is me and if so join room (add room to local list of rooms)
-                 * Could be extracted to separate method. **/
+                 * if it's somebody else, add them as user to local chatroom
+                 * Could be extracted to separate methods. **/
 
-                for (IChatroom c : chatrooms) {
-                    if (c.getChatID() == chatId) {
-                        if (user.equals(this.user)) {
-                            joinRoom(c);
-                        } else {
-                            c.addUser(user);
-                        }
-                        Event newEvent = new ToActivityEvent(message);
-                        eventBus.postEvent(newEvent);
-                    }
-                }
+                if (user.equals(this.user)) {
+                    IChatroom chatroom = new Chatroom(chatId, "");
+                    chatrooms.add(chatroom);
+                } else if (user != null){
+                   for (IChatroom c : chatrooms) {
+                       if (c.getChatID() == chatId) {
+                               c.addUser(user);
+                           }
+                       }
+                   }
+                Event newEvent = new ToActivityEvent(message);
+                eventBus.postEvent(newEvent);
+
+                //for (IChatroom c : chatrooms) {
+                //    if (c.getChatID() == chatId) {
+                //        if (user.equals(this.user)) {
+                //            joinRoom(c);
+                //        } else {
+                //            c.addUser(user);
+                //        }
+                //        Event newEvent = new ToActivityEvent(message);
+                //        eventBus.postEvent(newEvent);
+                //    }
+                //}
 
             } else if (message instanceof MsgNicknameAvailable) {
                 Log.d("MyTag", "Sending availability info to activity");
