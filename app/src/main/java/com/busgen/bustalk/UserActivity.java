@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
+import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
@@ -32,6 +33,8 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
 	private IChatroom myChatroom;
 	private ListView userListView;
     private EventBus eventBus;
+    private Client client;
+    private int chatId;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,8 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
 
         eventBus = EventBus.getInstance();
         eventBus.register(this);
+        client = Client.getInstance();
+        chatId = myChatroom.getChatID();
 
         refreshUserList();
 	}
@@ -59,7 +64,11 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
 	}
 
     private void refreshUserList(){
-
+        for (IChatroom c : client.getChatrooms()) {
+            if (c.getChatID() == chatId) {
+                myChatroom = c;
+            }
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -79,11 +88,15 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
             } else if (message instanceof MsgLeaveRoom) {
             } else if (message instanceof MsgLostChatRoom) {
             } else if (message instanceof MsgLostUserInChat) {
-                refreshUserList();eventBus = EventBus.getInstance();
-                eventBus.register(this);
+                if(((MsgNewUserInChat) message).getChatID() == chatId) {
+                    refreshUserList();
+                }
+
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
-                refreshUserList();
+                if(((MsgNewUserInChat) message).getChatID() == chatId) {
+                    refreshUserList();
+                }
 
             } else if (message instanceof MsgConnectionLost){
             } else if (message instanceof MsgPlatformData) {
