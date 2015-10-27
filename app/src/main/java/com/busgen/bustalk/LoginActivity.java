@@ -104,6 +104,8 @@ public class LoginActivity extends BindingActivity {
             progress.dismiss();
         }
     }
+
+
     private void initViews() {
         userNameInput = (EditText) findViewById(R.id.user_name_input);
         interestInput = (EditText) findViewById(R.id.interest_input);
@@ -131,6 +133,19 @@ public class LoginActivity extends BindingActivity {
             } else if (message instanceof MsgLostUserInChat) {
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
+                /** special case since it's the login activity**/
+                Log.d("MyTag", "Telling Login Activity to join the first room");
+                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+                Log.d("MyTag", "number of chatrooms in Client: " + client.getChatrooms().size());
+
+                Log.d("MyTag", "intents put in: " + "chatroom: " + client.getChatrooms().get(0).getChatID());
+                Log.d("MyTag", "intents put in: " + "Username: " + client.getUserName());
+                Log.d("MyTag", "intents put in: " + "Interest: " + client.getInterest());
+                intent.putExtra("Chatroom", client.getChatrooms().get(0));
+                intent.putExtra("Username", client.getUserName());
+                intent.putExtra("Interest", client.getInterest());
+                startActivity(intent);
+                LoginActivity.this.finish();
             } else if (message instanceof MsgNicknameAvailable) {
                 MsgNicknameAvailable nicknameAvailableMessage = (MsgNicknameAvailable) message;
                 Log.d("MyTag", "is nickname is available?...");
@@ -159,19 +174,20 @@ public class LoginActivity extends BindingActivity {
                 //List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
                 //IChatroom myChatroom = chatrooms.get(0);
                 List<IChatroom> availableChatrooms = availableRoomsMesssage.getRoomList();
-                IChatroom myChatroom = availableChatrooms.get(0);
+                IChatroom tempChatroom = availableChatrooms.get(0);
 
-                Log.d("MyTag", "JOINING CHATROOM " + myChatroom.getChatID());
-                IServerMessage joinMessage = new MsgJoinRoom(myChatroom);
+                Log.d("MyTag", "JOINING CHATROOM " + tempChatroom.getChatID());
+                IServerMessage joinMessage = new MsgJoinRoom(tempChatroom);
                 Event joinEvent = new ToServerEvent(joinMessage);
                 eventBus.postEvent(joinEvent);
 
-                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                intent.putExtra("Chatroom", myChatroom);
-                intent.putExtra("Username", client.getUserName());
-                intent.putExtra("Interest", client.getInterest());
-                startActivity(intent);
-                LoginActivity.this.finish();
+//                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+//
+//                intent.putExtra("Chatroom", client.getChatrooms().get(0));
+//                intent.putExtra("Username", client.getUserName());
+//                intent.putExtra("Interest", client.getInterest());
+//                startActivity(intent);
+//                LoginActivity.this.finish();
 
             } else if (message instanceof MsgConnectionStatus){
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus)message;

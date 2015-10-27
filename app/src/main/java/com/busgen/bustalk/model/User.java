@@ -39,7 +39,7 @@ public class User implements IUser{
     @Override
     public boolean equals(Object object){
 
-        if ((object instanceof IUser) && this.getUserName() == ((IUser)object).getUserName()){
+        if ((object instanceof IUser) && this.getUserName().equals(((IUser)object).getUserName())){
             return true;
         }
         return false;

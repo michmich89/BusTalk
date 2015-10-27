@@ -25,7 +25,7 @@ public class UserActivity extends AppCompatActivity {
 		myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
 		userAdapter = new UserAdapter(UserActivity.this, new ArrayList<IUser>());
 		userListView.setAdapter(userAdapter);
-
+        Log.d("MyTag", "Ok, inside useractivity. Looking at chatroom with ID: " + myChatroom.getChatID());
 		userAdapter.add(myChatroom.getUsers());
 		Log.d("MyTag", "users in myChatroom: " + myChatroom.getUsers().size());
 		userAdapter.add(new User("Nisse", "Glida"));
