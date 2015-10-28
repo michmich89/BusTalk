@@ -37,10 +37,12 @@ public class ConnectionsHandler implements IEventBusListener{
     private int timeDisconnected;
 
     private final boolean isTest = true;
+    private boolean isTimerRunning;
 
     public ConnectionsHandler(WifiManager wifiManager){
         super();
         timeDisconnected = 0;
+        isTimerRunning = false;
         //The string in servercommunicator can be any url that has our server installed
         serverCom = new ServerCommunicator("ws://sandra.kottnet.net:8080/BusTalkServer/chat");
         platformCom = new PlatformCommunicator();
@@ -85,12 +87,16 @@ public class ConnectionsHandler implements IEventBusListener{
     }
 
     private void startTimer() {
-        this.timer = new Timer("wifiCheck");
-        timer.scheduleAtFixedRate(timerTask, 0, 5000);
+        if(!isTimerRunning) {
+            this.timer = new Timer("wifiCheck");
+            timer.scheduleAtFixedRate(timerTask, 0, 5000);
+            isTimerRunning = true;
+        }
     }
 
     private void stopTimer() {
         timer.cancel();
+        isTimerRunning = false;
     }
 
     @Override
