@@ -33,7 +33,6 @@ public class ConnectionsHandler implements IEventBusListener{
     private String groupID;
 
     private Timer timer;
-    private TimerTask timerTask;
     private int timeDisconnected;
 
     private final boolean isTest = true;
@@ -52,43 +51,13 @@ public class ConnectionsHandler implements IEventBusListener{
         eventBus.register(serverCom);
         eventBus.register(platformCom);
 
-        //timer = new Timer("wifiCheck");
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if(serverCom.isConnected()){
-                System.out.println("Running timertask...");
-                    if(isTest){
-                        sendNextStopData(groupID);
-                    } else if(wifiController.isConnectedTo(groupID)){
-                        timeDisconnected = 0;
-                        sendNextStopData(groupID);
-                    }else{
-                        sendNextStopData(groupID);
-                        timeDisconnected = timeDisconnected + 1;
-                        if(timeDisconnected >= 3){
-                            sendConnectionLost();
-                        }
-                    }
-                } else {
-                    sendConnectionLost();
-                }
-            }
-
-            private void sendConnectionLost(){
-                eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
-                eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
-            }
-
-            private void sendNextStopData(String bussID) {
-                eventBus.postEvent(new ToPlatformEvent(new MsgPlatformDataRequest(bussID)));
-            }
-        };
     }
 
     private void startTimer() {
         if(!isTimerRunning) {
+            System.out.println("Trying to start timer");
             this.timer = new Timer("wifiCheck");
+            TimerTask timerTask = new WifiTimerTask();
             timer.scheduleAtFixedRate(timerTask, 0, 5000);
             isTimerRunning = true;
         }
@@ -96,7 +65,9 @@ public class ConnectionsHandler implements IEventBusListener{
 
     private void stopTimer() {
         timer.cancel();
+        timer.purge();
         isTimerRunning = false;
+        System.out.println("Timer stopped");
     }
 
     @Override
@@ -130,6 +101,38 @@ public class ConnectionsHandler implements IEventBusListener{
                 eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(couldConnect)));
 
             }
+        }
+    }
+
+    private class WifiTimerTask extends TimerTask{
+            @Override
+            public void run() {
+                if(serverCom.isConnected()){
+                    System.out.println("Running timertask...");
+                    if(isTest){
+                        sendNextStopData(groupID);
+                    } else if(wifiController.isConnectedTo(groupID)){
+                        timeDisconnected = 0;
+                        sendNextStopData(groupID);
+                    }else{
+                        sendNextStopData(groupID);
+                        timeDisconnected = timeDisconnected + 1;
+                        if(timeDisconnected >= 3){
+                            sendConnectionLost();
+                        }
+                    }
+                } else {
+                    sendConnectionLost();
+                }
+            }
+
+        private void sendConnectionLost(){
+            eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
+            eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
+        }
+
+        private void sendNextStopData(String bussID) {
+            eventBus.postEvent(new ToPlatformEvent(new MsgPlatformDataRequest(bussID)));
         }
     }
 }
