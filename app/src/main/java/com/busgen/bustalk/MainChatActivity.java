@@ -218,6 +218,7 @@ public class MainChatActivity extends BindingActivity {
 
     @Override
     public void onBackPressed() {
+        eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
         Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
         startActivity(intent);
         MainChatActivity.this.finish();
