@@ -1,6 +1,7 @@
 package com.busgen.bustalk;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +82,9 @@ public class MessageAdapter extends BaseAdapter{
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
         holder.userName.setText(message.getNickname() + ":");
+        if(isMe) {
+            holder.userName.setTextColor(Color.rgb(0,125,0));
+        }
 
         //Underlines the username text, not applied at the moment
         //holder.userName.setPaintFlags(holder.userName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
