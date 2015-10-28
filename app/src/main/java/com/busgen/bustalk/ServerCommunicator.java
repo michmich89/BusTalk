@@ -105,12 +105,6 @@ public class ServerCommunicator implements IEventBusListener {
 
     @Override
     public void onEvent(Event event) {
-        //IServerMessage tempMessage = event.getMessage();
-        //Log.d("MyTag", tempMessage.toString());
-        //if(tempMessage instanceof MsgJoinRoom){
-        //    //Log.d("MyTag", tempMessage.toString());
-        //    Log.d("MyTag", "blagaha");
-        //}
         IServerMessage message = event.getMessage();
         if (event instanceof ToServerEvent) {
             Log.d("MyTag", "Server received some sort of event, namely");
@@ -162,7 +156,7 @@ public class ServerCommunicator implements IEventBusListener {
                     //todo stoppa timer, skicka connectionlost
                     IServerMessage connectionLost = new MsgConnectionLost();
                     eventBus.postEvent(new ToServerEvent(connectionLost));
-                    eventBus.postEvent(new ToClientEvent(connectionLost));
+                    eventBus.postEvent(new ToActivityEvent(connectionLost));
                 }
             });
             System.out.println("Added listener to the websocket");
