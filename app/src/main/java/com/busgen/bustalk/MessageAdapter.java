@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.List;
@@ -82,9 +83,6 @@ public class MessageAdapter extends BaseAdapter{
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
         holder.userName.setText(message.getNickname() + ":");
-        if(isMe) {
-            holder.userName.setTextColor(Color.rgb(0,125,0));
-        }
 
         //Underlines the username text, not applied at the moment
         //holder.userName.setPaintFlags(holder.userName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
