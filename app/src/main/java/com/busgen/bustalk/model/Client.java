@@ -19,6 +19,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
+import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 import com.busgen.bustalk.service.EventBus;
@@ -299,7 +300,9 @@ public class Client implements IClient, IEventBusListener {
                 // chatrooms = ((MsgAvailableRooms) message).getRoomList();
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
-            } else if (message instanceof MsgPlatformDataRequest) {
+            } else if (message instanceof MsgSetGroupId) {
+                MsgSetGroupId groupIdMessage = (MsgSetGroupId)message;
+                setGroupId(((MsgSetGroupId) message).getGroupId());
             }
         }
     }

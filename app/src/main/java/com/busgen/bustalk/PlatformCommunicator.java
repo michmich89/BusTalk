@@ -71,13 +71,13 @@ public class PlatformCommunicator implements IEventBusListener{
         String dgw = new String();
         if (regNrToDgw.containsValue(bussID)) {
             dgw = regNrToDgw.get(bussID);
-        } else if (bussID != null) {
-            //hållplats
-            return bussID;
-        } else {
-
-            //If we don't have a legal bussID, the simulated buss will be used.
+        } else if(bussID.equals("Test")) {
+            //this represents the simulated buss
             dgw = "Ericsson$Vin_Num_001";
+
+        } else if(bussID != null){
+            //This means that bussID should be a busstop and thus the busstop itself should be displayed.
+            return bussID;
         }
 
         JSONObject platformData = null;
@@ -152,7 +152,7 @@ public class PlatformCommunicator implements IEventBusListener{
         }
         //todo hantera null om servern inte skickar meddelande
         if (busStop == null){
-            busStop = "NisseTerminalen";
+            busStop = "Next busstop could not be found";
         }
         return busStop;
     }
@@ -165,7 +165,8 @@ public class PlatformCommunicator implements IEventBusListener{
             Log.d("MyLog", "platformevent");
             /* Skickar endast nästa hållplats tills vidare*/
             if (message instanceof MsgPlatformDataRequest) {
-                String nextStop = getNextStopData(null);
+                MsgPlatformDataRequest requestMessage = (MsgPlatformDataRequest)message;
+                String nextStop = getNextStopData(requestMessage.getBussID());
                 System.out.println("Nextstop = " + nextStop);
 
                 MsgPlatformData newMessage = new MsgPlatformData("nextStop", nextStop);

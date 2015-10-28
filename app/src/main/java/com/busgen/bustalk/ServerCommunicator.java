@@ -62,7 +62,7 @@ public class ServerCommunicator implements IEventBusListener {
     }
 
 
-    public void connect() {
+    private void connect() {
         //this.webSocket.connectAsynchronously();
         openConnectionThread = new Thread(){
             @Override
@@ -103,8 +103,15 @@ public class ServerCommunicator implements IEventBusListener {
         }
     }
 
-
-
+    public boolean canConnectToServer(){
+        System.out.println("Want to connect to server");
+        if(!isConnected()){
+            System.out.println("Wasn't connected to server, trying to connect...");
+            connect();
+        }
+        //eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
+        return isConnected();
+    }
 
     @Override
     public void onEvent(Event event) {
@@ -112,14 +119,8 @@ public class ServerCommunicator implements IEventBusListener {
         if (event instanceof ToServerEvent) {
             Log.d("MyTag", "Server received some sort of event, namely");
             Log.d("MyTag", message.getClass().getName());
-            if(message instanceof MsgConnectToServer){
-                System.out.println("Want to connect to server");
-                if(!isConnected()){
-                    System.out.println("Wasn't connected to server, trying to connect...");
-                    connect();
-                }
-                eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
-            }else if (message instanceof MsgNicknameAvailable) { //Should maybe be deleted, check later
+            //todo wtf är detta
+            if (message instanceof MsgNicknameAvailable) { //Should maybe be deleted, check later
                 eventBus.postEvent(new ToActivityEvent(message));
             }else {
                 sendMessage(message);
@@ -147,7 +148,6 @@ public class ServerCommunicator implements IEventBusListener {
                 @Override
                 public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
                     // Do things when connection is established
-                    //todo starta timer sen
                     eventBus.postEvent(new ToServerEvent(new MsgConnectionEstablished()));
                 }
 
@@ -156,7 +156,6 @@ public class ServerCommunicator implements IEventBusListener {
                                            WebSocketFrame clientCloseFrame, boolean closedByServer) {
 
                     // Do things when disconnected from server
-                    //todo stoppa timer, skicka connectionlost
                     IServerMessage connectionLost = new MsgConnectionLost();
                     eventBus.postEvent(new ToServerEvent(connectionLost));
                     eventBus.postEvent(new ToActivityEvent(connectionLost));

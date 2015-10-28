@@ -30,7 +30,19 @@ public class WifiController{
         bssidToRegNr = bussIDs.getBssidToRegNrMap();
     }
 
-    public boolean  isConnected(){
+    public boolean isConnectedTo(String groupID){
+        List<ScanResult> scanResultList = wifiManager.getScanResults();
+        for(ScanResult result : scanResultList){
+            if(bssidToRegNr.containsKey(result.BSSID)){
+                if(groupID.equals(bssidToRegNr.get(result.BSSID))){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isConnected(){
         List<ScanResult> scanResultList = wifiManager.getScanResults();
         for(ScanResult result : scanResultList){
             if(bssidToRegNr.containsKey(result.BSSID)){
