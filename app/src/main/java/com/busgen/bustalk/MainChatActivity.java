@@ -152,19 +152,31 @@ public class MainChatActivity extends BindingActivity {
     }
 
     public void connectionLostAlert(){
-        AlertDialog alertDialog = new AlertDialog.Builder(MainChatActivity.this).create();
-        alertDialog.setTitle("Connection Error");
-        alertDialog.setMessage("Your connection to the server has been lost");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        MainChatActivity.this.finish();
-                    }
-                });
-        alertDialog.show();
+        System.out.println("Alert was used.");
+        //AlertDialog alertDialog = new AlertDialog.Builder(MainChatActivity.this).create();
+        Runnable testRun = new Runnable() {
+            @Override
+            public void run() {
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainChatActivity.this);
+                alertBuilder.setTitle("Connection Error");
+                alertBuilder.setMessage("Your connection to the server has been lost");
+                alertBuilder.setCancelable(false);
+                alertBuilder.setNegativeButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                MainChatActivity.this.finish();
+                            }
+                        });
+                alertBuilder.show();
+            }
+        };
+        runOnUiThread(testRun);
+
+
     }
 
 
