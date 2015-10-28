@@ -180,7 +180,7 @@ public class Client implements IClient, IEventBusListener {
             } else if (message instanceof MsgJoinRoom) {
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
 
-                //Skala bort kod här sedan, joinRoom innehåller det mesta
+                //Skala bort kod här sedan, joinRoom innehåller det mesta. Denna används aldrig.
                 if (!chatrooms.contains(chatroom)) {
                     joinRoom(chatroom);
                     Event newEvent = new ToActivityEvent(message);
