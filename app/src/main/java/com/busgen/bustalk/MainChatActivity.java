@@ -11,6 +11,7 @@ import android.widget.*;
 
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
+import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
@@ -24,6 +25,8 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
+import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
+import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ public class MainChatActivity extends BindingActivity {
     private MessageAdapter messageAdapter;
     private IChatroom myChatroom;
     private MenuItem usersPresent;
+    private MenuItem userActivityMenuItem;
     private String userName;
     private String interest;
 
@@ -46,7 +50,6 @@ public class MainChatActivity extends BindingActivity {
         setContentView(R.layout.activity_main_chat);
         initVariables();
         initViews();
-        //eventBus.register(this);
     }
 
     private void initVariables(){
@@ -86,13 +89,9 @@ public class MainChatActivity extends BindingActivity {
     public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
-        //messageListView.setAdapter(messageAdapter);
-        //messageListView.invalidateViews();
-        //messageListView.setSelection(messageListView.getCount() - 1);
     }
 
     public void updateRoom(int chatId){
-
         for (IChatroom c : client.getChatrooms()) {
             if (c.getChatID() == chatId) {
                 myChatroom = c;
@@ -116,6 +115,10 @@ public class MainChatActivity extends BindingActivity {
                     }
                 });
                 myChatroom.addMessage(chatMessage);
+            } else if (message instanceof MsgUsersInChat) {
+                int chatId = ((MsgUsersInChat) message).getChatID();
+                updateRoom(chatId);
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {
@@ -123,12 +126,12 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLostUserInChat) {
                 int chatId = ((MsgLostUserInChat) message).getChatID();
                 updateRoom(chatId);
-
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
                 int chatId = ((MsgNewUserInChat) message).getChatID();
                 updateRoom(chatId);
-
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgConnectionLost){
                 connectionLostAlert();
             } else if (message instanceof MsgPlatformData) {
@@ -167,13 +170,30 @@ public class MainChatActivity extends BindingActivity {
         alertDialog.show();
     }
 
+    private void updateNumOfUsersMenuItem(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
+                usersPresent.setTitle(numOfUsers);
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_chat, menu);
-        this.usersPresent = menu.findItem(R.id.action_users);
-        usersPresent.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        this.usersPresent = menu.findItem(R.id.num_of_users_menu_item);
+
+        MsgUsersInChatRequest message = new MsgUsersInChatRequest(myChatroom.getChatID());
+        Event event = new ToServerEvent(message);
+        eventBus.postEvent(event);
+
+        updateNumOfUsersMenuItem();
+
+        this.userActivityMenuItem = menu.findItem(R.id.user_activity_menu_item);
+        userActivityMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = new Intent(MainChatActivity.this, UserActivity.class);

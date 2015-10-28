@@ -244,9 +244,9 @@ public class Client implements IClient, IEventBusListener {
                     IChatroom chatroom = new Chatroom(chatId, "");
                     joinRoom(chatroom);
 
-                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
-                    Event newEvent = new ToServerEvent(userReqMsg);
-                    eventBus.postEvent(newEvent);
+//                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+//                    Event newEvent = new ToServerEvent(userReqMsg);
+//                    eventBus.postEvent(newEvent);
                 }
 
                 if (user != null){
@@ -259,6 +259,12 @@ public class Client implements IClient, IEventBusListener {
                            }
                        }
                    }
+
+                if (user.equals(this.user)) {
+                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+                    Event newEvent = new ToServerEvent(userReqMsg);
+                    eventBus.postEvent(newEvent);
+                }
 
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
@@ -284,6 +290,8 @@ public class Client implements IClient, IEventBusListener {
                         c.setUsers(userList);
                     }
                 }
+                Event activityEvent = new ToActivityEvent(message);
+                eventBus.postEvent(activityEvent);
 
             } else if (message instanceof MsgNicknameAvailable) {
                 Log.d("MyTag", "Sending availability info to activity");
