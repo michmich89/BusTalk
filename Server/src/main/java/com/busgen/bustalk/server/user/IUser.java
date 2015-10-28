@@ -1,6 +1,6 @@
 package com.busgen.bustalk.server.user;
 
-import com.busgen.bustalk.server.chatroom.Chatroom;
+import com.busgen.bustalk.server.chatroom.IChatroom;
 
 import java.util.List;
 
@@ -22,16 +22,20 @@ public interface IUser {
      *
      * @param chatroom The chatroom the user joined
      */
-    public void onJoinChatroom(Chatroom chatroom);
+    public void onJoinChatroom(IChatroom chatroom);
 
     /**
      * Called upon when a user leaves a chatroom
      *
      * @param chatroom The chatroom the user leaves
      */
-    public void onLeaveChatroom(Chatroom chatroom);
+    public void onLeaveChatroom(IChatroom chatroom);
 
-    public List<Chatroom> getCurrentChatrooms();
+    public List<IChatroom> getCurrentChatrooms();
 
+    public String getGroupId();
 
+    public boolean isInRoom(IChatroom chatroom);
+
+    public void setGroupId(String groupId);
 }

@@ -34,8 +34,8 @@ public class ChatroomFactory {
         return Holder.INSTANCE;
     }
 
-    public Chatroom createChatroom(String chatroomSubject){
-        Chatroom temporaryReference = new Chatroom(this.normalChatIdNbr, chatroomSubject);
+    public IChatroom createChatroom(String chatroomSubject){
+        IChatroom temporaryReference = new Chatroom(this.normalChatIdNbr, chatroomSubject);
         this.normalChatIdNbr++;
         return temporaryReference;
     }
@@ -46,10 +46,10 @@ public class ChatroomFactory {
      * @return the newly created main chatroom
      * @throws ChatIdNbrFullException if no ID-numbers is available
      */
-    public Chatroom createMainChatroom(String title) throws ChatIdNbrFullException{
+    public IChatroom createMainChatroom(String title) throws ChatIdNbrFullException{
 
         if(mainChatIdNbr < Constants.NBR_OF_RESERVED_CHAT_IDS){
-            Chatroom temporaryReference = new Chatroom(this.mainChatIdNbr, title);
+            IChatroom temporaryReference = new Chatroom(this.mainChatIdNbr, title);
             this.mainChatIdNbr++;
             return temporaryReference;
         }

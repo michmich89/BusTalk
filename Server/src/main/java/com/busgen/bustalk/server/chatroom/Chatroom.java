@@ -1,5 +1,6 @@
 package com.busgen.bustalk.server.chatroom;
 
+import com.busgen.bustalk.server.user.IUser;
 import com.busgen.bustalk.server.user.User;
 
 import java.util.ArrayList;
@@ -16,20 +17,20 @@ public class Chatroom implements IChatroom {
 
     private String chatroomTitle;
     private final int idNbr;
-    private final List<User> chatroomUsers;
+    private final List<IUser> chatroomUsers;
 
     public Chatroom(int idNbr, String chatroomTitle){
         this.chatroomTitle = chatroomTitle;
         this.idNbr = idNbr;
-        chatroomUsers = new ArrayList<User>();
+        chatroomUsers = new ArrayList<IUser>();
     }
 
-    public void subscribeToRoom(User user){
+    public void subscribeToRoom(IUser user){
         chatroomUsers.add(user);
 
     }
 
-    public void unsubscribeToRoom(User user){
+    public void unsubscribeToRoom(IUser user){
         chatroomUsers.remove(user);
     }
 
@@ -41,11 +42,11 @@ public class Chatroom implements IChatroom {
         return this.chatroomTitle;
     }
 
-    public List<User> getChatroomUsers(){
-        return new ArrayList<User>(chatroomUsers);
+    public List<IUser> getChatroomUsers(){
+        return new ArrayList<IUser>(chatroomUsers);
     }
 
-    public boolean isUserInRoom(User user){
+    public boolean isUserInRoom(IUser user){
         return chatroomUsers.contains(user);
     }
 }

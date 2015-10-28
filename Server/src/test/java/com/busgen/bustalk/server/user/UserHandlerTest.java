@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class UserHandlerTest {
     private ChatroomHandler chatroomHandler;
     private UserHandler userHandler;
-    private User user;
+    private IUser user;
 
     public UserHandlerTest () {
         chatroomHandler = new ChatroomHandler();
@@ -55,7 +55,7 @@ public class UserHandlerTest {
 
         Session userSession = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, userSession, "newname", "unit testing");
-        User user = userHandler.getUser(userSession);
+        IUser user = userHandler.getUser(userSession);
         userHandler.setUserNameAndInterests(user, userSession, name, "something else");
 
         assertTrue(user.getName().equals(name));
@@ -65,7 +65,7 @@ public class UserHandlerTest {
     public void testIfUserIsRemovedCorrectly() {
         Session userSession = Mockito.mock(Session.class);
         userHandler.setUserNameAndInterests(null, userSession, "user name", "some interests");
-        User user = userHandler.getUser(userSession);
+        IUser user = userHandler.getUser(userSession);
 
         userHandler.removeUser(user);
         assertTrue(!userHandler.getUsers().contains(user) && userHandler.isNameAllowed(user.getName()));

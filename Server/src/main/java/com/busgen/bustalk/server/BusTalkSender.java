@@ -1,9 +1,10 @@
 package com.busgen.bustalk.server;
 
-import com.busgen.bustalk.server.chatroom.Chatroom;
+import com.busgen.bustalk.server.chatroom.IChatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
+import com.busgen.bustalk.server.user.IUser;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import com.busgen.bustalk.server.util.Constants;
@@ -41,7 +42,7 @@ public class BusTalkSender {
      * @param user The user that created the chatroom
      * @param chatroom The newly created chatroom you want to notify users about
      */
-    public void chatroomCreatedNotification(User user, Chatroom chatroom) {
+    public void chatroomCreatedNotification(IUser user, IChatroom chatroom) {
         Session creator = userHandler.getSession(user);
         String groupId = user.getGroupId();
         JSONObject jsonObject = new JSONObject();
@@ -50,8 +51,9 @@ public class BusTalkSender {
         jsonObject.put("chatId", chatroom.getIdNbr());
         jsonObject.put("isYours", false);
 
-        // TODO: Could perhaps be more optimized...
-        for(User u : userHandler.getUsers()){
+        // TODO: Could perhaps be more optimized... (maybe by creating objects representing groups that hold users and
+        // chat rooms)
+        for(IUser u : userHandler.getUsers()){
             if(!u.equals(user) && u.getGroupId().equals(groupId)){
                 userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
             }
@@ -66,14 +68,14 @@ public class BusTalkSender {
      * @param user The user that just joined
      * @param chatroom The chatroom whos users will be notified
      */
-    public void userJoinedNotification(User user, Chatroom chatroom) {
+    public void userJoinedNotification(IUser user, IChatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION);
         jsonObject.put("chatId", chatroom.getIdNbr());
         jsonObject.put("name", user.getName());
         jsonObject.put("interests", user.getInterests());
 
-        for (User u : chatroom.getChatroomUsers()) {
+        for (IUser u : chatroom.getChatroomUsers()) {
             Session s = userHandler.getSession(u);
             s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
@@ -85,13 +87,13 @@ public class BusTalkSender {
      * @param user The user who left
      * @param chatroom The chatroom that the user left
      */
-    public void userLeftNotification(User user, Chatroom chatroom) {
+    public void userLeftNotification(IUser user, IChatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.USER_LEFT_ROOM_NOTIFICATION);
         jsonObject.put("chatId", chatroom.getIdNbr());
         jsonObject.put("name", user.getName());
 
-        for (User u : chatroom.getChatroomUsers()) {
+        for (IUser u : chatroom.getChatroomUsers()) {
             Session s = userHandler.getSession(u);
             s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
@@ -103,12 +105,12 @@ public class BusTalkSender {
      * @param groupId the group ID of all affected users
      * @param chatroom the chatroom that was deleted
      */
-    public void chatDeletedNotification(String groupId, Chatroom chatroom) {
+    public void chatDeletedNotification(String groupId, IChatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.ROOM_DELETED_NOTIFICATION);
         jsonObject.put("chatId", chatroom.getIdNbr());
 
-        for (User u : userHandler.getUsers()) {
+        for (IUser u : userHandler.getUsers()) {
             if(u.getGroupId().equals(groupId)) {
                 userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
             }
@@ -120,13 +122,13 @@ public class BusTalkSender {
      *
      * @param user
      */
-    public void listOfChatrooms(User user) {
+    public void listOfChatrooms(IUser user) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.LIST_OF_CHATROOMS_NOTIFICATION);
         jsonObject.put("groupId", user.getGroupId());
 
-        List<Chatroom> tempChatroomList = chatroomHandler.getGroupOfChatrooms(user.getGroupId());
-        for (Chatroom c : tempChatroomList) {
+        List<IChatroom> tempChatroomList = chatroomHandler.getGroupOfChatrooms(user.getGroupId());
+        for (IChatroom c : tempChatroomList) {
             JSONObject jsonChatroom = new JSONObject();
             jsonChatroom.put("chatId", c.getIdNbr());
             jsonChatroom.put("name", c.getTitle());
@@ -146,12 +148,12 @@ public class BusTalkSender {
      * @param user the user the message should be sent to
      * @param chatroom the chatroom the user wants info about
      */
-    public void listOfUsersInRoom(User user, Chatroom chatroom) {
+    public void listOfUsersInRoom(IUser user, IChatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("type", MessageType.LIST_OF_USERS_IN_CHAT_NOTIFICATION);
         jsonObject.put("chatId", chatroom.getIdNbr());
-        for (User u : chatroom.getChatroomUsers()) {
+        for (IUser u : chatroom.getChatroomUsers()) {
             JSONObject jsonUser = new JSONObject();
             jsonUser.put("name", u.getName());
             jsonUser.put("interests", u.getInterests());
@@ -170,7 +172,7 @@ public class BusTalkSender {
      * @param chatroom The chatroom the message was sent to
      * @param message The actual message the user wrote
      */
-    public void chatMessage(User sender, Chatroom chatroom, String message) {
+    public void chatMessage(IUser sender, IChatroom chatroom, String message) {
         int chatId = chatroom.getIdNbr();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.CHAT_MESSAGE_NOTIFICATION);
@@ -180,23 +182,17 @@ public class BusTalkSender {
         jsonObject.put("time", new Date().toString());
         jsonObject.put("isMe", false);
 
-
-
         System.out.println(chatroom.getChatroomUsers().toString());
-        for (User u : chatroom.getChatroomUsers()) {
+        for (IUser u : chatroom.getChatroomUsers()) {
             if (!u.equals(sender)) {
                 Session s = userHandler.getSession(u);
                 s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
-                LOGGER.log(Level.INFO, String.format("Sent message to {0}: {1}"),
-                        new Object[]{u.getName(), jsonObject.toString()});
             }
         }
 
         jsonObject.put("isMe", true);
         Session session = userHandler.getSession(sender);
         session.getAsyncRemote().sendObject(new UserMessage(jsonObject));
-        LOGGER.log(Level.INFO, String.format("Sent message to {0}: {1}"),
-                new Object[]{sender.getName(), jsonObject.toString()});
     }
 
     /**

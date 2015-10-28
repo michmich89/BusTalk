@@ -1,11 +1,13 @@
 package com.busgen.bustalk.server;
 
-import com.busgen.bustalk.server.chatroom.Chatroom;
+import com.busgen.bustalk.server.chatroom.IChatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
+import com.busgen.bustalk.server.user.IUser;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
+import com.busgen.bustalk.server.util.Constants;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,7 +29,7 @@ public class BusTalkHandlerTest {
     private ChatroomHandler chatroomHandler;
     private UserHandler userHandler;
     private BusTalkHandler busTalkHandler;
-    private User user;
+    private IUser user;
 
     public BusTalkHandlerTest(){
         busTalkHandler = BusTalkHandler.getInstance();
@@ -38,7 +40,7 @@ public class BusTalkHandlerTest {
     @Test
     public void TestChangeGroupIdOfUser(){
         //Create objects needed
-        User user = new User("username", "userinterests");
+        IUser user = new User("username", "userinterests");
         Session session = Mockito.mock(Session.class);
         Mockito.when(session.getAsyncRemote()).thenReturn(Mockito.mock(RemoteEndpoint.Async.class));
         userHandler.addUser(user, session);
@@ -72,7 +74,7 @@ public class BusTalkHandlerTest {
 
     @Test
     public void UserLeavingAllRoomsWhenSessionIsClosed(){
-        User user = new User("username", "userinterests");
+        IUser user = new User("username", "userinterests");
         Session session = Mockito.mock(Session.class);
         userHandler.addUser(user, session);
         Mockito.when(session.getAsyncRemote()).thenReturn(Mockito.mock(RemoteEndpoint.Async.class));
@@ -105,9 +107,9 @@ public class BusTalkHandlerTest {
         busTalkHandler.handleInput(userMessage2, session);
         busTalkHandler.handleInput(userMessage3, session);
 
-        Chatroom first = chatroomHandler.getChatroom(10000);
-        Chatroom second = chatroomHandler.getChatroom(10001);
-        Chatroom third = chatroomHandler.getChatroom(10002);
+        IChatroom first = chatroomHandler.getChatroom(Constants.NBR_OF_RESERVED_CHAT_IDS);
+        IChatroom second = chatroomHandler.getChatroom(Constants.NBR_OF_RESERVED_CHAT_IDS + 1);
+        IChatroom third = chatroomHandler.getChatroom(Constants.NBR_OF_RESERVED_CHAT_IDS + 2);
 
         int nbr1 = first.getChatroomUsers().size();
         int nbr2 = second.getChatroomUsers().size();
@@ -137,10 +139,10 @@ public class BusTalkHandlerTest {
         Mockito.when(userSession.getAsyncRemote()).thenReturn(Mockito.mock(RemoteEndpoint.Async.class));
         // Create user
         userHandler.setUserNameAndInterests(null, userSession, "abc123", "interests");
-        User user = userHandler.getUser(userSession);
+        IUser user = userHandler.getUser(userSession);
         // Change group and join main chat
         busTalkHandler.handleInput(changeGroup("1"), userSession);
-        Chatroom chatroom1 = chatroomHandler.getGroupOfChatrooms("1").get(0);
+        IChatroom chatroom1 = chatroomHandler.getGroupOfChatrooms("1").get(0);
         busTalkHandler.handleInput(joinRoom(chatroom1.getIdNbr()), userSession);
 
         // Check if user is in the room, then change group and check once again if the user is in the room
@@ -156,7 +158,7 @@ public class BusTalkHandlerTest {
 
         String groupId = "group";
         busTalkHandler.handleInput(changeGroup(groupId), userSession);
-        List<Chatroom> chatrooms = chatroomHandler.getGroupOfChatrooms(groupId);
+        List<IChatroom> chatrooms = chatroomHandler.getGroupOfChatrooms(groupId);
 
         assertTrue(chatrooms != null && chatrooms.size() == 1);
     }
@@ -169,11 +171,11 @@ public class BusTalkHandlerTest {
         // Join a group and get the list of chat rooms in that group (should only be one)
         String groupId1 = "group1";
         busTalkHandler.handleInput(changeGroup(groupId1), userSession);
-        List<Chatroom> chatrooms1 = chatroomHandler.getGroupOfChatrooms(groupId1);
+        List<IChatroom> chatrooms1 = chatroomHandler.getGroupOfChatrooms(groupId1);
         // Join another group and get the list of the same group as before
         String groupId2 = "group2";
         busTalkHandler.handleInput(changeGroup(groupId2), userSession);
-        List<Chatroom> chatrooms2 = chatroomHandler.getGroupOfChatrooms(groupId1);
+        List<IChatroom> chatrooms2 = chatroomHandler.getGroupOfChatrooms(groupId1);
         // Check if the first list is empty, and if the group was removed (so that it returns null after user has
         // changed group)
         assertTrue(chatrooms1.size() == 0 && chatrooms2 == null);

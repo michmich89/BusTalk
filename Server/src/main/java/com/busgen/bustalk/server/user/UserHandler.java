@@ -1,6 +1,6 @@
 package com.busgen.bustalk.server.user;
 
-import com.busgen.bustalk.server.chatroom.Chatroom;
+import com.busgen.bustalk.server.chatroom.IChatroom;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -16,14 +16,14 @@ import java.util.logging.Logger;
  * Handles all user related things, such as list of users (and their corresponding session), what names are allowed, etc.
  */
 public class UserHandler {
-    private final BiMap<User, Session> userToSession;
+    private final BiMap<IUser, Session> userToSession;
     private final List<String> disallowedNames;
     private static final Logger LOGGER = Logger.getLogger(UserHandler.class.getName());
     private UserFactory userFactory;
 
     public UserHandler() {
         this.userFactory = new UserFactory();
-        this.userToSession = Maps.synchronizedBiMap(HashBiMap.<User, Session>create());
+        this.userToSession = Maps.synchronizedBiMap(HashBiMap.<IUser, Session>create());
         this.disallowedNames = Collections.synchronizedList(new ArrayList<String>());
 
         disallowedNames.add("Alexander Kloutschek");
@@ -33,7 +33,7 @@ public class UserHandler {
      * @param session the session connected to a user
      * @return User connected to the parameter session
      */
-    public User getUser(Session session) {
+    public IUser getUser(Session session) {
         return userToSession.inverse().get(session);
     }
 
@@ -41,7 +41,7 @@ public class UserHandler {
      * @param user the user connected to a session
      * @return Session connected to the parameter user
      */
-    public Session getSession(User user) {
+    public Session getSession(IUser user) {
         return userToSession.get(user);
     }
 
@@ -49,8 +49,8 @@ public class UserHandler {
      *
      * @return a list of users in the room
      */
-    public List<User> getUsers() {
-        return new ArrayList<User>(userToSession.keySet());
+    public List<IUser> getUsers() {
+        return new ArrayList<IUser>(userToSession.keySet());
     }
 
     /**
@@ -80,6 +80,8 @@ public class UserHandler {
         name = name.toLowerCase();
         if (!disallowedNames.contains(name)) {
             disallowedNames.add(name);
+
+            LOGGER.log(Level.INFO, String.format("\"{0}\" was added to the list of disallowed names"), name);
         }
     }
 
@@ -91,6 +93,7 @@ public class UserHandler {
     private void removeDisallowedName(String name) {
         name = name.toLowerCase();
         disallowedNames.remove(name);
+        LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), name);
     }
 
 
@@ -100,11 +103,10 @@ public class UserHandler {
      * @param user
      * @param session
      */
-    public void addUser(User user, Session session) {
+    public void addUser(IUser user, Session session) {
         userToSession.put(user, session);
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Added to user list"), new Object[]{session.getId(), user.getName()});
         addDisallowedName(user.getName());
-        LOGGER.log(Level.INFO, String.format("\"{0}\" was added to the list of disallowed names"), user.getName());
     }
 
     /**
@@ -112,20 +114,22 @@ public class UserHandler {
      *
      * @param user
      */
-    public void removeUser(User user) {
+    public void removeUser(IUser user) {
         removeDisallowedName(user.getName());
-        LOGGER.log(Level.INFO, String.format("\"{0}\" was removed from the list of disallowed names"), user.getName());
         Session session = userToSession.get(user);
         userToSession.remove(user);
         LOGGER.log(Level.INFO, String.format("[{0}:{1}] Removed from user list"), new Object[]{session.getId(), user.getName()});
     }
 
-    public boolean setUserNameAndInterests(User user, Session session, String name, String interests) {
+    public boolean setUserNameAndInterests(IUser user, Session session, String name, String interests) {
         if (user != null && (isNameAllowed(name) || user.getName().equalsIgnoreCase(name))) {
             String oldName = user.getName();
             String oldInterests = user.getInterests();
             user.setName(name);
             user.setInterests(interests);
+
+            removeDisallowedName(oldName);
+            addDisallowedName(name);
 
             LOGGER.log(Level.INFO, String.format("[{0}:{1}] Name changed to \"{2}\" and interest changed from \"{3}\" to \"{4}\""),
                     new Object[]{session.getId(), oldName, user.getName(), oldInterests, user.getInterests()});
@@ -136,6 +140,8 @@ public class UserHandler {
             LOGGER.log(Level.INFO, String.format("[{0}:{1}] Created with interests \"{2}\""),
                     new Object[]{session.getId(), user.getName(), user.getInterests()});
         } else {
+            LOGGER.log(Level.INFO, String.format("[{0}] User name \"{1}\" was already taken\n{2}"),
+                    new Object[]{session.getId(), name, disallowedNames.toString()});
             return false;
         }
 
@@ -149,7 +155,7 @@ public class UserHandler {
      * @param user
      * @param chatroom
      */
-    public void addToCurrentRooms(User user, Chatroom chatroom){
+    public void addToCurrentRooms(IUser user, IChatroom chatroom){
         user.onJoinChatroom(chatroom);
     }
 
@@ -160,11 +166,11 @@ public class UserHandler {
      * @param user
      * @param chatroom
      */
-    public void removeFromCurrentRooms(User user, Chatroom chatroom){
+    public void removeFromCurrentRooms(IUser user, IChatroom chatroom){
         user.onLeaveChatroom(chatroom);
     }
 
-    public boolean isUserInRoom(User user, Chatroom chatroom){
+    public boolean isUserInRoom(IUser user, IChatroom chatroom){
         return user.isInRoom(chatroom);
     }
 }

@@ -6,7 +6,7 @@ public class UserFactory {
 
     }
 
-    public User createUser(String name, String interests){
+    public IUser createUser(String name, String interests){
         return new User(name, interests);
     }
 }

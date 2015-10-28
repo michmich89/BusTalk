@@ -1,5 +1,6 @@
 package com.busgen.bustalk.server.chatroom;
 
+import com.busgen.bustalk.server.user.IUser;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import org.junit.Before;
@@ -25,7 +26,7 @@ public class ChatroomHandlerTest {
     private Session session;
     private ChatroomHandler chatroomHandler;
     private UserHandler userHandler;
-    private User user;
+    private IUser user;
 
     public ChatroomHandlerTest () {
         chatroomHandler = new ChatroomHandler();
@@ -42,7 +43,7 @@ public class ChatroomHandlerTest {
 
     @Test
     public void testIfUserCreatedChatroomsAreCreatedCorrectly() {
-        Chatroom chatroom = chatroomHandler.createChatroom(user, "test chatroom");
+        IChatroom chatroom = chatroomHandler.createChatroom(user, "test chatroom");
 
         assertTrue(chatroomHandler.getListOfOpenChatrooms().contains(chatroom)
                 && chatroomHandler.getGroupOfChatrooms(user.getGroupId()).contains(chatroom));
@@ -50,7 +51,7 @@ public class ChatroomHandlerTest {
 
     @Test
     public void testIfUserCreatedChatroomIsDeletedWhenLastUserLeaves() {
-        Chatroom chatroom = chatroomHandler.createChatroom(user, "chat room 123");
+        IChatroom chatroom = chatroomHandler.createChatroom(user, "chat room 123");
         chatroomHandler.joinChatroom(user, chatroom);
 
         assertTrue(chatroom.getChatroomUsers().contains(user));
@@ -62,7 +63,7 @@ public class ChatroomHandlerTest {
 
     @Test
     public void testIfUserCreatedChatroomsHaveTheCorrectGroupId() {
-        Chatroom chatroom = chatroomHandler.createChatroom(user, "test");
+        IChatroom chatroom = chatroomHandler.createChatroom(user, "test");
 
         assertTrue(chatroomHandler.getGroupOfChatrooms(user.getGroupId()).contains(chatroom));
     }

@@ -1,6 +1,7 @@
 package com.busgen.bustalk.server.chatroom;
 
 import com.busgen.bustalk.server.BusTalkSender;
+import com.busgen.bustalk.server.user.IUser;
 import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import com.busgen.bustalk.server.util.Constants;
@@ -17,17 +18,17 @@ import java.util.logging.Logger;
  */
 public class ChatroomHandler {
 
-    private final BiMap<Integer, Chatroom> idToChatroom;
+    private final BiMap<Integer, IChatroom> idToChatroom;
     private final ChatroomFactory chatroomFactory;
     private final static Logger LOGGER = Logger.getLogger(ChatroomHandler.class.getName());
-    private final Map<String, List<Chatroom>> groupToListOfChatrooms;
+    private final Map<String, List<IChatroom>> groupToListOfChatrooms;
 
 
 
     public ChatroomHandler() {
-        this.idToChatroom = Maps.synchronizedBiMap(HashBiMap.<Integer, Chatroom>create());
+        this.idToChatroom = Maps.synchronizedBiMap(HashBiMap.<Integer, IChatroom>create());
         this.chatroomFactory = ChatroomFactory.getFactory();
-        this.groupToListOfChatrooms = Collections.synchronizedMap(new HashMap<String, List<Chatroom>>());
+        this.groupToListOfChatrooms = Collections.synchronizedMap(new HashMap<String, List<IChatroom>>());
 
     }
 
@@ -38,13 +39,13 @@ public class ChatroomHandler {
      * @param name The name/title of the chatroom
      * @return The newly created chatroom
      */
-    public Chatroom createChatroom(User user, String name) {
-        Chatroom chatroom = chatroomFactory.createChatroom(name);
+    public IChatroom createChatroom(IUser user, String name) {
+        IChatroom chatroom = chatroomFactory.createChatroom(name);
         idToChatroom.put(chatroom.getIdNbr(), chatroom);
 
-        List<Chatroom> tempList = groupToListOfChatrooms.get(user.getGroupId());
+        List<IChatroom> tempList = groupToListOfChatrooms.get(user.getGroupId());
         if (tempList == null) {
-            tempList = new ArrayList<Chatroom>();
+            tempList = new ArrayList<IChatroom>();
             tempList.add(chatroom);
             groupToListOfChatrooms.put(user.getGroupId(), tempList);
         } else {
@@ -64,7 +65,7 @@ public class ChatroomHandler {
      * @param chatroom
      * @return
      */
-    public boolean isUserInRoom(User user, Chatroom chatroom) {
+    public boolean isUserInRoom(IUser user, IChatroom chatroom) {
         return chatroom.isUserInRoom(user);
     }
 
@@ -74,7 +75,7 @@ public class ChatroomHandler {
      * @param user
      * @param chatroom
      */
-    public void joinChatroom(User user, Chatroom chatroom) {
+    public void joinChatroom(IUser user, IChatroom chatroom) {
         chatroom.subscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}] Joined room {1} ({2})"),
                     new Object[]{user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
@@ -86,7 +87,7 @@ public class ChatroomHandler {
      * @param user
      * @param chatroom
      */
-    public void leaveChatroom(User user, Chatroom chatroom) {
+    public void leaveChatroom(IUser user, IChatroom chatroom) {
         chatroom.unsubscribeToRoom(user);
         LOGGER.log(Level.INFO, String.format("[{0}] Left room {1} ({2})"),
                 new Object[]{user.getName(), chatroom.getTitle(), chatroom.getIdNbr()});
@@ -98,7 +99,7 @@ public class ChatroomHandler {
 
 
     private void deleteChatroom(int chatId, String groupId) {
-        Chatroom chatroom = idToChatroom.get(chatId);
+        IChatroom chatroom = idToChatroom.get(chatId);
         idToChatroom.remove(chatId);
         groupToListOfChatrooms.get(groupId).remove(chatroom);
         LOGGER.log(Level.INFO, String.format("Chat room {0} ({1}) was removed."), new Object[]{chatroom.getTitle(), chatId});
@@ -107,8 +108,8 @@ public class ChatroomHandler {
     /**
      * @return a list of all chatroom
      */
-    public List<Chatroom> getListOfOpenChatrooms() {
-        return new ArrayList<Chatroom>(idToChatroom.values());
+    public List<IChatroom> getListOfOpenChatrooms() {
+        return new ArrayList<IChatroom>(idToChatroom.values());
     }
 
     /**
@@ -116,7 +117,7 @@ public class ChatroomHandler {
      * @param chatroom The chatroom for which a user list is requested
      * @return A list of users in the room
      */
-    public List<User> getListOfUsersInChatroom(Chatroom chatroom) {
+    public List<IUser> getListOfUsersInChatroom(IChatroom chatroom) {
         return chatroom.getChatroomUsers();
     }
 
@@ -124,7 +125,7 @@ public class ChatroomHandler {
      * @param chatId the ID number of the chatroom that's being asked for
      * @return the chatroom with a matching ID
      */
-    public Chatroom getChatroom(int chatId) {
+    public IChatroom getChatroom(int chatId) {
         return idToChatroom.get(chatId);
     }
 
@@ -132,15 +133,15 @@ public class ChatroomHandler {
      * @param groupId the group ID of the chatrooms being asked for
      * @return a list of chatrooms with given groupId
      */
-    public List<Chatroom> getGroupOfChatrooms(String groupId){
+    public List<IChatroom> getGroupOfChatrooms(String groupId){
         return groupToListOfChatrooms.get(groupId);
     }
 
 
     public void createMainChatroom(String groupId){
         try{
-            Chatroom chatroom = chatroomFactory.createMainChatroom(groupId);
-            ArrayList<Chatroom> chatroomList = new ArrayList<Chatroom>();
+            IChatroom chatroom = chatroomFactory.createMainChatroom(groupId);
+            ArrayList<IChatroom> chatroomList = new ArrayList<IChatroom>();
             chatroomList.add(chatroom);
             idToChatroom.put(chatroom.getIdNbr(), chatroom);
             groupToListOfChatrooms.put(groupId, chatroomList);
@@ -156,8 +157,8 @@ public class ChatroomHandler {
     }
 
     public void removeGroup(String groupId){
-        List<Chatroom> chatroomsToRemove = new ArrayList<Chatroom>(groupToListOfChatrooms.get(groupId));
-        for(Chatroom c : chatroomsToRemove){
+        List<IChatroom> chatroomsToRemove = new ArrayList<IChatroom>(groupToListOfChatrooms.get(groupId));
+        for(IChatroom c : chatroomsToRemove){
             deleteChatroom(c.getIdNbr(), groupId);
         }
         groupToListOfChatrooms.remove(groupId);
