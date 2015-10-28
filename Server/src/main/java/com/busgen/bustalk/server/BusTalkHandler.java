@@ -1,7 +1,7 @@
 package com.busgen.bustalk.server;
 
-import com.busgen.bustalk.server.chatroom.IChatroom;
 import com.busgen.bustalk.server.chatroom.ChatroomHandler;
+import com.busgen.bustalk.server.chatroom.IChatroom;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.IUser;
@@ -177,13 +177,14 @@ public class BusTalkHandler {
         String id = userMessage.getString("groupId");
         if(user.getGroupId() == null || !user.getGroupId().equals(id)) {
 
-            logger.log(Level.INFO, String.format("[{0}:{1}] Group ID changed to {2}"),
-                    new Object[]{session.getId(), user.getName(), user.getGroupId()});
-
             for (IChatroom c : user.getCurrentChatrooms()) {
                 leaveRoom(user, c);
             }
+            
             user.setGroupId(id);
+            logger.log(Level.INFO, String.format("[{0}:{1}] Group ID changed to {2}"),
+                    new Object[]{session.getId(), user.getName(), user.getGroupId()});
+
             if(chatroomHandler.getGroupOfChatrooms(id) == null ||
                     chatroomHandler.getGroupOfChatrooms(id).isEmpty()) {
 

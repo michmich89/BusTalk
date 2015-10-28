@@ -1,7 +1,6 @@
 package com.busgen.bustalk.server.chatroom;
 
 import com.busgen.bustalk.server.user.IUser;
-import com.busgen.bustalk.server.user.User;
 
 import java.util.List;
 

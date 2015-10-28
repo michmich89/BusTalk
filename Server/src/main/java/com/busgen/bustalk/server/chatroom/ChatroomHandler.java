@@ -1,9 +1,6 @@
 package com.busgen.bustalk.server.chatroom;
 
-import com.busgen.bustalk.server.BusTalkSender;
 import com.busgen.bustalk.server.user.IUser;
-import com.busgen.bustalk.server.user.User;
-import com.busgen.bustalk.server.user.UserHandler;
 import com.busgen.bustalk.server.util.Constants;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
