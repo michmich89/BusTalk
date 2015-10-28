@@ -68,6 +68,7 @@ public class ServerCommunicator implements IEventBusListener {
             @Override
             public void run() {
                 try {
+                    /*
                     if (webSocket == null) {
                         System.out.println("Websocket was null, creating websocket...");
                         createWebsocket();
@@ -75,7 +76,9 @@ public class ServerCommunicator implements IEventBusListener {
                     if (webSocket != null) {
                         System.out.println("Websocket wasn't null anymore, connecting to server");
                         webSocket.connect();
-                    }
+                    }*/
+                    createWebsocket();
+                    webSocket.connect();
 
                 } catch (WebSocketException e) {
                     e.printStackTrace();
@@ -96,8 +99,8 @@ public class ServerCommunicator implements IEventBusListener {
             return this.webSocket.isOpen();
         } else {
             System.out.println("Websocket is null!");
+            return false;
         }
-        return false;
     }
 
 
