@@ -106,8 +106,8 @@ public class LoginActivity extends BindingActivity {
 
     @Override
     public void onEvent(Event event) {
-        IServerMessage message = event.getMessage();
         if (event instanceof ToActivityEvent && !hasLoggedIn) {
+            IServerMessage message = event.getMessage();
             Log.d("MyTag", "LoginActivity receiving some sort of event, namely");
             Log.d("MyTag", message.getClass().getName());
 
@@ -177,6 +177,7 @@ public class LoginActivity extends BindingActivity {
 //                LoginActivity.this.finish();
             } else if (message instanceof MsgNewUserInChat) {
                 /** special case since it's the login activity*/
+                //todo koll på om det är vi??? wut
                  Log.d("MyTag", "Telling Login Activity to join the first room");
                  Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                  Log.d("MyTag", "number of chatrooms in Client: " + client.getChatrooms().size());
@@ -194,5 +195,9 @@ public class LoginActivity extends BindingActivity {
                  LoginActivity.this.finish();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

@@ -196,4 +196,11 @@ public class MainChatActivity extends BindingActivity {
         });
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
+        startActivity(intent);
+        MainChatActivity.this.finish();
+    }
 }
