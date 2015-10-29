@@ -113,6 +113,7 @@ public class Client implements IClient, IEventBusListener {
     public void joinRoom(IChatroom chatroom) {
 
         if (chatroom != null && !chatrooms.contains(chatroom)) {
+            chatroom.addUser(user);
             chatrooms.add(chatroom);
             Log.d("MyTag", "Added chatroom " + chatroom.getChatID() + " to Client's chatrooms");
             Log.d("MyTag", "Client's chatroom size: " + chatrooms.size());
@@ -245,12 +246,14 @@ public class Client implements IClient, IEventBusListener {
                     IChatroom chatroom = new Chatroom(chatId, "");
                     joinRoom(chatroom);
 
+                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+                    Event newEvent = new ToServerEvent(userReqMsg);
+                    eventBus.postEvent(newEvent);
+
 //                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
 //                    Event newEvent = new ToServerEvent(userReqMsg);
 //                    eventBus.postEvent(newEvent);
-                }
-
-                if (user != null){
+                } else if (user != null){
                     Log.d("MyTag", "Someone joined a room, updating chatroom");
                    for (IChatroom c : chatrooms) {
                        if (c.getChatID() == chatId) {
@@ -260,11 +263,12 @@ public class Client implements IClient, IEventBusListener {
                            }
                        }
                    }
-                if (user.equals(this.user)) {
-                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
-                    Event newEvent = new ToServerEvent(userReqMsg);
-                    eventBus.postEvent(newEvent);
-                }
+
+//                if (user.equals(this.user)) {
+//                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+//                    Event newEvent = new ToServerEvent(userReqMsg);
+//                    eventBus.postEvent(newEvent);
+//                }
 
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
