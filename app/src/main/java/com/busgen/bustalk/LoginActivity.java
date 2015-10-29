@@ -225,5 +225,6 @@ public class LoginActivity extends BindingActivity {
 
     @Override
     public void onBackPressed() {
+        this.finish();
     }
 }
