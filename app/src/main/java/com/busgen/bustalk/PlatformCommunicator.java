@@ -6,11 +6,9 @@ import android.util.Log;
 
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
-import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToPlatformEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
-import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.service.EventBus;
@@ -127,7 +125,6 @@ public class PlatformCommunicator implements IEventBusListener{
                 JSONArray platformArray = new JSONArray(response.toString());
                 platformData = platformArray.getJSONObject(platformArray.length() - 1);
                 busStop = platformData.getString("value");
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
