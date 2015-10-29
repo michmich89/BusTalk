@@ -22,11 +22,13 @@
             android:name=".MainChatActivity"
             android:label="@string/title_activity_main_chat"
             android:screenOrientation="portrait">
+            android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait">
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

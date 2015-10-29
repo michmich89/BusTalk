@@ -42,7 +42,7 @@ public class MainService extends Service {
 
         client = Client.getInstance();
         //connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
-        connectionsHandler = new ConnectionsHandler();
+        connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
         eventBus.register(client);
 
     }

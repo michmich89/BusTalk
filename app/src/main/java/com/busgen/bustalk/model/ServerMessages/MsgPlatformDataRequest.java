@@ -10,7 +10,11 @@ public class MsgPlatformDataRequest implements IServerMessage{
     //här skulle man kunna beskriva vilken sorts data det är man vill skicka kanske?
     private String dataType;
 
-    public MsgPlatformDataRequest(){
+    public MsgPlatformDataRequest(String bussID){
+        this.bussID = bussID;
+    }
 
+    public String getBussID(){
+        return bussID;
     }
 }
