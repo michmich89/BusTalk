@@ -11,7 +11,6 @@ import android.widget.*;
 
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
-import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
@@ -42,6 +41,7 @@ public class MainChatActivity extends BindingActivity {
     private MenuItem userActivityMenuItem;
     private String userName;
     private String interest;
+    private boolean backButtonPressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,7 @@ public class MainChatActivity extends BindingActivity {
     }
 
     private void initVariables(){
+        backButtonPressed = false;
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
         myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
@@ -132,7 +133,9 @@ public class MainChatActivity extends BindingActivity {
                 updateRoom(chatId);
                 updateNumOfUsersMenuItem();
             } else if (message instanceof MsgConnectionLost){
-                connectionLostAlert();
+                if(!backButtonPressed){
+                    connectionLostAlert();
+                }
             } else if (message instanceof MsgPlatformData) {
                 /*skriver ut nästa hållplats i en label*/
                 if (((MsgPlatformData) message).getDataType().equals("nextStop")){
@@ -167,7 +170,10 @@ public class MainChatActivity extends BindingActivity {
                 alertBuilder.setNegativeButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                                if(dialog != null){
+                                    dialog.dismiss();
+                                    dialog = null;
+                                }
                                 Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 MainChatActivity.this.finish();
@@ -177,8 +183,15 @@ public class MainChatActivity extends BindingActivity {
             }
         };
         runOnUiThread(testRun);
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        backButtonPressed = true;
+        eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
+        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
+        startActivity(intent);
+        MainChatActivity.this.finish();
     }
 
     private void updateNumOfUsersMenuItem(){
@@ -216,11 +229,5 @@ public class MainChatActivity extends BindingActivity {
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
-        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
-        startActivity(intent);
-        MainChatActivity.this.finish();
-    }
+
 }
