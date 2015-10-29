@@ -20,6 +20,7 @@ import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
+import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRoomsRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
@@ -165,23 +166,57 @@ public class LoginActivity extends BindingActivity {
 //                startActivity(intent);
 //                LoginActivity.this.finish();
             } else if (message instanceof MsgNewUserInChat) {
-                /** special case since it's the login activity*/
-                //todo koll på om det är vi??? wut
-                 Log.d("MyTag", "Telling Login Activity to join the first room");
-                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-                 Log.d("MyTag", "number of chatrooms in Client: " + client.getChatrooms().size());
+                MsgNewUserInChat msgNewUserInChat = ((MsgNewUserInChat) message);
+                IUser newUser = msgNewUserInChat.getUser();
+                IChatroom chatroom = client.getChatrooms().get(0);
 
-                 Log.d("MyTag", "intents put in: " + "chatroom: " + client.getChatrooms().get(0).getChatID());
-                 Log.d("MyTag", "intents put in: " + "Username: " + client.getUserName());
-                 Log.d("MyTag", "intents put in: " + "Interest: " + client.getInterest());
+                Log.d("MyTag", "newUser = " + newUser);
+                Log.d("MyTag", "thisUser = " + client.getUser());
+                if (newUser.equals(client.getUser())){
+                    MsgJoinRoom msgJoinRoom = new MsgJoinRoom(chatroom);
+                    Event joinEvent = new ToActivityEvent(msgJoinRoom);
+                    eventBus.postEvent(joinEvent);
+                }
 
-                 intent.putExtra("Chatroom", client.getChatrooms().get(0));
-                 intent.putExtra("Username", client.getUserName());
-                 intent.putExtra("Interest", client.getInterest());
+//                /** special case since it's the login activity*/
+//                //todo koll på om det är vi??? wut
+//                 Log.d("MyTag", "Telling Login Activity to join the first room");
+//                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+//                 Log.d("MyTag", "number of chatrooms in Client: " + client.getChatrooms().size());
+//
+//                 Log.d("MyTag", "intents put in: " + "chatroom: " + client.getChatrooms().get(0).getChatID());
+//                 Log.d("MyTag", "intents put in: " + "Username: " + client.getUserName());
+//                 Log.d("MyTag", "intents put in: " + "Interest: " + client.getInterest());
+//
+//                 intent.putExtra("Chatroom", client.getChatrooms().get(0));
+//                 intent.putExtra("Username", client.getUserName());
+//                 intent.putExtra("Interest", client.getInterest());
+//
+//                 startActivity(intent);
+//                 hasLoggedIn = true;
+//                 LoginActivity.this.finish();
+            } else if (message instanceof MsgJoinRoom){
 
-                 startActivity(intent);
-                 hasLoggedIn = true;
-                 LoginActivity.this.finish();
+                MsgJoinRoom msgJoinRoom = (MsgJoinRoom) message;
+                IChatroom chatroom = msgJoinRoom.getChatroom();
+                String userName = client.getUserName();
+                String interest = client.getInterest();
+
+                Log.d("MyTag", "Telling Login Activity to join the first room");
+                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
+                Log.d("MyTag", "number of chatrooms in Client: " + client.getChatrooms().size());
+
+                Log.d("MyTag", "intents put in: " + "chatroom: " + client.getChatrooms().get(0).getChatID());
+                Log.d("MyTag", "intents put in: " + "Username: " + client.getUserName());
+                Log.d("MyTag", "intents put in: " + "Interest: " + client.getInterest());
+
+                intent.putExtra("Chatroom", chatroom);
+                intent.putExtra("Username", userName);
+                intent.putExtra("Interest", interest);
+
+                startActivity(intent);
+                hasLoggedIn = true;
+                LoginActivity.this.finish();
             }
         }
     }
