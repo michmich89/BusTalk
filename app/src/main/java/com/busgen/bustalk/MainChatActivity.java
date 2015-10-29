@@ -145,8 +145,9 @@ public class MainChatActivity extends BindingActivity {
                         public void run() {
                             System.out.println("Running the run");
                             String nextStop = nextStopMessage.getData();
-                            setTitle("Buss 55");
-                            ((TextView) findViewById(R.id.nextStopLabel)).setText("Nästa hållplats: " + nextStop);
+                            setTitle(R.string.title_activity_main_chat);
+                            String nextStop2 = getString(R.string.nextStop2) + " ";
+                            ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
                         }
                     });
                 }
@@ -174,8 +175,10 @@ public class MainChatActivity extends BindingActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
-                usersPresent.setTitle(numOfUsers);
+                if(usersPresent!=null) {
+                    String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
+                    usersPresent.setTitle(numOfUsers);
+                }
             }
         });
     }
