@@ -54,6 +54,7 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
     protected void onDestroy(){
     super.onDestroy();
     unbindService(serviceConnection);
+    eventBus.unRegister(this);
 
     }
     @Override
