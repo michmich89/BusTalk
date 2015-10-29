@@ -39,7 +39,6 @@ public class MainService extends Service {
     public void onCreate(){
 
         eventBus = EventBus.getInstance();
-
         client = Client.getInstance();
         //connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
         connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
