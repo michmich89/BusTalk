@@ -67,8 +67,8 @@ public class LoginActivity extends BindingActivity {
                     loginToast.show();
                 }else{
                     progress = new ProgressDialog(LoginActivity.this);
-                    progress.setTitle("Loading");
-                    progress.setMessage("Please wait while loading...");
+                    progress.setTitle(R.string.loading_1);
+                    progress.setMessage(getText(R.string.loading_2));
                         /*progress.setButton("Cancel", new DialogInterface.OnClickListener()
                         {
                             public void onClick(DialogInterface dialog, int which)
