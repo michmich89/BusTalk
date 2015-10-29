@@ -19,4 +19,6 @@
     <string name="arbitrary_user_interest">Hockey</string>
     <string name="num_of_users_menu_item_text">0</string>
     <string name="user_activity_menu_item_text">UserActivity Menuitem</string>
+    <string name="loading_1">Loading</string>
+    <string name="loading_2">Loading</string>
 </resources>
