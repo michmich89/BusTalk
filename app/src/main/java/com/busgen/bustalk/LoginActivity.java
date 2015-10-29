@@ -84,16 +84,6 @@ public class LoginActivity extends BindingActivity {
         });
     }
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        if (progress != null) {
-            progress.dismiss();
-            isConnected = false;
-        }
-    }
-
-
     private void initViews() {
         userNameInput = (EditText) findViewById(R.id.user_name_input);
         interestInput = (EditText) findViewById(R.id.interest_input);
@@ -127,7 +117,6 @@ public class LoginActivity extends BindingActivity {
                         isConnected = false;
                     }
                     interest = interestInput.getText().toString();
-
                     IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
                     Event nameEvent = new ToServerEvent(serverMessage);
                     isConnected = true;

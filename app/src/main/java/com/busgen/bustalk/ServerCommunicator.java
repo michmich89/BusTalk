@@ -76,8 +76,12 @@ public class ServerCommunicator implements IEventBusListener {
                         System.out.println("Websocket wasn't null anymore, connecting to server");
                         webSocket.connect();
                     }*/
+
                     createWebsocket();
-                    webSocket.connect();
+                    if(webSocket != null){
+                        webSocket.connect();
+                    }
+
 
                 } catch (WebSocketException e) {
                     e.printStackTrace();
@@ -119,8 +123,12 @@ public class ServerCommunicator implements IEventBusListener {
             Log.d("MyTag", "Server received some sort of event, namely");
             Log.d("MyTag", message.getClass().getName());
             //todo wtf är detta
-            if (message instanceof MsgNicknameAvailable) { //Should maybe be deleted, check later
-                eventBus.postEvent(new ToActivityEvent(message));
+            if (message instanceof MsgConnectionLost) {
+                if(webSocket != null){
+                    if(webSocket.isOpen()){
+                        webSocket.disconnect();
+                    }
+                }
             }else {
                 sendMessage(message);
             }
