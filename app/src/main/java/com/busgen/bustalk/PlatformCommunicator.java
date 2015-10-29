@@ -34,12 +34,14 @@ public class PlatformCommunicator implements IEventBusListener {
     private final int SECOND = 1000;
     private BussIDs bussIDs;
     private HashMap<String, String> regNrToDgw;
+    private HashMap<String, String> bssidToRegnr;
     private String busStop;
     private EventBus eventBus;
 
     public PlatformCommunicator() {
         bussIDs = new BussIDs();
         regNrToDgw = bussIDs.getRegNrToDgwMap();
+        bssidToRegnr = bussIDs.getBssidToRegNrMap();
         eventBus = EventBus.getInstance();
 
     }
@@ -64,15 +66,21 @@ public class PlatformCommunicator implements IEventBusListener {
 
     public String getNextStopData(String bussID) {
         //todo Den här metoden ska brytas upp.
+        if(bussID == null){
+            //todo send exception?
+            return "Next busstop could not be found";
+        }
         busStop = null;
         String dgw = new String();
-        if (regNrToDgw.containsValue(bussID)) {
+        if (regNrToDgw.containsKey(bussID)) {
             dgw = regNrToDgw.get(bussID);
         } else if(bussID.equals("Test")) {
             //this represents the simulated buss
             dgw = "Ericsson$Vin_Num_001";
-
-        } else if(bussID != null){
+        } else if(!bssidToRegnr.containsValue(bussID)){
+            //means that the string is illegal and the bussid haven't been added to our bssid collection.
+            return "Next busstop could not be found";
+        } else {
             //This means that bussID should be a busstop and thus the busstop itself should be displayed.
             return bussID;
         }
@@ -82,10 +90,6 @@ public class PlatformCommunicator implements IEventBusListener {
         long durationTime = SECOND * 60l;
         long startTime = endTime - durationTime;
 
-        //Todo fixa wifi mac-address antagligen till wifi objekt och hämta rätt bussid
-        //todo ersätt vin med bussid utifrån mac address
-
-        //simulerad bussresa nedan
         String url = "https://ece01.ericsson.net:4443/ecity?dgw=" + dgw + "&sensorSpec=Ericsson$Next_Stop&t1=" + startTime + "&t2=" + endTime;
         //System.out.println(url);
         /*Streams, initializing them to null so that we can easily check
@@ -116,7 +120,7 @@ public class PlatformCommunicator implements IEventBusListener {
                 response.append(inputLine);
             }
             //System.out.println("while :" + inputLine);
-            //System.out.println("response :" + response.toString());
+            System.out.println("response :" + response.toString());
 
             try {
                 //String teststring = response.substring(1,response.length()-1);
