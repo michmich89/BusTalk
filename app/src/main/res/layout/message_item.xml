@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="@drawable/speech_bubble_green"
+            android:background="@drawable/bubble_white_normal_mirror"
             android:paddingLeft="10dp"
             android:paddingBottom="10dp"
             android:orientation="vertical">
