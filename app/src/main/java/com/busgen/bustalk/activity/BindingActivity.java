@@ -14,6 +14,9 @@ import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.service.EventBus;
 import com.busgen.bustalk.service.MainService;
 
+/**
+ * An activity that is binded to the main service and subscribes to the eventbus.
+ */
 public class BindingActivity extends AppCompatActivity implements IEventBusListener {
 
     EventBus eventBus = null;

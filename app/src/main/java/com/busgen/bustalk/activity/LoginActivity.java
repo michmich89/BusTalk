@@ -31,6 +31,9 @@ import com.busgen.bustalk.service.MainService;
 
 import java.util.List;
 
+/**
+ * Activity for the login screen.
+ */
 public class LoginActivity extends BindingActivity {
     private EditText userNameInput;
     private EditText interestInput;
