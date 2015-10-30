@@ -37,7 +37,7 @@ public class EventBus {
         }
     }
 
-    public synchronized void postEvent(Event event){
+    public void postEvent(Event event){
         for (int i = 0; i < subscribers.size(); i++){
             subscribers.get(i).onEvent(event);
         }
