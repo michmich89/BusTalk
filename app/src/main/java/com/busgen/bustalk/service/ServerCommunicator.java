@@ -29,12 +29,9 @@ import java.util.Map;
  * Class that is responsible for the connection to our websocket server.
  */
 public class ServerCommunicator implements IEventBusListener {
-<<<<<<< HEAD
     //Kanske behöver dela upp ansvaret i flera klasser.
 
     private final int SECOND = 1000;
-=======
->>>>>>> Remove unnecessary logs and comments
     private WebSocket webSocket;
     private WebSocketFactory factory;
     private String serverAddress;

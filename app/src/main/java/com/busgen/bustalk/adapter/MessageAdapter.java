@@ -10,11 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-<<<<<<< HEAD:app/src/main/java/com/busgen/bustalk/MessageAdapter.java
-=======
 import com.busgen.bustalk.R;
 import com.busgen.bustalk.model.Client;
->>>>>>> Created new packages.:app/src/main/java/com/busgen/bustalk/adapter/MessageAdapter.java
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.List;
