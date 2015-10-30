@@ -265,7 +265,7 @@ public class MainChatActivity extends BindingActivity {
 
     private void drawNewMessage(final MsgChatMessage chatMessage) {
         if (chatMessage.getChatId() == myChatroom.getChatID() &&
-                chatMessage.getNickname().equals(client.getUserName())){
+                !chatMessage.getNickname().equals(client.getUserName())){
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
