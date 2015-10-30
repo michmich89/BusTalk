@@ -21,7 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by nalex on 19/10/2015.
+ * Class that that is responsible for all the connections to the app. Has a timer that checks if we still have a connection.
  */
 public class ConnectionsHandler implements IEventBusListener{
     private ServerCommunicator serverCom;
@@ -52,6 +52,9 @@ public class ConnectionsHandler implements IEventBusListener{
 
     }
 
+    /**
+     * Starts timer that checks if our connection is acceptable.
+     */
     private void startTimer() {
         if(!isTimerRunning) {
             this.timer = new Timer("wifiCheck");

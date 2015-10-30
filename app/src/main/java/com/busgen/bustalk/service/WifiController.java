@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by nalex on 19/10/2015.
+ * Class that checks if the machine running the application is in physical range of an accepted wifi-address.
+ * You can also get the accepted wifi address if the machine in fact is in range.
  */
 public class WifiController{
     private boolean isConnected;

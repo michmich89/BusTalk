@@ -26,6 +26,9 @@ import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * Class that fetches data for the different buses from the innovation platform.
+ */
 public class PlatformCommunicator implements IEventBusListener {
 
     private final int SECOND = 1000;
@@ -43,6 +46,9 @@ public class PlatformCommunicator implements IEventBusListener {
 
     }
 
+    /**
+     * Returns the verification string in its base64 form.
+     */
     private String getLoginVerification() throws IOException {
         String userNamePass = getVerificationFromFile();
         byte[] bytePass = userNamePass.getBytes("UTF-8");
@@ -50,17 +56,19 @@ public class PlatformCommunicator implements IEventBusListener {
         return "Basic " + base64EncodedPass;
     }
 
-    private String getVerificationFromFile() throws IOException {
-        /*String filePath = new String("app/src/main/res/InnovationPlatformVerification.txt");
-        File apiKeyFile = new File(filePath);
-        String apiKey = Files.toString(apiKeyFile, Charset.UTF_8);
-        URL fileURL = Resources.getResource("InnovationPlatformVerification.txt");
-        String apiKey = Resources.toString(fileURL, Charsets.UTF_8);
-        return apiKey;*/
+    /**
+     * Returns the string representing our verification to connect to the platform api.
+     */
+    private String getVerificationFromFile(){
         return "grp16:uRP*-F7kuD";
 
     }
 
+    /**
+     * Fetches a string representing the next stop.
+     * @param bussID the bus or busstop you want to get the next busstop for.
+     * @return string of the next stop.
+     */
     public String getNextStopData(String bussID) {
         //todo Den här metoden ska brytas upp.
         if(bussID == null){
@@ -88,7 +96,6 @@ public class PlatformCommunicator implements IEventBusListener {
         long startTime = endTime - durationTime;
 
         String url = "https://ece01.ericsson.net:4443/ecity?dgw=" + dgw + "&sensorSpec=Ericsson$Next_Stop&t1=" + startTime + "&t2=" + endTime;
-        //System.out.println(url);
         /*Streams, initializing them to null so that we can easily check
         if they have been initialized in order to close them properly
         */
@@ -116,12 +123,9 @@ public class PlatformCommunicator implements IEventBusListener {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            //System.out.println("while :" + inputLine);
             System.out.println("response :" + response.toString());
 
             try {
-                //String teststring = response.substring(1,response.length()-1);
-                //System.out.println(teststring);
                 JSONArray platformArray = new JSONArray(response.toString());
                 platformData = platformArray.getJSONObject(platformArray.length() - 1);
                 busStop = platformData.getString("value");
@@ -131,7 +135,6 @@ public class PlatformCommunicator implements IEventBusListener {
 
 
         } catch (IOException ex) {
-            //todo needs proper exception handling and probably display an error message in the app
             ex.printStackTrace();
         } finally {
             try {
@@ -147,7 +150,6 @@ public class PlatformCommunicator implements IEventBusListener {
             }
 
         }
-        //todo hantera null om servern inte skickar meddelande
         if (busStop == null){
             busStop = "...";
         }
@@ -159,12 +161,9 @@ public class PlatformCommunicator implements IEventBusListener {
         IServerMessage message = event.getMessage();
 
         if (event instanceof ToPlatformEvent) {
-            Log.d("MyLog", "platformevent");
-            /* Skickar endast nästa hållplats tills vidare*/
             if (message instanceof MsgPlatformDataRequest) {
                 MsgPlatformDataRequest requestMessage = (MsgPlatformDataRequest)message;
                 String nextStop = getNextStopData(requestMessage.getBussID());
-                System.out.println("Nextstop = " + nextStop);
 
                 MsgPlatformData newMessage = new MsgPlatformData("nextStop", nextStop);
                 Event newEvent = new ToActivityEvent(newMessage);

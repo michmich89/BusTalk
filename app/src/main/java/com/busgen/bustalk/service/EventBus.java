@@ -8,6 +8,9 @@ import com.busgen.bustalk.model.IEventBusListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Eventbus is a singleton that is used to send messages to different classes that implements the Eventlistener inteface.
+ */
 public class EventBus {
 
 
@@ -41,7 +44,6 @@ public class EventBus {
         for (int i = 0; i < subscribers.size(); i++){
             subscribers.get(i).onEvent(event);
         }
-        Log.d("BusTag", "skickar event till " + subscribers.size() + " subscribers...");
 
     }
 
