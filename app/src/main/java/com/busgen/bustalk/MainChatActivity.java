@@ -24,6 +24,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
+import com.busgen.bustalk.model.ServerMessages.MsgStartPlatformTimer;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 
@@ -49,6 +50,11 @@ public class MainChatActivity extends BindingActivity {
         setContentView(R.layout.activity_main_chat);
         initVariables();
         initViews();
+
+        MsgStartPlatformTimer msgStartPlatformTimer = new MsgStartPlatformTimer();
+        Event event = new ToServerEvent(msgStartPlatformTimer);
+        eventBus.postEvent(event);
+
     }
 
     private void initVariables(){
