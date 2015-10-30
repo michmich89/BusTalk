@@ -10,8 +10,11 @@ import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IUser;
 import java.util.List;
 
+/**
+ * This class is responsible for transforming User objects into suitable view items that
+ * are to be inserted in the ListView belonging to the UserActivity.
+ */
 public class UserAdapter extends BaseAdapter{
-
 	private List<IUser> users;
 	private Activity context;
 	private LayoutInflater inflater;
@@ -79,11 +82,20 @@ public class UserAdapter extends BaseAdapter{
 		return convertView;
 	}
 
+	/**
+	 * Viewholder class that is used as part of the ViewHolder design pattern.
+	 */
 	private static class ViewHolder{
 		public TextView userName;
 		public TextView userInterest;
 	}
 
+	/**
+	 * Creates a ViewHolder corresponding to the View passed in as a parameter.
+	 *
+	 * @param v The View that is used to create the ViewHolder.
+	 * @return Returns the ViewHolder corresponding to the view passed in as a parameter.
+	 */
 	private ViewHolder createViewHolder(View v){
 		ViewHolder holder = new ViewHolder();
 		holder.userName = (TextView) v.findViewById(R.id.user_name);

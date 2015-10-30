@@ -2,10 +2,7 @@ package com.busgen.bustalk;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
-import android.widget.TextView;
-
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.model.Client;
@@ -13,21 +10,14 @@ import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
-import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
-import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
-import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
-import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
-import com.busgen.bustalk.model.ServerMessages.MsgLeaveRoom;
-import com.busgen.bustalk.model.ServerMessages.MsgLostChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
-import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
-import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
-import com.busgen.bustalk.model.User;
 import com.busgen.bustalk.service.EventBus;
-
 import java.util.ArrayList;
 
+/**
+ * This class is responsible for listing users that are currently active in the chat.
+ */
 public class UserActivity extends AppCompatActivity implements IEventBusListener{
 	private UserAdapter userAdapter;
 	private IChatroom myChatroom;
@@ -44,6 +34,9 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
         refreshUserList();
 	}
 
+    /**
+     * Initiates the components of the activity as well as registers it to the EventBus.
+     */
 	private void initComponents(){
         userListView = (ListView) findViewById(R.id.user_list_view);
         myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
@@ -56,6 +49,9 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
         chatId = myChatroom.getChatID();
 	}
 
+    /**
+     * Refreshes the users to be listed in this activity.
+     */
     private void refreshUserList(){
         for (IChatroom c : client.getChatrooms()) {
             if (c.getChatID() == chatId) {
@@ -71,6 +67,11 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
         });
     }
 
+    /**
+     * This method reacts to events posted on the EventBus that are directed to activities.
+     *
+     * @param event The event received from the EventBus.
+     */
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
         if (event instanceof ToActivityEvent){

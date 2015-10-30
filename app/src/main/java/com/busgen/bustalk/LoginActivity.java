@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.busgen.bustalk.events.Event;
@@ -41,6 +42,7 @@ import java.util.List;
 public class LoginActivity extends BindingActivity {
     private EditText userNameInput;
     private EditText interestInput;
+    private TextView notificationText;
     private Button loginButton;
     private Toast loginToast;
     private Toast noConnectionToast;
@@ -90,6 +92,7 @@ public class LoginActivity extends BindingActivity {
     private void initViews() {
         userNameInput = (EditText) findViewById(R.id.user_name_input);
         interestInput = (EditText) findViewById(R.id.interest_input);
+        notificationText = (TextView) findViewById(R.id.notification_text);
         loginButton = (Button) findViewById(R.id.login_button);
         loginToast = Toast.makeText(LoginActivity.this, "You have to choose a nickname",
                 Toast.LENGTH_SHORT);
@@ -107,7 +110,25 @@ public class LoginActivity extends BindingActivity {
             if (message instanceof MsgConnectionStatus) {
                 MsgConnectionStatus connectionMessage = (MsgConnectionStatus) message;
                 System.out.println("Got message status: " + connectionMessage.isConnected());
-                testConnection(connectionMessage);
+                if (!connectionMessage.isConnected()) {
+                    System.out.println("Wasn't connected");
+                    isConnected = false;
+                    progress.dismiss();
+                    noConnectionToast.show();
+                    notificationText.setVisibility(View.VISIBLE);
+                } else {
+                    System.out.println("Connected to server! Set username and interests");
+                    userName = userNameInput.getText().toString();
+                    if (TextUtils.isEmpty(userName)) {  //Onödigt? kollas redan i onClickListener
+                        loginToast.show();
+                        isConnected = false;
+                    }
+                    interest = interestInput.getText().toString();
+                    IServerMessage serverMessage = new MsgChooseNickname(userName, interest);
+                    Event nameEvent = new ToServerEvent(serverMessage);
+                    isConnected = true;
+                    eventBus.postEvent(nameEvent);
+                }
             } else if (message instanceof MsgNicknameAvailable) {
                 MsgNicknameAvailable nicknameAvailableMessage = (MsgNicknameAvailable) message;
                 Log.d("MyTag", "is nickname is available?...");
