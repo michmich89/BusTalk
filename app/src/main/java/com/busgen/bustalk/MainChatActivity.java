@@ -115,12 +115,7 @@ public class MainChatActivity extends BindingActivity {
             if (message instanceof MsgChatMessage) {
                 Log.d("MyTag", "MainChat got a message!");
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        displayMessage(chatMessage);
-                    }
-                });
+                drawNewMessage(chatMessage);
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 updateRoom(chatId);
@@ -147,18 +142,7 @@ public class MainChatActivity extends BindingActivity {
                 if (((MsgPlatformData) message).getDataType().equals("nextStop")){
 
                     final MsgPlatformData nextStopMessage = (MsgPlatformData) message;
-                    System.out.println("Getting the busstop event");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("Running the run");
-                            String nextStop = nextStopMessage.getData();
-                            System.out.println("reg: " + client.getGroupId());
-                            setTitle(R.string.title_activity_main_chat);
-                            String nextStop2 = getString(R.string.nextStop2) + " ";
-                            ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
-                        }
-                    });
+                    printNextBusTop(nextStopMessage);
                 }
             }
         }
@@ -247,5 +231,28 @@ public class MainChatActivity extends BindingActivity {
                 alertDialog.dismiss();
             }
         }
+    }
+
+    private void printNextBusTop(final MsgPlatformData platformData) {
+        System.out.println("Getting the busstop event");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Running the run");
+                String nextStop = platformData.getData();
+                setTitle(R.string.title_activity_main_chat);
+                String nextStop2 = getString(R.string.nextStop2) + " ";
+                ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
+            }
+        });
+    }
+
+    private void drawNewMessage(final MsgChatMessage chatMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayMessage(chatMessage);
+            }
+        });
     }
 }
