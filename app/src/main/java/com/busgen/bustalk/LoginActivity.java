@@ -46,8 +46,6 @@ public class LoginActivity extends BindingActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //eventBus = EventBus.getInstance();
-        //eventBus.clearSubscribers();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         startService(new Intent(this, MainService.class));
@@ -57,21 +55,12 @@ public class LoginActivity extends BindingActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //userName = userNameInput.getText().toString();
                 if (TextUtils.isEmpty(userNameInput.getText().toString())) {
                     loginToast.show();
                 }else{
                     progress = new ProgressDialog(LoginActivity.this);
                     progress.setTitle(R.string.loading_1);
                     progress.setMessage(getText(R.string.loading_2));
-                        /*progress.setButton("Cancel", new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                // Use either finish() or return() to either close the activity or just the dialog
-                                return;
-                            }
-                        });*/
                     progress.setCancelable(false);
                     progress.show();
                     eventBus.postEvent(new ToServerEvent(new MsgConnectToServer()));
@@ -142,8 +131,6 @@ public class LoginActivity extends BindingActivity {
     }
 
     private void postJoinMainRoomEvent(MsgAvailableRooms availableRoomsMessage) {
-        //List<IChatroom> chatrooms = availableRoomsMesssage.getRoomList();
-        //IChatroom myChatroom = chatrooms.get(0);
         List<IChatroom> availableChatrooms = availableRoomsMessage.getRoomList();
         IChatroom tempChatroom = availableChatrooms.get(0);
 
@@ -151,14 +138,6 @@ public class LoginActivity extends BindingActivity {
         IServerMessage joinMessage = new MsgJoinRoom(tempChatroom);
         Event joinEvent = new ToServerEvent(joinMessage);
         eventBus.postEvent(joinEvent);
-
-//                Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-//
-//                intent.putExtra("Chatroom", client.getChatrooms().get(0));
-//                intent.putExtra("Username", client.getUserName());
-//                intent.putExtra("Interest", client.getInterest());
-//                startActivity(intent);
-//                LoginActivity.this.finish();
     }
 
     private void testConnection(MsgConnectionStatus connectionStatus) {
@@ -215,26 +194,15 @@ public class LoginActivity extends BindingActivity {
             Event joinEvent = new ToActivityEvent(msgJoinRoom);
             eventBus.postEvent(joinEvent);
         }
-
-//                /** special case since it's the login activity*/
-//                //todo koll på om det är vi??? wut
-//                 Log.d("MyTag", "Telling Login Activity to join the first room");
-//                 Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
-//                 Log.d("MyTag", "number of chatrooms in Client: " + client.getChatrooms().size());
-//
-//                 Log.d("MyTag", "intents put in: " + "chatroom: " + client.getChatrooms().get(0).getChatID());
-//                 Log.d("MyTag", "intents put in: " + "Username: " + client.getUserName());
-//                 Log.d("MyTag", "intents put in: " + "Interest: " + client.getInterest());
-//
-//                 intent.putExtra("Chatroom", client.getChatrooms().get(0));
-//                 intent.putExtra("Username", client.getUserName());
-//                 intent.putExtra("Interest", client.getInterest());
-//
-//                 startActivity(intent);
-//                 hasLoggedIn = true;
-//                 LoginActivity.this.finish();
     }
 
+    @Override
+    public void onDestroy(){
+        if(progress != null) {
+            progress.dismiss();
+        }
+        super.onDestroy();
+    }
     @Override
     public void onBackPressed() {
         this.finish();
