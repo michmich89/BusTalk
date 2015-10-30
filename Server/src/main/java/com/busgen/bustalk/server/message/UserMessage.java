@@ -4,6 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * Wrapper class that wraps incoming messages in the form o a JSON object
+ *
  * Created by Kristoffer on 2015-09-29.
  */
 

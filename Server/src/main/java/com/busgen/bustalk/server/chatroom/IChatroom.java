@@ -5,7 +5,7 @@ import com.busgen.bustalk.server.user.IUser;
 import java.util.List;
 
 /**
- * Interface for a chat room.
+ * Interface for chatrooms.
  *
  * Created by Kristoffer on 2015-10-12.
  */

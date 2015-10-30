@@ -25,6 +25,13 @@ public class BusTalkSender {
         static final BusTalkSender INSTANCE = new BusTalkSender();
     }
 
+
+    /**
+     * Getter for a singleton method using the Initialization-on-demand-holder idiom.
+     * Ensures thread safety
+     *
+     * @return
+     */
     public static BusTalkSender getInstance(){
         return Holder.INSTANCE;
     }
@@ -58,10 +65,11 @@ public class BusTalkSender {
     }
 
     /**
-     * Sends out a notification to all users in a charoom, when a new user joins
+     * Sends out a notification to all affected users in a chatroom that a new user has joined.
      *
-     * @param user The user that just joined
-     * @param chatroom The chatroom whos users will be notified
+     * @param user the new User in the room
+     * @param users the list of of Users in the chatroom
+     * @param chatId The ID of the affected chatroom
      */
     public void userJoinedNotification(IUser user, List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
@@ -77,10 +85,11 @@ public class BusTalkSender {
     }
 
     /**
-     * Sends out a notification to all users in a chatroom, when a user has left the room
+     * Sends out a notification that a user has left a chatroom
      *
-     * @param user The user who left
-     * @param chatroom The chatroom that the user left
+     * @param user The user that left
+     * @param users The user in the affected chatroom
+     * @param chatId The ID number of the affected chatroom
      */
     public void userLeftNotification(IUser user, List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
@@ -95,10 +104,10 @@ public class BusTalkSender {
     }
 
     /**
-     * Sends out a message to affected users that a chatroom has been deleted.
+     * Sends out a notification that a chatroom has been deleted
      *
-     * @param groupId the group ID of all affected users
-     * @param chatroom the chatroom that was deleted
+     * @param users Users in the affected group
+     * @param chatId the ID of the deleted chatroom
      */
     public void chatDeletedNotification(List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
@@ -111,9 +120,11 @@ public class BusTalkSender {
     }
 
     /**
-     * Sends out a message containing all chatrooms that a specific user can join
+     * Sends out a list of chatrooms to a specific user
      *
-     * @param user
+     * @param user the User who requested a list of available chatrooms
+     * @param chatrooms The list of chatrooms that is available to the User
+     * @param groupId the ID of the group affected
      */
     public void listOfChatrooms(IUser user, List<IChatroom> chatrooms, String groupId) {
         JSONObject jsonObject = new JSONObject();
@@ -135,10 +146,11 @@ public class BusTalkSender {
     }
 
     /**
-     * Sends out a message to a user, containing information of other users in a specific room
+     * Sends out a list of users in a chatroom to a specific user
      *
-     * @param user the user the message should be sent to
-     * @param chatroom the chatroom the user wants info about
+     * @param user The user who requested a list
+     * @param users the list of users in the affected chatroom
+     * @param chatId the ID of that affecetd chatroom
      */
     public void listOfUsersInRoom(IUser user, List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
@@ -159,11 +171,12 @@ public class BusTalkSender {
     }
 
     /**
-     * When a user sends a message, this will send out that message to all users in a chatroom
+     * Sends out a notification with a message when a user is sending a Bustalkmessage
      *
-     * @param sender The user that sent the message
-     * @param chatroom The chatroom the message was sent to
-     * @param message The actual message the user wrote
+     * @param sender the user who sent a message
+     * @param users the user who should receive the message (Those in the chatroom)
+     * @param chatId the ID of the chatroom the message was sent to
+     * @param message The actual message
      */
     public void chatMessage(IUser sender, List<IUser> users, int chatId, String message) {
         JSONObject jsonObject = new JSONObject();
@@ -193,7 +206,6 @@ public class BusTalkSender {
      * @param succeeded true if the name/interests were successfully set, false otherwise
      */
     public void userNameAndInterestStatus(Session session, boolean succeeded) {
-        // TODO: Is there a better way than having session as parameter here? User might have not been created yet
         // TODO: Send info to all clients that a user has changed name
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.NAME_AND_INTEREST_SET);
