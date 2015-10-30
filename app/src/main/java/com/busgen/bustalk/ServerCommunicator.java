@@ -61,12 +61,13 @@ public class ServerCommunicator implements IEventBusListener {
     }
 
 
-    public void connect() {
+    private void connect() {
         //this.webSocket.connectAsynchronously();
         openConnectionThread = new Thread(){
             @Override
             public void run() {
                 try {
+                    /*
                     if (webSocket == null) {
                         System.out.println("Websocket was null, creating websocket...");
                         createWebsocket();
@@ -74,7 +75,13 @@ public class ServerCommunicator implements IEventBusListener {
                     if (webSocket != null) {
                         System.out.println("Websocket wasn't null anymore, connecting to server");
                         webSocket.connect();
+                    }*/
+
+                    createWebsocket();
+                    if(webSocket != null){
+                        webSocket.connect();
                     }
+
 
                 } catch (WebSocketException e) {
                     e.printStackTrace();
@@ -95,31 +102,31 @@ public class ServerCommunicator implements IEventBusListener {
             return this.webSocket.isOpen();
         } else {
             System.out.println("Websocket is null!");
+            return false;
         }
-        return false;
+    }
+
+    public boolean canConnectToServer(){
+        System.out.println("Want to connect to server");
+        if(!isConnected()){
+            System.out.println("Wasn't connected to server, trying to connect...");
+            connect();
+        }
+        //eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
+        return isConnected();
     }
 
     @Override
     public void onEvent(Event event) {
-        //IServerMessage tempMessage = event.getMessage();
-        //Log.d("MyTag", tempMessage.toString());
-        //if(tempMessage instanceof MsgJoinRoom){
-        //    //Log.d("MyTag", tempMessage.toString());
-        //    Log.d("MyTag", "blagaha");
-        //}
         IServerMessage message = event.getMessage();
         if (event instanceof ToServerEvent) {
             Log.d("MyTag", "Server received some sort of event, namely");
             Log.d("MyTag", message.getClass().getName());
-            if(message instanceof MsgConnectToServer){
-                System.out.println("Want to connect to server");
-                if(!isConnected()){
-                    System.out.println("Wasn't connected to server, trying to connect...");
-                    connect();
+            if (message instanceof MsgConnectionLost) {
+                if(webSocket != null){
+                    System.out.println("tried to disconnect from server");
+                    webSocket.disconnect();
                 }
-                eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(isConnected())));
-            }else if (message instanceof MsgNicknameAvailable) { //Should maybe be deleted, check later
-                eventBus.postEvent(new ToActivityEvent(message));
             }else {
                 sendMessage(message);
             }
@@ -146,7 +153,6 @@ public class ServerCommunicator implements IEventBusListener {
                 @Override
                 public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
                     // Do things when connection is established
-                    //todo starta timer sen
                     eventBus.postEvent(new ToServerEvent(new MsgConnectionEstablished()));
                 }
 
@@ -155,10 +161,9 @@ public class ServerCommunicator implements IEventBusListener {
                                            WebSocketFrame clientCloseFrame, boolean closedByServer) {
 
                     // Do things when disconnected from server
-                    //todo stoppa timer, skicka connectionlost
                     IServerMessage connectionLost = new MsgConnectionLost();
                     eventBus.postEvent(new ToServerEvent(connectionLost));
-                    eventBus.postEvent(new ToClientEvent(connectionLost));
+                    eventBus.postEvent(new ToActivityEvent(connectionLost));
                 }
             });
             System.out.println("Added listener to the websocket");

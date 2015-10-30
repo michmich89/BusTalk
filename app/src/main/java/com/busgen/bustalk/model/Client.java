@@ -19,6 +19,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
+import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 import com.busgen.bustalk.service.EventBus;
@@ -112,6 +113,7 @@ public class Client implements IClient, IEventBusListener {
     public void joinRoom(IChatroom chatroom) {
 
         if (chatroom != null && !chatrooms.contains(chatroom)) {
+            chatroom.addUser(user);
             chatrooms.add(chatroom);
             Log.d("MyTag", "Added chatroom " + chatroom.getChatID() + " to Client's chatrooms");
             Log.d("MyTag", "Client's chatroom size: " + chatrooms.size());
@@ -126,14 +128,7 @@ public class Client implements IClient, IEventBusListener {
         }
     }
 
-    @Override
-    public void addMessageToChatroom(MsgChatMessage message) {
-        for (int i = 0; i < chatrooms.size(); i++) {
-            if (chatrooms.get(i).getChatID() == message.getChatId()) {
-                chatrooms.get(i).addMessage(message);
-            }
-        }
-    }
+
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
@@ -158,7 +153,6 @@ public class Client implements IClient, IEventBusListener {
 
                     for (IChatroom c : chatrooms) {
                         if (c.getChatID() == chatMessage.getChatId()) {
-                            c.addMessage(chatMessage);
                             Event newEvent = new ToActivityEvent(chatMessage);
                             eventBus.postEvent(newEvent);
                         }
@@ -180,7 +174,7 @@ public class Client implements IClient, IEventBusListener {
             } else if (message instanceof MsgJoinRoom) {
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
 
-                //Skala bort kod här sedan, joinRoom innehåller det mesta
+                //Skala bort kod här sedan, joinRoom innehåller det mesta. Denna används aldrig.
                 if (!chatrooms.contains(chatroom)) {
                     joinRoom(chatroom);
                     Event newEvent = new ToActivityEvent(message);
@@ -247,9 +241,11 @@ public class Client implements IClient, IEventBusListener {
                     MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
                     Event newEvent = new ToServerEvent(userReqMsg);
                     eventBus.postEvent(newEvent);
-                }
 
-                if (user != null){
+//                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+//                    Event newEvent = new ToServerEvent(userReqMsg);
+//                    eventBus.postEvent(newEvent);
+                } else if (user != null){
                     Log.d("MyTag", "Someone joined a room, updating chatroom");
                    for (IChatroom c : chatrooms) {
                        if (c.getChatID() == chatId) {
@@ -259,6 +255,12 @@ public class Client implements IClient, IEventBusListener {
                            }
                        }
                    }
+
+//                if (user.equals(this.user)) {
+//                    MsgUsersInChatRequest userReqMsg = new MsgUsersInChatRequest(chatId);
+//                    Event newEvent = new ToServerEvent(userReqMsg);
+//                    eventBus.postEvent(newEvent);
+//                }
 
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
@@ -284,6 +286,8 @@ public class Client implements IClient, IEventBusListener {
                         c.setUsers(userList);
                     }
                 }
+                Event activityEvent = new ToActivityEvent(message);
+                eventBus.postEvent(activityEvent);
 
             } else if (message instanceof MsgNicknameAvailable) {
                 Log.d("MyTag", "Sending availability info to activity");
@@ -293,7 +297,9 @@ public class Client implements IClient, IEventBusListener {
                 // chatrooms = ((MsgAvailableRooms) message).getRoomList();
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
-            } else if (message instanceof MsgPlatformDataRequest) {
+            } else if (message instanceof MsgSetGroupId) {
+                MsgSetGroupId groupIdMessage = (MsgSetGroupId)message;
+                setGroupId(((MsgSetGroupId) message).getGroupId());
             }
         }
     }

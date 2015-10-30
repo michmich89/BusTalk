@@ -1,5 +1,7 @@
 package com.busgen.bustalk.model.ServerMessages;
 
+import android.util.Log;
+
 import com.busgen.bustalk.model.IServerMessage;
 
 /**
@@ -59,5 +61,46 @@ public class MsgChatMessage implements IServerMessage {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object object){
+    MsgChatMessage chatMessage;
+        Log.d("MyTag", "equalling chatmessage");
+        if(object != null && object instanceof MsgChatMessage){
+            chatMessage = (MsgChatMessage) object;
+            Log.d("MyTag", "chatMessage not null");
+            if ((this.isMe == chatMessage.getIsMe() && this.getMessage().equals(chatMessage.getMessage())
+                    && this.date.equals(chatMessage.getDate()) && this.nickname.equals(chatMessage.getNickname())
+                    && this.chatId == chatMessage.getChatId())){
+                Log.d("MyTag", "equals is true");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int isMe;
+        int message;
+        int date;
+        int nickname;
+        int chatId;
+
+        if (this.isMe = true){
+            isMe = 1;
+        } else {
+            isMe = 0;
+        }
+
+        message = this.message.hashCode();
+        date = this.date.hashCode();
+        nickname = this.nickname.hashCode();
+        chatId = this.nickname.hashCode();
+
+        int hashCode = (isMe + message + date + nickname + chatId);
+        return hashCode;
     }
 }

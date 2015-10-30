@@ -24,6 +24,9 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
+import com.busgen.bustalk.model.ServerMessages.MsgStartPlatformTimer;
+import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
+import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -36,8 +39,11 @@ public class MainChatActivity extends BindingActivity {
     private MessageAdapter messageAdapter;
     private IChatroom myChatroom;
     private MenuItem usersPresent;
+    private MenuItem userActivityMenuItem;
     private String userName;
     private String interest;
+    private boolean backButtonPressed;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +52,15 @@ public class MainChatActivity extends BindingActivity {
         setContentView(R.layout.activity_main_chat);
         initVariables();
         initViews();
-        //eventBus.register(this);
+
+        MsgStartPlatformTimer msgStartPlatformTimer = new MsgStartPlatformTimer();
+        Event event = new ToServerEvent(msgStartPlatformTimer);
+        eventBus.postEvent(event);
+
     }
 
     private void initVariables(){
+        backButtonPressed = false;
         userName = getIntent().getStringExtra("Username");
         interest = getIntent().getStringExtra("Interest");
         myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
@@ -75,7 +86,7 @@ public class MainChatActivity extends BindingActivity {
 
                 messageInputLine.setText("");
                 displayMessage(message);
-                myChatroom.addMessage(message);
+                //myChatroom.addMessage(message);
 
                 Event event = new ToServerEvent(message);
                 eventBus.postEvent(event);
@@ -86,13 +97,9 @@ public class MainChatActivity extends BindingActivity {
     public void displayMessage(MsgChatMessage message) {
         messageAdapter.add(message);
         messageAdapter.notifyDataSetChanged();
-        //messageListView.setAdapter(messageAdapter);
-        //messageListView.invalidateViews();
-        //messageListView.setSelection(messageListView.getCount() - 1);
     }
 
     public void updateRoom(int chatId){
-
         for (IChatroom c : client.getChatrooms()) {
             if (c.getChatID() == chatId) {
                 myChatroom = c;
@@ -115,7 +122,10 @@ public class MainChatActivity extends BindingActivity {
                         displayMessage(chatMessage);
                     }
                 });
-                myChatroom.addMessage(chatMessage);
+            } else if (message instanceof MsgUsersInChat) {
+                int chatId = ((MsgUsersInChat) message).getChatID();
+                updateRoom(chatId);
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgCreateRoom) {
             } else if (message instanceof MsgJoinRoom) {
             } else if (message instanceof MsgLeaveRoom) {
@@ -123,14 +133,16 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgLostUserInChat) {
                 int chatId = ((MsgLostUserInChat) message).getChatID();
                 updateRoom(chatId);
-
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
                 int chatId = ((MsgNewUserInChat) message).getChatID();
                 updateRoom(chatId);
-
+                updateNumOfUsersMenuItem();
             } else if (message instanceof MsgConnectionLost){
-                connectionLostAlert();
+                if(!backButtonPressed){
+                    connectionLostAlert();
+                }
             } else if (message instanceof MsgPlatformData) {
                 /*skriver ut nästa hållplats i en label*/
                 if (((MsgPlatformData) message).getDataType().equals("nextStop")){
@@ -142,8 +154,9 @@ public class MainChatActivity extends BindingActivity {
                         public void run() {
                             System.out.println("Running the run");
                             String nextStop = nextStopMessage.getData();
-                            setTitle("Buss 55");
-                            ((TextView) findViewById(R.id.nextStopLabel)).setText("Nästa hållplats: " + nextStop);
+                            setTitle(R.string.title_activity_main_chat);
+                            String nextStop2 = getString(R.string.nextStop2) + " ";
+                            ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
                         }
                     });
                 }
@@ -152,28 +165,69 @@ public class MainChatActivity extends BindingActivity {
     }
 
     public void connectionLostAlert(){
-        AlertDialog alertDialog = new AlertDialog.Builder(MainChatActivity.this).create();
-        alertDialog.setTitle("Connection Error");
-        alertDialog.setMessage("Your connection to the server has been lost");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        MainChatActivity.this.finish();
-                    }
-                });
-        alertDialog.show();
+        System.out.println("Alert was used.");
+        //AlertDialog alertDialog = new AlertDialog.Builder(MainChatActivity.this).create();
+        Runnable testRun = new Runnable() {
+            @Override
+            public void run() {
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainChatActivity.this);
+                alertBuilder.setTitle("Connection Error");
+                alertBuilder.setMessage("Your connection to the server has been lost");
+                alertBuilder.setCancelable(false);
+                alertBuilder.setNegativeButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                    //dialog = null;
+                                }
+                                Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                MainChatActivity.this.finish();
+                            }
+                        });
+                alertDialog = alertBuilder.show();
+            }
+        };
+        runOnUiThread(testRun);
     }
 
+    @Override
+    public void onBackPressed() {
+        backButtonPressed = true;
+        eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
+        Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
+        startActivity(intent);
+        MainChatActivity.this.finish();
+    }
+
+    private void updateNumOfUsersMenuItem(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (usersPresent != null) {
+                    String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
+                    usersPresent.setTitle(numOfUsers);
+                }
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_chat, menu);
-        this.usersPresent = menu.findItem(R.id.action_users);
-        usersPresent.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        this.usersPresent = menu.findItem(R.id.num_of_users_menu_item);
+
+        MsgUsersInChatRequest message = new MsgUsersInChatRequest(myChatroom.getChatID());
+        Event event = new ToServerEvent(message);
+        eventBus.postEvent(event);
+
+        updateNumOfUsersMenuItem();
+
+        this.userActivityMenuItem = menu.findItem(R.id.user_activity_menu_item);
+        userActivityMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = new Intent(MainChatActivity.this, UserActivity.class);
@@ -183,5 +237,15 @@ public class MainChatActivity extends BindingActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(alertDialog != null){
+            if(alertDialog.isShowing()){
+                alertDialog.dismiss();
+            }
+        }
     }
 }

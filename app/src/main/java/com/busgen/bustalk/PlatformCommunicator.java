@@ -5,11 +5,9 @@ import android.util.Log;
 
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
-import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToPlatformEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
-import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.service.EventBus;
@@ -36,12 +34,14 @@ public class PlatformCommunicator implements IEventBusListener {
     private final int SECOND = 1000;
     private BussIDs bussIDs;
     private HashMap<String, String> regNrToDgw;
+    private HashMap<String, String> bssidToRegnr;
     private String busStop;
     private EventBus eventBus;
 
     public PlatformCommunicator() {
         bussIDs = new BussIDs();
         regNrToDgw = bussIDs.getRegNrToDgwMap();
+        bssidToRegnr = bussIDs.getBssidToRegNrMap();
         eventBus = EventBus.getInstance();
 
     }
@@ -66,17 +66,23 @@ public class PlatformCommunicator implements IEventBusListener {
 
     public String getNextStopData(String bussID) {
         //todo Den här metoden ska brytas upp.
+        if(bussID == null){
+            //todo send exception?
+            return "Next busstop could not be found";
+        }
         busStop = null;
         String dgw = new String();
-        if (regNrToDgw.containsValue(bussID)) {
+        if (regNrToDgw.containsKey(bussID)) {
             dgw = regNrToDgw.get(bussID);
-        } else if (bussID != null) {
-            //hållplats
-            return bussID;
-        } else {
-
-            //If we don't have a legal bussID, the simulated buss will be used.
+        } else if(bussID.equals("Test")) {
+            //this represents the simulated buss
             dgw = "Ericsson$Vin_Num_001";
+        } else if(!bssidToRegnr.containsValue(bussID)){
+            //means that the string is illegal and the bussid haven't been added to our bssid collection.
+            return "Next busstop could not be found";
+        } else {
+            //This means that bussID should be a busstop and thus the busstop itself should be displayed.
+            return bussID;
         }
 
         JSONObject platformData = null;
@@ -84,10 +90,6 @@ public class PlatformCommunicator implements IEventBusListener {
         long durationTime = SECOND * 60l;
         long startTime = endTime - durationTime;
 
-        //Todo fixa wifi mac-address antagligen till wifi objekt och hämta rätt bussid
-        //todo ersätt vin med bussid utifrån mac address
-
-        //simulerad bussresa nedan
         String url = "https://ece01.ericsson.net:4443/ecity?dgw=" + dgw + "&sensorSpec=Ericsson$Next_Stop&t1=" + startTime + "&t2=" + endTime;
         //System.out.println(url);
         /*Streams, initializing them to null so that we can easily check
@@ -118,7 +120,7 @@ public class PlatformCommunicator implements IEventBusListener {
                 response.append(inputLine);
             }
             //System.out.println("while :" + inputLine);
-            //System.out.println("response :" + response.toString());
+            System.out.println("response :" + response.toString());
 
             try {
                 //String teststring = response.substring(1,response.length()-1);
@@ -126,7 +128,6 @@ public class PlatformCommunicator implements IEventBusListener {
                 JSONArray platformArray = new JSONArray(response.toString());
                 platformData = platformArray.getJSONObject(platformArray.length() - 1);
                 busStop = platformData.getString("value");
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -151,7 +152,7 @@ public class PlatformCommunicator implements IEventBusListener {
         }
         //todo hantera null om servern inte skickar meddelande
         if (busStop == null){
-            busStop = "NisseTerminalen";
+            busStop = "Next busstop could not be found";
         }
         return busStop;
     }
@@ -164,7 +165,8 @@ public class PlatformCommunicator implements IEventBusListener {
             Log.d("MyLog", "platformevent");
             /* Skickar endast nästa hållplats tills vidare*/
             if (message instanceof MsgPlatformDataRequest) {
-                String nextStop = getNextStopData(null);
+                MsgPlatformDataRequest requestMessage = (MsgPlatformDataRequest)message;
+                String nextStop = getNextStopData(requestMessage.getBussID());
                 System.out.println("Nextstop = " + nextStop);
 
                 MsgPlatformData newMessage = new MsgPlatformData("nextStop", nextStop);

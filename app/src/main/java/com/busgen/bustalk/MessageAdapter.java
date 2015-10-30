@@ -1,12 +1,14 @@
 package com.busgen.bustalk;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.List;
