@@ -143,9 +143,9 @@ public class BusTalkHandlerTest {
         userHandler.setUserNameAndInterests(null, userSession2, "123abc", "interests");
         IUser user2 = userHandler.getUser(userSession2);
         // Change group and join main chat
-        busTalkHandler.handleInput(changeGroup("1"), userSession1);
-        busTalkHandler.handleInput(changeGroup("1"), userSession2);
-        int chatId = groupHandler.getGroupRooms("1").get(0).getIdNbr();
+        busTalkHandler.handleInput(changeGroup("GROUPPPPPP"), userSession1);
+        busTalkHandler.handleInput(changeGroup("GROUPPPPPP"), userSession2);
+        int chatId = groupHandler.getGroupRooms("GROUPPPPPP").get(0).getIdNbr();
         busTalkHandler.handleInput(joinRoom(chatId), userSession1);
         busTalkHandler.handleInput(joinRoom(chatId), userSession2);
 

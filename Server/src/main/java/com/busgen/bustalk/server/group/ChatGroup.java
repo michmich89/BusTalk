@@ -230,6 +230,7 @@ public class ChatGroup implements IChatGroup {
     private void removeRoom(IChatroom chatroom) {
         this.chatrooms.remove(chatroom);
         this.chatroomToUsers.remove(chatroom);
+        this.chatrooms.remove(chatroom.getIdNbr());
 
         LOGGER.log(Level.INFO, String.format("Chat room \"{1}\" with id \"{2}\" was deleted."),
                 new Object[]{chatroom.getTitle(), chatrooms.inverse().get(chatroom)});
