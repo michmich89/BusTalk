@@ -34,7 +34,7 @@ public class ConnectionsHandler implements IEventBusListener{
     private Timer timer;
     private int timeDisconnected;
 
-    private final boolean isTest = true;
+    private final boolean isTest = false;
     private boolean isTimerRunning;
 
     public ConnectionsHandler(WifiManager wifiManager){
