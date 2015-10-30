@@ -36,7 +36,7 @@ public class ConnectionsHandler implements IEventBusListener{
     private Timer timer;
     private int timeDisconnected;
 
-    private final boolean isTest = true;
+    private final boolean isTest = false;
     private boolean isTimerRunning;
 
     public ConnectionsHandler(WifiManager wifiManager){
@@ -130,7 +130,7 @@ public class ConnectionsHandler implements IEventBusListener{
             }
 
         private void sendConnectionLost(){
-            eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
+            //eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
             eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
         }
 
