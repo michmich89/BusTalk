@@ -17,7 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Class used to encode ServerMessages to
+ * Class used to encode ServerMessages to JSONObjects.
  */
 public class JSONEncoder {
 
