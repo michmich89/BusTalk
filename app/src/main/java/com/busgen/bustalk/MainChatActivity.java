@@ -128,6 +128,7 @@ public class MainChatActivity extends BindingActivity {
             if (message instanceof MsgChatMessage) {
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
                 drawNewMessage(chatMessage);
+
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 updateRoom(chatId);
@@ -238,4 +239,40 @@ public class MainChatActivity extends BindingActivity {
         return true;
     }
 
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(alertDialog != null){
+            if(alertDialog.isShowing()){
+                alertDialog.dismiss();
+            }
+        }
+    }
+
+    private void printNextBusTop(final MsgPlatformData platformData) {
+        System.out.println("Getting the busstop event");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Running the run");
+                String nextStop = platformData.getData();
+                setTitle(R.string.title_activity_main_chat);
+                String nextStop2 = getString(R.string.nextStop2) + " ";
+                ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
+            }
+        });
+    }
+
+    private void drawNewMessage(final MsgChatMessage chatMessage) {
+        if (chatMessage.getChatId() == myChatroom.getChatID() &&
+                chatMessage.getNickname().equals(client.getUserName())){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayMessage(chatMessage);
+                }
+            });
+    }
+    }
 }

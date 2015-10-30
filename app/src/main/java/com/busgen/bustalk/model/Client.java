@@ -149,18 +149,11 @@ public class Client implements IClient, IEventBusListener {
                 Log.d("MyTag", "sender of message: " + chatMessage.getNickname());
                 Log.d("MyTag", "And I am: " + getUserName());
                 Log.d("MyTag", "Is it me who sent it? " + chatMessage.getNickname().equals(getUserName()));
-                if (!chatMessage.getNickname().equals(getUserName())) {
 
-                    for (IChatroom c : chatrooms) {
-                        if (c.getChatID() == chatMessage.getChatId()) {
                             Event newEvent = new ToActivityEvent(chatMessage);
                             eventBus.postEvent(newEvent);
-                        }
-                    }
-                    //chatrooms.get(chatMessage.getChatId()).addMessage(chatMessage);
-                    //Event newEvent = new ToActivityEvent(chatMessage);
-                    //eventBus.postEvent(newEvent);
-                }
+                    
+
             } else if (message instanceof MsgChooseNickname) {
                 /*
                 sets username and alerts activities about it (Not used atm)
@@ -171,7 +164,7 @@ public class Client implements IClient, IEventBusListener {
                 eventBus.postEvent(newEvent);
             } else if (message instanceof MsgCreateRoom) {
 
-            } else if (message instanceof MsgJoinRoom) {
+            } else if (message instanceof MsgJoinRoom) {// TODO ta bort skiten
                 IChatroom chatroom = ((MsgJoinRoom) message).getChatroom();
 
                 //Skala bort kod här sedan, joinRoom innehåller det mesta. Denna används aldrig.
@@ -185,6 +178,7 @@ public class Client implements IClient, IEventBusListener {
                 int chatId = ((MsgLeaveRoom) message).getChatID();
 
                 /** Check if client is connected to the room and if so remove it from list**/
+                // TODO method
                 for (IChatroom c : chatrooms) {
                     if (c.getChatID() == chatId) {
                         leaveRoom(c);
@@ -195,7 +189,7 @@ public class Client implements IClient, IEventBusListener {
 
             } else if (message instanceof MsgLostChatRoom) {
                 int chatId = ((MsgLostChatRoom) message).getChatID();
-
+                // TODO method
                 for (IChatroom c : chatrooms) {
                     if (c.getChatID() == chatId) {
                         this.chatrooms.remove(c);
@@ -210,7 +204,7 @@ public class Client implements IClient, IEventBusListener {
 
                 /** Check if user is me and if so leave room (remove room from local list of rooms)
                  * Could be extracted to separate method. **/
-
+                // TODO method
                 for (IChatroom c : chatrooms) {
                     if (c.getChatID() == chatId) {
                         if (user.equals(this.user)) {
@@ -232,7 +226,7 @@ public class Client implements IClient, IEventBusListener {
                 /** Check if user is me and if so join room (add room to local list of rooms)
                  * if it's somebody else, add them as user to local chatroom
                  * Could be extracted to separate methods. **/
-
+                // TODO method
                 if (user.equals(this.user)) {
                     Log.d("MyTag", "It was me who joined a room, adding the room to my list");
                     IChatroom chatroom = new Chatroom(chatId, "");
@@ -247,6 +241,7 @@ public class Client implements IClient, IEventBusListener {
 //                    eventBus.postEvent(newEvent);
                 } else if (user != null){
                     Log.d("MyTag", "Someone joined a room, updating chatroom");
+                    // TODO method
                    for (IChatroom c : chatrooms) {
                        if (c.getChatID() == chatId) {
                                c.addUser(user);
@@ -279,7 +274,7 @@ public class Client implements IClient, IEventBusListener {
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 List<IUser> userList = ((MsgUsersInChat) message).getUserList();
-
+// TODO method
                 for (IChatroom c : chatrooms) {
                     if (c.getChatID() == chatId) {
                         c.setUsers(userList);
