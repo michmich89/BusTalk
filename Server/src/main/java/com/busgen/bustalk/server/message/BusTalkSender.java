@@ -1,20 +1,13 @@
-package com.busgen.bustalk.server;
+package com.busgen.bustalk.server.message;
 
 import com.busgen.bustalk.server.chatroom.IChatroom;
-import com.busgen.bustalk.server.chatroom.ChatroomHandler;
-import com.busgen.bustalk.server.message.MessageType;
-import com.busgen.bustalk.server.message.UserMessage;
 import com.busgen.bustalk.server.user.IUser;
-import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
-import com.busgen.bustalk.server.util.Constants;
 import org.json.JSONObject;
 
 import javax.websocket.Session;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,15 +18,19 @@ import java.util.logging.Logger;
  */
 public class BusTalkSender {
 
-    private final UserHandler userHandler;
-    private final ChatroomHandler chatroomHandler;
     private static final Logger LOGGER = Logger.getLogger(BusTalkSender.class.getName());
+    private final UserHandler userHandler;
 
+    private static class Holder {
+        static final BusTalkSender INSTANCE = new BusTalkSender();
+    }
 
+    public static BusTalkSender getInstance(){
+        return Holder.INSTANCE;
+    }
 
-    public BusTalkSender(UserHandler userHandler, ChatroomHandler chatroomHandler) {
-        this.userHandler = userHandler;
-        this.chatroomHandler = chatroomHandler;
+    private BusTalkSender() {
+        this.userHandler = UserHandler.getInstance();
     }
 
     /**
@@ -42,9 +39,7 @@ public class BusTalkSender {
      * @param user The user that created the chatroom
      * @param chatroom The newly created chatroom you want to notify users about
      */
-    public void chatroomCreatedNotification(IUser user, IChatroom chatroom) {
-        Session creator = userHandler.getSession(user);
-        String groupId = user.getGroupId();
+    public void chatroomCreatedNotification(IUser user, List<IUser> users, IChatroom chatroom) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.ROOM_CREATED_NOTIFICATION);
         jsonObject.put("title", chatroom.getTitle());
@@ -53,13 +48,13 @@ public class BusTalkSender {
 
         // TODO: Could perhaps be more optimized... (maybe by creating objects representing groups that hold users and
         // chat rooms)
-        for(IUser u : userHandler.getUsers()){
-            if(!u.equals(user) && u.getGroupId().equals(groupId)){
+        for(IUser u : users){
+            if(!u.equals(user)){
                 userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
             }
         }
         jsonObject.put("isYours", true);
-        creator.getAsyncRemote().sendObject(new UserMessage(jsonObject));
+        userHandler.getSession(user).getAsyncRemote().sendObject(new UserMessage(jsonObject));
     }
 
     /**
@@ -68,14 +63,14 @@ public class BusTalkSender {
      * @param user The user that just joined
      * @param chatroom The chatroom whos users will be notified
      */
-    public void userJoinedNotification(IUser user, IChatroom chatroom) {
+    public void userJoinedNotification(IUser user, List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.NEW_USER_IN_CHAT_NOTIFICATION);
-        jsonObject.put("chatId", chatroom.getIdNbr());
+        jsonObject.put("chatId", chatId);
         jsonObject.put("name", user.getName());
         jsonObject.put("interests", user.getInterests());
 
-        for (IUser u : chatroom.getChatroomUsers()) {
+        for (IUser u : users) {
             Session s = userHandler.getSession(u);
             s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
@@ -87,13 +82,13 @@ public class BusTalkSender {
      * @param user The user who left
      * @param chatroom The chatroom that the user left
      */
-    public void userLeftNotification(IUser user, IChatroom chatroom) {
+    public void userLeftNotification(IUser user, List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.USER_LEFT_ROOM_NOTIFICATION);
-        jsonObject.put("chatId", chatroom.getIdNbr());
+        jsonObject.put("chatId", chatId);
         jsonObject.put("name", user.getName());
 
-        for (IUser u : chatroom.getChatroomUsers()) {
+        for (IUser u : users) {
             Session s = userHandler.getSession(u);
             s.getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
@@ -105,15 +100,13 @@ public class BusTalkSender {
      * @param groupId the group ID of all affected users
      * @param chatroom the chatroom that was deleted
      */
-    public void chatDeletedNotification(String groupId, IChatroom chatroom) {
+    public void chatDeletedNotification(List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.ROOM_DELETED_NOTIFICATION);
-        jsonObject.put("chatId", chatroom.getIdNbr());
+        jsonObject.put("chatId", chatId);
 
-        for (IUser u : userHandler.getUsers()) {
-            if(u.getGroupId().equals(groupId)) {
-                userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
-            }
+        for (IUser u : users) {
+            userHandler.getSession(u).getAsyncRemote().sendObject(new UserMessage(jsonObject));
         }
     }
 
@@ -122,13 +115,12 @@ public class BusTalkSender {
      *
      * @param user
      */
-    public void listOfChatrooms(IUser user) {
+    public void listOfChatrooms(IUser user, List<IChatroom> chatrooms, String groupId) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.LIST_OF_CHATROOMS_NOTIFICATION);
-        jsonObject.put("groupId", user.getGroupId());
+        jsonObject.put("groupId", groupId);
 
-        List<IChatroom> tempChatroomList = chatroomHandler.getGroupOfChatrooms(user.getGroupId());
-        for (IChatroom c : tempChatroomList) {
+        for (IChatroom c : chatrooms) {
             JSONObject jsonChatroom = new JSONObject();
             jsonChatroom.put("chatId", c.getIdNbr());
             jsonChatroom.put("name", c.getTitle());
@@ -148,12 +140,13 @@ public class BusTalkSender {
      * @param user the user the message should be sent to
      * @param chatroom the chatroom the user wants info about
      */
-    public void listOfUsersInRoom(IUser user, IChatroom chatroom) {
+    public void listOfUsersInRoom(IUser user, List<IUser> users, int chatId) {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("type", MessageType.LIST_OF_USERS_IN_CHAT_NOTIFICATION);
-        jsonObject.put("chatId", chatroom.getIdNbr());
-        for (IUser u : chatroom.getChatroomUsers()) {
+        jsonObject.put("chatId", chatId);
+
+        for (IUser u : users) {
             JSONObject jsonUser = new JSONObject();
             jsonUser.put("name", u.getName());
             jsonUser.put("interests", u.getInterests());
@@ -172,8 +165,7 @@ public class BusTalkSender {
      * @param chatroom The chatroom the message was sent to
      * @param message The actual message the user wrote
      */
-    public void chatMessage(IUser sender, IChatroom chatroom, String message) {
-        int chatId = chatroom.getIdNbr();
+    public void chatMessage(IUser sender, List<IUser> users, int chatId, String message) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", MessageType.CHAT_MESSAGE_NOTIFICATION);
         jsonObject.put("chatId", chatId);
@@ -182,8 +174,7 @@ public class BusTalkSender {
         jsonObject.put("time", new Date().toString());
         jsonObject.put("isMe", false);
 
-        System.out.println(chatroom.getChatroomUsers().toString());
-        for (IUser u : chatroom.getChatroomUsers()) {
+        for (IUser u : users) {
             if (!u.equals(sender)) {
                 Session s = userHandler.getSession(u);
                 s.getAsyncRemote().sendObject(new UserMessage(jsonObject));

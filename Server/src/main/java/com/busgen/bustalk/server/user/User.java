@@ -14,13 +14,10 @@ public class User implements IUser {
 
     private String name;
     private String interests;
-    private final List<IChatroom> inChatrooms;
-    private String groupId;
 
     public User(String name, String interests){
         this.name = name;
         this.interests = interests;
-        inChatrooms = new ArrayList<IChatroom>();
     }
 
     @Override
@@ -54,33 +51,6 @@ public class User implements IUser {
 
     public void setInterests(String newInterests){
         this.interests = newInterests;
-    }
-
-    public void onJoinChatroom(IChatroom chatroom){
-        inChatrooms.add(chatroom);
-    }
-
-
-    public void onLeaveChatroom(IChatroom chatroom){
-        inChatrooms.remove(chatroom);
-    }
-
-
-
-    public List<IChatroom> getCurrentChatrooms(){
-        return new ArrayList<IChatroom>(inChatrooms);
-    }
-
-    public boolean isInRoom(IChatroom chatroom){
-        return inChatrooms.contains(chatroom);
-    }
-
-    public void setGroupId(String groupId){
-        this.groupId = groupId;
-    }
-
-    public String getGroupId(){
-        return this.groupId;
     }
 
 }

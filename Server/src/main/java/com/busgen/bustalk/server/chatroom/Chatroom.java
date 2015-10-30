@@ -16,21 +16,10 @@ public class Chatroom implements IChatroom {
 
     private String chatroomTitle;
     private final int idNbr;
-    private final List<IUser> chatroomUsers;
 
     public Chatroom(int idNbr, String chatroomTitle){
         this.chatroomTitle = chatroomTitle;
         this.idNbr = idNbr;
-        chatroomUsers = new ArrayList<IUser>();
-    }
-
-    public void subscribeToRoom(IUser user){
-        chatroomUsers.add(user);
-
-    }
-
-    public void unsubscribeToRoom(IUser user){
-        chatroomUsers.remove(user);
     }
 
     public int getIdNbr(){
@@ -39,13 +28,5 @@ public class Chatroom implements IChatroom {
 
     public String getTitle () {
         return this.chatroomTitle;
-    }
-
-    public List<IUser> getChatroomUsers(){
-        return new ArrayList<IUser>(chatroomUsers);
-    }
-
-    public boolean isUserInRoom(IUser user){
-        return chatroomUsers.contains(user);
     }
 }

@@ -1,6 +1,5 @@
 package com.busgen.bustalk.server.user;
 
-import com.busgen.bustalk.server.chatroom.IChatroom;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -21,7 +20,15 @@ public class UserHandler {
     private static final Logger LOGGER = Logger.getLogger(UserHandler.class.getName());
     private UserFactory userFactory;
 
-    public UserHandler() {
+    private static class Holder {
+        static final UserHandler INSTANCE = new UserHandler();
+    }
+
+    public static UserHandler getInstance(){
+        return Holder.INSTANCE;
+    }
+
+    private UserHandler() {
         this.userFactory = new UserFactory();
         this.userToSession = Maps.synchronizedBiMap(HashBiMap.<IUser, Session>create());
         this.disallowedNames = Collections.synchronizedList(new ArrayList<String>());
@@ -51,14 +58,6 @@ public class UserHandler {
      */
     public List<IUser> getUsers() {
         return new ArrayList<IUser>(userToSession.keySet());
-    }
-
-    /**
-     *
-     * @return a list of sessions to the users in the room
-     */
-    public List<Session> getSessions() {
-        return new ArrayList<Session>(userToSession.values());
     }
 
     /**
@@ -146,31 +145,5 @@ public class UserHandler {
         }
 
         return true;
-    }
-
-    //TODO: Should/can be private?
-    /**
-     * Adds a room to a user, updating the list of rooms the user is connected to
-     *
-     * @param user
-     * @param chatroom
-     */
-    public void addToCurrentRooms(IUser user, IChatroom chatroom){
-        user.onJoinChatroom(chatroom);
-    }
-
-    //TODO: Should/can be private?
-    /**
-     * Removes a room from a user, updating the list of rooms the user is connected to
-     *
-     * @param user
-     * @param chatroom
-     */
-    public void removeFromCurrentRooms(IUser user, IChatroom chatroom){
-        user.onLeaveChatroom(chatroom);
-    }
-
-    public boolean isUserInRoom(IUser user, IChatroom chatroom){
-        return user.isInRoom(chatroom);
     }
 }

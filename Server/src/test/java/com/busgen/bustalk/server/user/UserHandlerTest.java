@@ -1,16 +1,9 @@
 package com.busgen.bustalk.server.user;
 
-import com.busgen.bustalk.server.chatroom.ChatroomHandler;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.websocket.*;
-import java.io.IOException;
-import java.net.URI;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -18,13 +11,10 @@ import static org.junit.Assert.*;
  * Created by danie on 2015-10-13.
  */
 public class UserHandlerTest {
-    private ChatroomHandler chatroomHandler;
     private UserHandler userHandler;
-    private IUser user;
 
     public UserHandlerTest () {
-        chatroomHandler = new ChatroomHandler();
-        userHandler = new UserHandler();
+        userHandler = UserHandler.getInstance();
     }
 
     @Test
