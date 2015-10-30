@@ -17,6 +17,8 @@ import java.util.List;
 /**
  * This class is responsible for transforming MsgChatMesssage objects into suitable view items that
  * are to be inserted in the ListView belonging to the MainChatActivity.
+ *
+ * parts taken from http://www.codeproject.com/Tips/897826/Designing-Android-Chat-Bubble-Chat-UI
  */
 public class MessageAdapter extends BaseAdapter{
     private final List<MsgChatMessage> messages;
@@ -78,7 +80,7 @@ public class MessageAdapter extends BaseAdapter{
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
-        holder.userName.setText(message.getNickname() + ":");
+        holder.userName.setText(message.getUserName() + ":");
 
         return convertView;
     }
