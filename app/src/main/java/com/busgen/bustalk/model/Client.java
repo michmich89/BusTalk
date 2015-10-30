@@ -2,7 +2,6 @@ package com.busgen.bustalk.model;
 
 import android.util.Log;
 
-import com.busgen.bustalk.MainChatActivity;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
@@ -18,7 +17,6 @@ import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
-import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;

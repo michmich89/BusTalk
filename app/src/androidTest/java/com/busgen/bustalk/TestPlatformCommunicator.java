@@ -2,6 +2,7 @@ package com.busgen.bustalk;
 
 import android.test.AndroidTestCase;
 
+import com.busgen.bustalk.service.PlatformCommunicator;
 
 
 /**

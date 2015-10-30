@@ -10,15 +10,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.busgen.bustalk.ConnectionsHandler;
-import com.busgen.bustalk.PlatformCommunicator;
-import com.busgen.bustalk.ServerCommunicator;
 import com.busgen.bustalk.model.Client;
-import com.busgen.bustalk.model.IClient;
-import com.busgen.bustalk.model.IEventBusListener;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class MainService extends Service {
 

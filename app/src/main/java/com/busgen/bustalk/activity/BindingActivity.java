@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.activity;
 
 import android.content.ComponentName;
 import android.content.Context;
