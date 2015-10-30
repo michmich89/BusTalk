@@ -3,7 +3,9 @@ package com.busgen.bustalk.utils;
 import java.util.HashMap;
 
 /**
- * Created by nalex on 19/10/2015.
+ * BussIDS contains two collections. The first one is used to translate bssids to their registration number if it's a buss or
+ * to its name if it's a busstop. The second one converts the name of the reg number of a bus to the signal name used when
+ * fetching data from the innovation platform.
  */
 public class BussIDs {
     private HashMap<String, String> bssidToRegNr;
@@ -13,7 +15,6 @@ public class BussIDs {
         bssidToRegNr = new HashMap<String, String>();
 
         //buses
-        bssidToRegNr.put("02:10:75:48:98:95", "WifiOK");
         bssidToRegNr.put("04:f0:21:10:0a:07", "EPO 131");
         bssidToRegNr.put("04:f0:21:10:09:df", "EPO 136");
         bssidToRegNr.put("04:f0:21:10:09:e8", "EPO 143");

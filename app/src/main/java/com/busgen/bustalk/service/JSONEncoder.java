@@ -17,12 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by nalex on 16/10/2015.
+ * Class used to encode ServerMessages to
  */
 public class JSONEncoder {
 
     public String encode(IServerMessage clientMessage) throws JSONException{
-        //Maybe should have "return clientMessage.toString();" instead
         if(clientMessage == null){
             throw new NullPointerException("The message was null and could therefore not be converted to a JSON object");
         }
@@ -34,10 +33,6 @@ public class JSONEncoder {
             object.put("type", MessageTypes.CHAT_MESSAGE);
             object.put("chatId", chatMessage.getChatId());
             object.put("message", chatMessage.getMessage());
-            /*
-            object.put("sender", chatMessage.getNickname());
-            object.put("time", chatMessage.getDate().toString());
-            */
         }else if(clientMessage instanceof MsgJoinRoom){
             MsgJoinRoom joinMessage = (MsgJoinRoom)clientMessage;
             object.put("type", MessageTypes.JOIN_ROOM_REQUEST);
