@@ -1,7 +1,9 @@
 # BusGen
 
 Installation tips:
-The class ConnectionsHandler has a boolean "isTest". When the boolean is true, the application will ignore to check if the wifi is correct. When false the program will work as intended.
+1.The class ConnectionsHandler has a boolean "isTest". When the boolean is true, the application will ignore to check if the wifi is correct. When false the program will work as intended.
+
+2. You will need an android phone to test the app since normal emulators don't support wifimanagers.
 
 If you're running gitinspector and checking authors. Alexander Kloutschek = Rektorn.
 
