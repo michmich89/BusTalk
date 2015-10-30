@@ -26,9 +26,6 @@ import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 
-/**
- * Created by Alexander Kloutschek on 2015-10-18.
- */
 public class PlatformCommunicator implements IEventBusListener {
 
     private final int SECOND = 1000;
@@ -68,7 +65,7 @@ public class PlatformCommunicator implements IEventBusListener {
         //todo Den här metoden ska brytas upp.
         if(bussID == null){
             //todo send exception?
-            return "Next busstop could not be found";
+            return "Not available";
         }
         busStop = null;
         String dgw = new String();
@@ -79,7 +76,7 @@ public class PlatformCommunicator implements IEventBusListener {
             dgw = "Ericsson$Vin_Num_001";
         } else if(!bssidToRegnr.containsValue(bussID)){
             //means that the string is illegal and the bussid haven't been added to our bssid collection.
-            return "Next busstop could not be found";
+            return "Not available";
         } else {
             //This means that bussID should be a busstop and thus the busstop itself should be displayed.
             return bussID;
@@ -152,7 +149,7 @@ public class PlatformCommunicator implements IEventBusListener {
         }
         //todo hantera null om servern inte skickar meddelande
         if (busStop == null){
-            busStop = "Next busstop could not be found";
+            busStop = "Not available";
         }
         return busStop;
     }
