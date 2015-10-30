@@ -111,9 +111,6 @@ public class Client implements IClient, IEventBusListener {
         if (chatroom != null && !chatrooms.contains(chatroom)) {
             chatroom.addUser(user);
             chatrooms.add(chatroom);
-            Log.d("MyTag", "Added chatroom " + chatroom.getChatID() + " to Client's chatrooms");
-            Log.d("MyTag", "Client's chatroom size: " + chatrooms.size());
-            Log.d("MyTag", "For good measure, chatroom nbr 0 is: " + getChatrooms().get(0).getChatID());
             requestUsersFromServer(chatroom.getChatID());
         }
     }
@@ -159,8 +156,6 @@ public class Client implements IClient, IEventBusListener {
         for (IChatroom c : chatrooms) {
             if (c.getChatID() == chatId) {
                 c.addUser(user);
-                Log.d("MyTag", "Added user " + user.getUserName() + " to chatroom " + c.getChatID());
-                Log.d("MyTag", "It now has " + c.getNbrOfUsers() + " users");
             }
         }
     }
@@ -202,13 +197,8 @@ public class Client implements IClient, IEventBusListener {
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
         if (event instanceof ToClientEvent) {
-            Log.d("MyTag", "Client receiving some sort of event");
-            Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                Log.d("MyTag", "sender of message: " + chatMessage.getUserName());
-                Log.d("MyTag", "And I am: " + getUserName());
-                Log.d("MyTag", "Is it me who sent it? " + chatMessage.getUserName().equals(getUserName()));
 
                 Event newEvent = new ToActivityEvent(chatMessage);
                 eventBus.postEvent(newEvent);
@@ -243,11 +233,9 @@ public class Client implements IClient, IEventBusListener {
                  * Could be extracted to separate methods. **/
 
                 if (user.equals(this.user)) {
-                    Log.d("MyTag", "It was me who joined a room, adding the room to my list");
                     IChatroom chatroom = new Chatroom(chatId, "");
                     joinRoom(chatroom);
                 } else if (user != null){
-                    Log.d("MyTag", "Someone joined a room, updating chatroom");
                     addUser(chatId, user);
                 }
                 Event newEvent = new ToActivityEvent(message);
@@ -259,7 +247,6 @@ public class Client implements IClient, IEventBusListener {
                 setUsers(chatId, userList);
 
             } else if (message instanceof MsgNicknameAvailable) {
-                Log.d("MyTag", "Sending availability info to activity");
                 Event newEvent = new ToActivityEvent(message);
                 eventBus.postEvent(newEvent);
             } else if (message instanceof MsgAvailableRooms) {

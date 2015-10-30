@@ -66,14 +66,11 @@ public class MsgChatMessage implements IServerMessage {
     @Override
     public boolean equals(Object object){
     MsgChatMessage chatMessage;
-        Log.d("MyTag", "equalling chatmessage");
         if(object != null && object instanceof MsgChatMessage){
             chatMessage = (MsgChatMessage) object;
-            Log.d("MyTag", "chatMessage not null");
             if ((this.isMe == chatMessage.getIsMe() && this.getMessage().equals(chatMessage.getMessage())
                     && this.date.equals(chatMessage.getDate()) && this.userName.equals(chatMessage.getUserName())
                     && this.chatId == chatMessage.getChatId())){
-                Log.d("MyTag", "equals is true");
                 return true;
             }
         }

@@ -7,8 +7,6 @@ import com.busgen.bustalk.model.IServerMessage;
  */
 public class MsgPlatformDataRequest implements IServerMessage{
     private String bussID;
-    //här skulle man kunna beskriva vilken sorts data det är man vill skicka kanske?
-    private String dataType;
 
     public MsgPlatformDataRequest(String bussID){
         this.bussID = bussID;

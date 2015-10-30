@@ -27,7 +27,6 @@ public class ConnectionsHandler implements IEventBusListener{
     private ServerCommunicator serverCom;
     private PlatformCommunicator platformCom;
     private WifiController wifiController;
-    private boolean connectionStatus;
 
     private EventBus eventBus;
     private String groupID;
@@ -55,7 +54,6 @@ public class ConnectionsHandler implements IEventBusListener{
 
     private void startTimer() {
         if(!isTimerRunning) {
-            System.out.println("Trying to start timer");
             this.timer = new Timer("wifiCheck");
             TimerTask timerTask = new WifiTimerTask();
             timer.scheduleAtFixedRate(timerTask, 0, 5000);
@@ -67,7 +65,6 @@ public class ConnectionsHandler implements IEventBusListener{
         timer.cancel();
         timer.purge();
         isTimerRunning = false;
-        System.out.println("Timer stopped");
     }
 
     @Override
@@ -75,9 +72,7 @@ public class ConnectionsHandler implements IEventBusListener{
         if (e instanceof ToServerEvent) {
             IServerMessage message = e.getMessage();
             if (message instanceof MsgConnectionEstablished) {
-                System.out.println("CONNECTION ESTABLISHED");
             } else if (message instanceof MsgConnectionLost) {
-                System.out.println("CONNECTION LOST");
                 stopTimer();
             } else if (message instanceof MsgConnectToServer) {
                 boolean couldConnect;
@@ -86,12 +81,10 @@ public class ConnectionsHandler implements IEventBusListener{
                         couldConnect = true;
                         groupID = "Test";
                         eventBus.postEvent(new ToClientEvent(new MsgSetGroupId(groupID)));
-                        //startTimer();
                     }else if(wifiController.isConnected()){
                         groupID = wifiController.getWifiName();
                         eventBus.postEvent(new ToClientEvent(new MsgSetGroupId(groupID)));
                         couldConnect = true;
-                        //startTimer();
                     }else{
                         couldConnect = false;
                     }
@@ -110,7 +103,6 @@ public class ConnectionsHandler implements IEventBusListener{
             @Override
             public void run() {
                 if(serverCom.isConnected()){
-                    System.out.println("Running timertask...");
                     if(isTest){
                         sendNextStopData(groupID);
                     } else if(wifiController.isConnectedTo(groupID)){
@@ -129,7 +121,6 @@ public class ConnectionsHandler implements IEventBusListener{
             }
 
         private void sendConnectionLost(){
-            //eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
             eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
         }
 

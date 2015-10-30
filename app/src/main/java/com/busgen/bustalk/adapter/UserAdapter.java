@@ -5,10 +5,10 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import com.busgen.bustalk.R;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.busgen.bustalk.R;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IUser;
 

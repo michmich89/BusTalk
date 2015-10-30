@@ -39,7 +39,6 @@ public class BindingActivity extends AppCompatActivity implements IEventBusListe
                                        IBinder binder) {
             MainService.MainBinder mainBinder = (MainService.MainBinder) binder;
             mainService = mainBinder.getService();
-            //client = mainService.getClient();
             isBound = true;
 
         }

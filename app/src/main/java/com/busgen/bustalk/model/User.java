@@ -17,7 +17,6 @@ public class User implements IUser{
 
     @Override
     public void setUserName(String userName) {
-        System.out.println("Sätter namn till " + userName );
         this.userName = userName;
     }
 
