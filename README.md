@@ -1,6 +1,7 @@
 # BusGen
 
 Installation tips:
+
 1.The class ConnectionsHandler has a boolean "isTest". When the boolean is true, the application will ignore to check if the wifi is correct. When false the program will work as intended.
 
 2. You will need an android phone to test the app since normal emulators don't support wifimanagers.
@@ -18,4 +19,4 @@ https://docs.google.com/forms/d/1-cKwGODiy2N8YEI3UPDMFc3HCd829ScWu3Al_iVM6-k/vie
 
 Might be worth noting that the program will not fetch the correct "next busstop" if the Innovation Platform is down.
 
-The pure app is located at the Client branch, the pure server is also located at the Server branch.
+The pure app source code is located at the Client branch, the source dode for the server is located at the Server branch.
