@@ -98,6 +98,14 @@ public class JSONDecoderTest extends TestCase{
         assertTrue(willDecode(jsonObject));
     }
 
+    public void testIfInvalidMessageIsDecoded() throws JSONException {
+        jsonObject = new JSONObject();
+        jsonObject.put("type", MessageTypes.NAME_AND_INTEREST_SET);
+        jsonObject.put("invalid", true);
+
+        assertFalse(willDecode(jsonObject));
+    }
+
     private boolean willDecode(JSONObject jsonObject) {
         return decoder.willDecode(jsonObject.toString());
     }
