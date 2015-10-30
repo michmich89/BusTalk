@@ -1,0 +1,19 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.busgen.bustalk.activity.MainChatActivity">
+    <item
+        android:id="@+id/num_of_users_menu_item"
+        android:title="@string/num_of_users_menu_item_text"
+        android:visible="true"
+        android:orderInCategory="1"
+        app:showAsAction="ifRoom" />
+    <item
+    android:id="@+id/user_activity_menu_item"
+    android:title="@string/user_activity_menu_item_text"
+    android:visible="true"
+    android:orderInCategory="2"
+    android:icon="@drawable/ic_menu_allfriends"
+    app:showAsAction="ifRoom" />
+</menu>

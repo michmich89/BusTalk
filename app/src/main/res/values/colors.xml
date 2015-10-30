@@ -1,0 +1,5 @@
+<resources>
+    <color name="button_color">#F44336</color>
+    <color name="button_text_color">#FFFFFF</color>
+    <color name="user_name_text_color">#002fa7</color>
+</resources>

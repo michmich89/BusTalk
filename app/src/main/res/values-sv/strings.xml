@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">BusTalk</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Inställningar</string>
+    <string name="title_activity_main_chat">Buss 55</string>
+    <string name="title_activity_login">BusTalk</string>
+    <string name="message_edit_hint">Skriv meddelande...</string>
+    <string name="button_text">Skicka</string>
+    <string name="arbitrary_date">Oct 6, 2015 1:10:07 PM</string>
+    <string name="arbitrary_user_name">Erik Larsson:</string>
+    <string name="login_user_name_hint">Alias</string>
+    <string name="login_interest_hint">Intressen (valfritt)</string>
+    <string name="login_button_text">Logga in</string>
+    <string name="nextStop">Hämtar hållplats...</string>
+    <string name="nextStop2">Nästa hållplats: </string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_users">Användare</string>
+    <string name="arbitrary_user_interest">Hockey</string>
+    <string name="num_of_users_menu_item_text">0</string>
+    <string name="user_activity_menu_item_text">UserActivity Menuitem</string>
+    <string name="loading_1">Laddar</string>
+    <string name="loading_2">Var god vänta medan det laddar...</string>
+</resources>
