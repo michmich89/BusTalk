@@ -1,5 +1,6 @@
 package com.busgen.bustalk;
 
+import com.busgen.bustalk.service.JSONDecoder;
 import com.busgen.bustalk.utils.MessageTypes;
 
 import junit.framework.TestCase;

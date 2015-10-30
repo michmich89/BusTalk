@@ -19,6 +19,8 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +57,11 @@ public class ServerCommunicator implements IEventBusListener {
     public void sendMessage(IServerMessage message) {
         if (webSocket != null) {
             Log.d("MyTag", "sending message to server...");
-            webSocket.sendText(jsonEncoder.encode(message));
+            try {
+                webSocket.sendText(jsonEncoder.encode(message));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
