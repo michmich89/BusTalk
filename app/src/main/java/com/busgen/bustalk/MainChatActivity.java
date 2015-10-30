@@ -41,6 +41,7 @@ public class MainChatActivity extends BindingActivity {
     private String userName;
     private String interest;
     private boolean backButtonPressed;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class MainChatActivity extends BindingActivity {
 
                 messageInputLine.setText("");
                 displayMessage(message);
-                myChatroom.addMessage(message);
+                //myChatroom.addMessage(message);
 
                 Event event = new ToServerEvent(message);
                 eventBus.postEvent(event);
@@ -126,13 +127,7 @@ public class MainChatActivity extends BindingActivity {
         if (event instanceof ToActivityEvent) {
             if (message instanceof MsgChatMessage) {
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        displayMessage(chatMessage);
-                    }
-                });
-                myChatroom.addMessage(chatMessage);
+                drawNewMessage(chatMessage);
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 updateRoom(chatId);
@@ -152,14 +147,7 @@ public class MainChatActivity extends BindingActivity {
             } else if (message instanceof MsgPlatformData) {
                 if (((MsgPlatformData) message).getDataType().equals("nextStop")){
                     final MsgPlatformData nextStopMessage = (MsgPlatformData) message;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String nextStop = nextStopMessage.getData();
-                            String nextStop2 = getString(R.string.nextStop2) + " ";
-                            ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
-                        }
-                    });
+                    printNextBusTop(nextStopMessage);
                 }
             }
         }
@@ -179,16 +167,16 @@ public class MainChatActivity extends BindingActivity {
                 alertBuilder.setNegativeButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                if(dialog != null){
+                                if (dialog != null) {
                                     dialog.dismiss();
-                                    dialog = null;
+                                    //dialog = null;
                                 }
                                 Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 MainChatActivity.this.finish();
                             }
                         });
-                alertBuilder.show();
+                alertDialog = alertBuilder.show();
             }
         };
         runOnUiThread(testRun);
@@ -210,7 +198,7 @@ public class MainChatActivity extends BindingActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(usersPresent!=null) {
+                if (usersPresent != null) {
                     String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
                     usersPresent.setTitle(numOfUsers);
                 }
@@ -241,5 +229,38 @@ public class MainChatActivity extends BindingActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(alertDialog != null){
+            if(alertDialog.isShowing()){
+                alertDialog.dismiss();
+            }
+        }
+    }
+
+    private void printNextBusTop(final MsgPlatformData platformData) {
+        System.out.println("Getting the busstop event");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Running the run");
+                String nextStop = platformData.getData();
+                setTitle(R.string.title_activity_main_chat);
+                String nextStop2 = getString(R.string.nextStop2) + " ";
+                ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
+            }
+        });
+    }
+
+    private void drawNewMessage(final MsgChatMessage chatMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayMessage(chatMessage);
+            }
+        });
     }
 }

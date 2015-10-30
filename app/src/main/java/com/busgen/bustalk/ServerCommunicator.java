@@ -122,12 +122,10 @@ public class ServerCommunicator implements IEventBusListener {
         if (event instanceof ToServerEvent) {
             Log.d("MyTag", "Server received some sort of event, namely");
             Log.d("MyTag", message.getClass().getName());
-            //todo wtf är detta
             if (message instanceof MsgConnectionLost) {
                 if(webSocket != null){
-                    if(webSocket.isOpen()){
-                        webSocket.disconnect();
-                    }
+                    System.out.println("tried to disconnect from server");
+                    webSocket.disconnect();
                 }
             }else {
                 sendMessage(message);

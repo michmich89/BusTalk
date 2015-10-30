@@ -97,11 +97,6 @@ public class Chatroom implements IChatroom, Serializable {
     public void terminate() {
     }
 
-    @Override
-    public void addMessage(MsgChatMessage message) {
-       // Log.d("MyTag", "Inside addMessage in Chatroom");
-       // messages.add(message);
-    }
 
     @Override
     public boolean equals(Object object){

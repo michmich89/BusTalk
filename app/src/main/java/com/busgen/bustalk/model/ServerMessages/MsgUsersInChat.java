@@ -27,6 +27,10 @@ public class MsgUsersInChat implements IServerMessage{
         userList.add(user);
     }
 
+    public void addUsersToList(List<IUser> users) {
+        userList.addAll(users);
+    }
+
     public int getChatID(){
         return chatId;
     }

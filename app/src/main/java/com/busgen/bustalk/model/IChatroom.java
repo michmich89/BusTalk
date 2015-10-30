@@ -37,6 +37,4 @@ public interface IChatroom extends Serializable{
 
     void terminate();
 
-    void addMessage(MsgChatMessage message);
-
 }

@@ -13,6 +13,7 @@ public class BussIDs {
         bssidToRegNr = new HashMap<String, String>();
 
         //buses
+        bssidToRegNr.put("02:10:75:48:98:95", "WifiOK");
         bssidToRegNr.put("04:f0:21:10:0a:07", "EPO 131");
         bssidToRegNr.put("04:f0:21:10:09:df", "EPO 136");
         bssidToRegNr.put("04:f0:21:10:09:e8", "EPO 143");

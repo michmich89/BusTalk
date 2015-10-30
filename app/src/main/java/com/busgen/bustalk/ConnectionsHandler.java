@@ -130,7 +130,7 @@ public class ConnectionsHandler implements IEventBusListener{
             }
 
         private void sendConnectionLost(){
-            eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
+            //eventBus.postEvent(new ToActivityEvent(new MsgConnectionLost()));
             eventBus.postEvent(new ToServerEvent(new MsgConnectionLost()));
         }
 

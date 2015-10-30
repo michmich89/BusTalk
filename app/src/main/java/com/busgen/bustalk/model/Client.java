@@ -128,14 +128,7 @@ public class Client implements IClient, IEventBusListener {
         }
     }
 
-    @Override
-    public void addMessageToChatroom(MsgChatMessage message) {
-        for (int i = 0; i < chatrooms.size(); i++) {
-            if (chatrooms.get(i).getChatID() == message.getChatId()) {
-                chatrooms.get(i).addMessage(message);
-            }
-        }
-    }
+
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
@@ -160,7 +153,6 @@ public class Client implements IClient, IEventBusListener {
 
                     for (IChatroom c : chatrooms) {
                         if (c.getChatID() == chatMessage.getChatId()) {
-                            c.addMessage(chatMessage);
                             Event newEvent = new ToActivityEvent(chatMessage);
                             eventBus.postEvent(newEvent);
                         }
