@@ -43,6 +43,7 @@ public class MainChatActivity extends BindingActivity {
     private String userName;
     private String interest;
     private boolean backButtonPressed;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,16 +179,16 @@ public class MainChatActivity extends BindingActivity {
                 alertBuilder.setNegativeButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                if(dialog != null){
+                                if (dialog != null) {
                                     dialog.dismiss();
-                                    dialog = null;
+                                    //dialog = null;
                                 }
                                 Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 MainChatActivity.this.finish();
                             }
                         });
-                alertBuilder.show();
+                alertDialog = alertBuilder.show();
             }
         };
         runOnUiThread(testRun);
@@ -206,7 +207,7 @@ public class MainChatActivity extends BindingActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(usersPresent!=null) {
+                if (usersPresent != null) {
                     String numOfUsers = Integer.toString(myChatroom.getNbrOfUsers());
                     usersPresent.setTitle(numOfUsers);
                 }
@@ -239,5 +240,13 @@ public class MainChatActivity extends BindingActivity {
         return true;
     }
 
-
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(alertDialog != null){
+            if(alertDialog.isShowing()){
+                alertDialog.dismiss();
+            }
+        }
+    }
 }
