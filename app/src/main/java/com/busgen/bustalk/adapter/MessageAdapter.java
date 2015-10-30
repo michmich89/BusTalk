@@ -1,13 +1,14 @@
 package com.busgen.bustalk.adapter;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.busgen.bustalk.R;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
@@ -17,6 +18,8 @@ import java.util.List;
 /**
  * This class is responsible for transforming MsgChatMesssage objects into suitable view items that
  * are to be inserted in the ListView belonging to the MainChatActivity.
+ *
+ * parts taken from http://www.codeproject.com/Tips/897826/Designing-Android-Chat-Bubble-Chat-UI
  */
 public class MessageAdapter extends BaseAdapter{
     private final List<MsgChatMessage> messages;
@@ -78,7 +81,7 @@ public class MessageAdapter extends BaseAdapter{
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
-        holder.userName.setText(message.getNickname() + ":");
+        holder.userName.setText(message.getUserName() + ":");
 
         return convertView;
     }

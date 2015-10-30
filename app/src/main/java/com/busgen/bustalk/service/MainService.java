@@ -9,7 +9,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.busgen.bustalk.model.Client;
 
 public class MainService extends Service {

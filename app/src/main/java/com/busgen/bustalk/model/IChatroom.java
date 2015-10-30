@@ -3,7 +3,6 @@ package com.busgen.bustalk.model;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**
