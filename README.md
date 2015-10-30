@@ -17,3 +17,5 @@ Diagram:
 https://docs.google.com/forms/d/1-cKwGODiy2N8YEI3UPDMFc3HCd829ScWu3Al_iVM6-k/viewanalytics
 
 Might be worth noting that the program will not fetch the correct "next busstop" if the Innovation Platform is down.
+
+The pure app is located at the Client branch, the pure server is also located at the Server branch.
