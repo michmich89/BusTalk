@@ -14,6 +14,10 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class handles all the logic and data that has to do with a group of chat rooms, such what chat rooms a user is
+ * in, make a user join a room if it can, etc.
+ */
 public class ChatGroup implements IChatGroup {
     private final BiMap<Integer, IChatroom> chatrooms;
     private final List<IUser> users;
@@ -42,10 +46,19 @@ public class ChatGroup implements IChatGroup {
         }
     }
 
+    /**
+     * Checks if a specific user is in this group.
+     * @param user The user which is to be checked.
+     * @return True if user is in group, false otherwise.
+     */
     public boolean isUserInGroup(IUser user) {
         return this.users.contains(user);
     }
 
+    /**
+     * Joins this group with a specific user.
+     * @param user The user which is to join the group.
+     */
     public void joinGroup(IUser user) {
         this.users.add(user);
         this.userToChatrooms.put(user, new ArrayList<IChatroom>());
@@ -53,6 +66,10 @@ public class ChatGroup implements IChatGroup {
                 new Object[]{user.getName(), this.groupId});
     }
 
+    /**
+     * Leaves this group with a specific user.
+     * @param user The user which is to leave this group.
+     */
     public void leaveGroup(IUser user) {
         this.users.remove(user);
 
@@ -65,10 +82,20 @@ public class ChatGroup implements IChatGroup {
                 new Object[]{user.getName(), this.groupId});
     }
 
+    /**
+     * Checks if there are any users in this group.
+     * @return True if there are no users, false if there are users in the room.
+     */
     public boolean isEmpty() {
         return this.users.isEmpty();
     }
 
+    /**
+     * Check if a specific user is in a specific chat room.
+     * @param user The user which is to be checked.
+     * @param chatId The id of the chat that may or may not contain the user.
+     * @return True if the user is in the chat, false otherwise.
+     */
     public boolean userIsInChatroom(IUser user, int chatId) {
         IChatroom chatroom = chatrooms.get(chatId);
         List<IUser> users = chatroomToUsers.get(chatroom);
@@ -76,6 +103,11 @@ public class ChatGroup implements IChatGroup {
         return users.contains(user);
     }
 
+    /**
+     * Creates a chat room and joins the room with the user that created the room.
+     * @param user The user that creates the room.
+     * @param title The title of the room.
+     */
     public void createRoom(IUser user, String title) {
         IChatroom chatroom = chatroomFactory.createChatroom(title);
         this.chatrooms.put(chatroom.getIdNbr(), chatroom);
@@ -88,6 +120,11 @@ public class ChatGroup implements IChatGroup {
         joinRoom(user, chatroom.getIdNbr());
     }
 
+    /**
+     * Joins a room with specific user.
+     * @param user The user which is to join a room.
+     * @param chatId The id of the chat which is to be joined.
+     */
     public void joinRoom(IUser user, int chatId) {
         IChatroom chatroom = chatrooms.get(chatId);
 
@@ -118,6 +155,11 @@ public class ChatGroup implements IChatGroup {
         busTalkSender.userJoinedNotification(user, chatroomToUsers.get(chatroom), chatId);
     }
 
+    /**
+     * Leaves a room with a specific user.
+     * @param user The user which is to leave a room.
+     * @param chatId The id of the chat which is to be left.
+     */
     public void leaveRoom(IUser user, int chatId) {
         IChatroom chatroom = chatrooms.get(chatId);
 
@@ -145,24 +187,42 @@ public class ChatGroup implements IChatGroup {
         }
     }
 
+    /**
+     * @return A list of chat rooms in this group.
+     */
     public List<IChatroom> getChatrooms() {
         System.out.println(new ArrayList<IChatroom>(this.chatrooms.values()).toString());
         return new ArrayList<IChatroom>(this.chatrooms.values());
     }
 
+    /**
+     * @param chatId The id of the chat that the users are gotten from.
+     * @return A list of users in the specified room.
+     */
     public List<IUser> getUsersInRoom(int chatId) {
         IChatroom chatroom = chatrooms.get(chatId);
         return chatroomToUsers.get(chatroom);
     }
 
+    /**
+     * @return The id of this group.
+     */
     public String getGroupId() {
         return this.groupId;
     }
 
+    /**
+     * @return A list of the users in this group.
+     */
     public List<IUser> getUsers() {
         return this.users;
     }
 
+    /**
+     * Returns the room a specific user is in.
+     * @param user The user which the chat rooms are being gotten for.
+     * @return A list of chat rooms the specified user is in.
+     */
     public List<IChatroom> getRoomsForUser(IUser user) {
         return userToChatrooms.get(user);
     }
