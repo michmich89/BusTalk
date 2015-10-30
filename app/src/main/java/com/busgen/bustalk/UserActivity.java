@@ -40,27 +40,20 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user);
+        initComponents();
+        refreshUserList();
+	}
 
-		userListView = (ListView) findViewById(R.id.user_list_view);
-		myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
-		userAdapter = new UserAdapter(UserActivity.this, new ArrayList<IUser>());
-		userListView.setAdapter(userAdapter);
-        Log.d("MyTag", "Ok, inside useractivity. Looking at chatroom with ID: " + myChatroom.getChatID());
-//		userAdapter.add(myChatroom.getUsers());
-//		Log.d("MyTag", "users in myChatroom: " + myChatroom.getUsers().size());
-//		userAdapter.add(new User("Nisse", "Glida"));
-//		userAdapter.notifyDataSetChanged();
+	private void initComponents(){
+        userListView = (ListView) findViewById(R.id.user_list_view);
+        myChatroom = (IChatroom) getIntent().getSerializableExtra("Chatroom");
+        userAdapter = new UserAdapter(UserActivity.this, new ArrayList<IUser>());
+        userListView.setAdapter(userAdapter);
 
         eventBus = EventBus.getInstance();
         eventBus.register(this);
         client = Client.getInstance();
         chatId = myChatroom.getChatID();
-
-        refreshUserList();
-	}
-
-	private void initViews(){
-
 	}
 
     private void refreshUserList(){
@@ -76,31 +69,19 @@ public class UserActivity extends AppCompatActivity implements IEventBusListener
                 userAdapter.notifyDataSetChanged();
             }
         });
-
     }
 
     public void onEvent(Event event) {
         IServerMessage message = event.getMessage();
-        if (event instanceof ToActivityEvent) {
-            Log.d("MyTag", "UserActivity got an event, namely " + message.getClass().getName());
-            if (message instanceof MsgChatMessage) {
-            } else if (message instanceof MsgCreateRoom) {
-            } else if (message instanceof MsgJoinRoom) {
-            } else if (message instanceof MsgLeaveRoom) {
-            } else if (message instanceof MsgLostChatRoom) {
-            } else if (message instanceof MsgLostUserInChat) {
+        if (event instanceof ToActivityEvent){
+            if (message instanceof MsgLostUserInChat) {
                 if(((MsgLostUserInChat) message).getChatID() == chatId) {
                     refreshUserList();
                 }
-
-            } else if (message instanceof MsgNewChatRoom) {
             } else if (message instanceof MsgNewUserInChat) {
                 if(((MsgNewUserInChat) message).getChatID() == chatId) {
                     refreshUserList();
                 }
-
-            } else if (message instanceof MsgConnectionLost){
-            } else if (message instanceof MsgPlatformData) {
             }
         }
     }

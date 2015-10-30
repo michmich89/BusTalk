@@ -153,6 +153,7 @@ public class MainChatActivity extends BindingActivity {
                         public void run() {
                             System.out.println("Running the run");
                             String nextStop = nextStopMessage.getData();
+                            System.out.println("reg: " + client.getGroupId());
                             setTitle(R.string.title_activity_main_chat);
                             String nextStop2 = getString(R.string.nextStop2) + " ";
                             ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
