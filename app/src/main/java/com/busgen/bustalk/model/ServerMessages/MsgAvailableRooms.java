@@ -1,8 +1,5 @@
 package com.busgen.bustalk.model.ServerMessages;
 
-import android.util.Log;
-
-import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
 
@@ -27,6 +24,10 @@ public class MsgAvailableRooms implements IServerMessage{
 
     public void addRoomToList(IChatroom chatroom){
         roomList.add(chatroom);
+    }
+
+    public void addRoomsToList(List<IChatroom> chatrooms) {
+        roomList.addAll(chatrooms);
     }
 
     public String getGroupId(){

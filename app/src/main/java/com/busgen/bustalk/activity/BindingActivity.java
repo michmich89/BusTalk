@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.activity;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
 
 import com.busgen.bustalk.events.Event;

@@ -1,8 +1,9 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.service;
 
 import android.util.Log;
 
 import com.busgen.bustalk.model.Chatroom;
+import com.busgen.bustalk.model.IChatroom;
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
@@ -19,6 +20,9 @@ import com.busgen.bustalk.utils.MessageTypes;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nalex on 16/10/2015.
@@ -62,11 +66,7 @@ public class JSONDecoder {
                 }
                 MsgUsersInChat usersInChat = new MsgUsersInChat(jsonObject.getInt("chatId"));
                 Log.d("MyTag", "" + "user array length: " + array.length());
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject userObject = array.getJSONObject(i);
-                    IUser user = new User(userObject.getString("name"), userObject.getString("interests"));
-                    usersInChat.addUserToList(user);
-                }
+                usersInChat.addUsersToList(getUsersFromJson(array));
                 Log.d("MyTag", "" + "Number of users in room " + usersInChat.getChatID() + ": " + usersInChat.getUserList().size());
                 serverMessage = usersInChat;
             }else if(type == MessageTypes.NEW_USER_IN_CHAT_NOTIFICATION) {
@@ -82,14 +82,7 @@ public class JSONDecoder {
                 JSONArray array = jsonObject.getJSONArray("chatrooms");
                 MsgAvailableRooms rooms = new MsgAvailableRooms(jsonObject.getString("groupId"));
                 Log.d("MyTag", "Nbr of chatrooms available: " + array.length());
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject roomObject = array.getJSONObject(i);
-                    Log.d("MyTag", "adding array object with index " + i);
-                    Log.d("MyTag", "adding room with chatId " + roomObject.getInt("chatId") + " and title " + roomObject.getString("name"));
-                    Chatroom chatroom = new Chatroom(roomObject.getInt("chatId"), roomObject.getString("name"));
-
-                    rooms.addRoomToList(chatroom);
-                }
+                rooms.addRoomsToList(getRoomsFromJson(array));
                 serverMessage = rooms;
             }
 
@@ -102,5 +95,27 @@ public class JSONDecoder {
         }catch(JSONException e){
             return false;
         }
+    }
+
+    private List<IChatroom> getRoomsFromJson(JSONArray array) throws JSONException {
+        List<IChatroom> chatrooms = new ArrayList<IChatroom>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject roomObject = array.getJSONObject(i);
+            Log.d("MyTag", "adding array object with index " + i);
+            Log.d("MyTag", "adding room with chatId " + roomObject.getInt("chatId") + " and title " + roomObject.getString("name"));
+            Chatroom chatroom = new Chatroom(roomObject.getInt("chatId"), roomObject.getString("name"));
+            chatrooms.add(chatroom);
+        }
+        return chatrooms;
+    }
+
+    private List<IUser> getUsersFromJson(JSONArray array) throws JSONException {
+        List<IUser> users = new ArrayList<IUser>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject userObject = array.getJSONObject(i);
+            IUser user = new User(userObject.getString("name"), userObject.getString("interests"));
+            users.add(user);
+        }
+        return users;
     }
 }

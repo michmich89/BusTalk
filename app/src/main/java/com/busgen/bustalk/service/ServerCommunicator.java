@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.service;
 
 import android.util.Log;
 
@@ -8,18 +8,18 @@ import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.IEventBusListener;
 import com.busgen.bustalk.model.IServerMessage;
-import com.busgen.bustalk.model.ServerMessages.MsgConnectToServer;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
-import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
-import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
-import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.service.EventBus;
+import com.busgen.bustalk.service.JSONDecoder;
+import com.busgen.bustalk.service.JSONEncoder;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
@@ -56,7 +56,11 @@ public class ServerCommunicator implements IEventBusListener {
     public void sendMessage(IServerMessage message) {
         if (webSocket != null) {
             Log.d("MyTag", "sending message to server...");
-            webSocket.sendText(jsonEncoder.encode(message));
+            try {
+                webSocket.sendText(jsonEncoder.encode(message));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

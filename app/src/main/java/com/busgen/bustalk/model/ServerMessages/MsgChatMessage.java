@@ -11,24 +11,24 @@ public class MsgChatMessage implements IServerMessage {
 
     private String message;
     private int chatId;
-    private String nickname;
+    private String userName;
     private String date;
     private boolean isMe;
 
-    public MsgChatMessage(boolean isMe, String message, String date, String nickname, int chatId) {
+    public MsgChatMessage(boolean isMe, String message, String date, String userName, int chatId) {
         this.isMe = isMe;
         this.message = message;
         this.date = date;
-        this.nickname = nickname;
+        this.userName = userName;
         this.chatId = chatId;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public int getChatId() {
@@ -71,7 +71,7 @@ public class MsgChatMessage implements IServerMessage {
             chatMessage = (MsgChatMessage) object;
             Log.d("MyTag", "chatMessage not null");
             if ((this.isMe == chatMessage.getIsMe() && this.getMessage().equals(chatMessage.getMessage())
-                    && this.date.equals(chatMessage.getDate()) && this.nickname.equals(chatMessage.getNickname())
+                    && this.date.equals(chatMessage.getDate()) && this.userName.equals(chatMessage.getUserName())
                     && this.chatId == chatMessage.getChatId())){
                 Log.d("MyTag", "equals is true");
                 return true;
@@ -86,7 +86,7 @@ public class MsgChatMessage implements IServerMessage {
         int isMe;
         int message;
         int date;
-        int nickname;
+        int userName;
         int chatId;
 
         if (this.isMe = true){
@@ -97,10 +97,10 @@ public class MsgChatMessage implements IServerMessage {
 
         message = this.message.hashCode();
         date = this.date.hashCode();
-        nickname = this.nickname.hashCode();
-        chatId = this.nickname.hashCode();
+        userName = this.userName.hashCode();
+        chatId = this.userName.hashCode();
 
-        int hashCode = (isMe + message + date + nickname + chatId);
+        int hashCode = (isMe + message + date + userName + chatId);
         return hashCode;
     }
 }

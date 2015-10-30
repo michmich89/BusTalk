@@ -1,14 +1,10 @@
 package com.busgen.bustalk.model;
 
-import android.util.Log;
-
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Observable;
 
 /**
  * Created by Johan on 2015-10-02.

@@ -3,14 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.busgen.bustalk.LoginActivity">
+    tools:context="com.busgen.bustalk.activity.LoginActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/notification_text"
+        android:text="Connection to server failed.\n\nTo login you need to:\n1. Be inside a bus 55 or one of its bus stops\n2. Have internet turned on\n3. Have wifi turned on"
+        android:visibility="invisible"
+        android:layout_above="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"/>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:id="@+id/linearLayout">
         <EditText
             android:id="@+id/user_name_input"
             android:layout_width="200dp"
@@ -32,7 +42,6 @@
             android:background="@color/button_color"
             android:textColor="@color/button_text_color"/>
     </LinearLayout>
-
 
 
 </RelativeLayout>

@@ -2,7 +2,6 @@ package com.busgen.bustalk.model.ServerMessages;
 
 import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.IUser;
-import com.busgen.bustalk.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,10 @@ public class MsgUsersInChat implements IServerMessage{
 
     public void addUserToList(IUser user){
         userList.add(user);
+    }
+
+    public void addUsersToList(List<IUser> users) {
+        userList.addAll(users);
     }
 
     public int getChatID(){

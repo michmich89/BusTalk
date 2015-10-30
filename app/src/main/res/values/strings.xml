@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_main_chat">Bus 55 general chat</string>
+    <string name="title_activity_main_chat">Bus 55</string>
     <string name="title_activity_login">BusTalk</string>
     <string name="message_edit_hint">Type your message...</string>
     <string name="button_text">Send</string>

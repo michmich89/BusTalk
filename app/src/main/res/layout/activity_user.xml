@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.busgen.bustalk.UserActivity">
+    tools:context="com.busgen.bustalk.activity.UserActivity">
 
     <ListView
         android:id="@+id/user_list_view"

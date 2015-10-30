@@ -1,23 +1,27 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.adapter;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import com.busgen.bustalk.R;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.List;
 
 /**
- * Created by miche on 2015-10-02.
+ * This class is responsible for transforming MsgChatMesssage objects into suitable view items that
+ * are to be inserted in the ListView belonging to the MainChatActivity.
+ *
+ * parts taken from http://www.codeproject.com/Tips/897826/Designing-Android-Chat-Bubble-Chat-UI
  */
 public class MessageAdapter extends BaseAdapter{
-
     private final List<MsgChatMessage> messages;
     private Activity context;
     private LayoutInflater inflater;
@@ -61,63 +65,54 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        //ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
         ViewHolder holder;
         MsgChatMessage message = getItem(position);
 
-        //Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
-        //future reuse
         if(convertView == null){
             convertView = inflater.inflate(R.layout.message_item, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
-        }//Reuses the holder set as tag to convertView, eliminates the need to call findViewById
+        }
         else{
             holder = (ViewHolder) convertView.getTag();
         }
 
         boolean isMe = message.getIsMe();
-
         setAlignment(holder, isMe);
         holder.messageText.setText(message.getMessage());
         holder.messageDate.setText(message.getDate());
-        holder.userName.setText(message.getNickname() + ":");
-
-        //Underlines the username text, not applied at the moment
-        //holder.userName.setPaintFlags(holder.userName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        holder.userName.setText(message.getUserName() + ":");
 
         return convertView;
     }
 
-	//Sets the layout of a message item in the ListView depending on who sent the message
+    /**
+     * Sets the alignment and background image of a message in the chat window depending on who
+     * sent the message. If the message was sent from the user it is aligned to the right. If it
+     * was sent from another user it is aligned to the left.
+     *
+     * @param holder The ViewHolder object corresponding to a certain View.
+     * @param isMe A boolean that is true if the message was sent from the user, false otherwise.
+     */
     private void setAlignment(ViewHolder holder, boolean isMe){
         if (isMe) {
-			//Sets a 9-patch image of a white chat bubble as background for message text
             holder.messageTextContainer.setBackgroundResource(R.drawable.bubble_white_normal_mirror);
 
-			//Aligns the message text and its corresponding bubble to the right in message item
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.messageTextContainer.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
             holder.messageTextContainer.setLayoutParams(layoutParams);
 
-			//Aligns message item to the right in the ListView
             RelativeLayout.LayoutParams lp =
                     (RelativeLayout.LayoutParams) holder.messageTopContainer.getLayoutParams();
             lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
             lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             holder.messageTopContainer.setLayoutParams(lp);
 
-			//Aligns the message date to the right in the message item
             layoutParams = (LinearLayout.LayoutParams) holder.messageDate.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
             holder.messageDate.setLayoutParams(layoutParams);
 
-			//Sets the visibility of userName TextView to "gone"
-			holder.userName.setVisibility(View.VISIBLE);
-
-            //This could be redundant
             layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
             holder.messageText.setLayoutParams(layoutParams);
@@ -139,17 +134,15 @@ public class MessageAdapter extends BaseAdapter{
 			layoutParams.gravity = Gravity.LEFT;
 			holder.messageDate.setLayoutParams(layoutParams);
 
-            //Sets the visibility of userName TextView to "visible"
-            holder.userName.setVisibility(View.VISIBLE);
-
-			//This could be redundant
             layoutParams = (LinearLayout.LayoutParams) holder.messageText.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
             holder.messageText.setLayoutParams(layoutParams);
         }
     }
 
-	//ViewHolder class used for the ViewHolder design pattern
+    /**
+     * Viewholder class that is used as part of the ViewHolder design pattern.
+     */
 	private static class ViewHolder{
 		public TextView messageText;
 		public TextView messageDate;
@@ -158,7 +151,12 @@ public class MessageAdapter extends BaseAdapter{
         public TextView userName;
 	}
 
-	//Returns a ViewHolder corresponding to the View that is sent in as a parameter
+    /**
+     * Creates a ViewHolder corresponding to the View passed in as a parameter.
+     *
+     * @param v The View that is used to create the ViewHolder.
+     * @return Returns the ViewHolder corresponding to the view passed in as a parameter.
+     */
     private ViewHolder createViewHolder(View v){
         ViewHolder holder = new ViewHolder();
         holder.messageDate = (TextView) v.findViewById(R.id.message_date);
