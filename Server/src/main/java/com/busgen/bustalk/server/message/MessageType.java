@@ -27,6 +27,6 @@ public class MessageType {
     public static final int ROOM_DELETED_NOTIFICATION = 107;
     public static final int ROOM_CREATED_NOTIFICATION = 108;
     public static final int NAME_AND_INTEREST_SET = 109;
-    //TODO: Rensa och snygga upp bland dessa?
+
     
 }

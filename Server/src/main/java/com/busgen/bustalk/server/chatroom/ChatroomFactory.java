@@ -30,10 +30,22 @@ public class ChatroomFactory {
         mainChatIdNbr = 0;
     }
 
+    /**
+     * Getter for singleton instance using the initialization-on-demand-holder idiom
+     * Ensures thread safety
+     *
+     * @return the factory singleton
+     */
     public static ChatroomFactory getFactory(){
         return Holder.INSTANCE;
     }
 
+    /**
+     * Creates a chatroom
+     *
+     * @param chatroomSubject Title/Name/Subject of chatroom
+     * @return the newly created chatroom
+     */
     public IChatroom createChatroom(String chatroomSubject){
         IChatroom temporaryReference = new Chatroom(this.normalChatIdNbr, chatroomSubject);
         this.normalChatIdNbr++;

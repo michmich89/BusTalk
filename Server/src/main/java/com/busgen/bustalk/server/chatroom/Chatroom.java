@@ -6,13 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Holds all important data related to a chat room.
- *
- * Created by Kristoffer on 2015-09-29.
+ * Data model of a chatroom
  */
 public class Chatroom implements IChatroom {
-
-    //TODO: We dont have any way of making a private chatroom
 
     private String chatroomTitle;
     private final int idNbr;
