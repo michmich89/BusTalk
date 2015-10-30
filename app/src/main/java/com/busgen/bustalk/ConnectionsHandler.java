@@ -15,6 +15,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
+import com.busgen.bustalk.model.ServerMessages.MsgStartPlatformTimer;
 import com.busgen.bustalk.service.EventBus;
 
 import java.util.Timer;
@@ -86,12 +87,12 @@ public class ConnectionsHandler implements IEventBusListener{
                         couldConnect = true;
                         groupID = "Test";
                         eventBus.postEvent(new ToClientEvent(new MsgSetGroupId(groupID)));
-                        startTimer();
+                        //startTimer();
                     }else if(wifiController.isConnected()){
                         groupID = wifiController.getWifiName();
                         eventBus.postEvent(new ToClientEvent(new MsgSetGroupId(groupID)));
                         couldConnect = true;
-                        startTimer();
+                        //startTimer();
                     }else{
                         couldConnect = false;
                     }
@@ -100,6 +101,8 @@ public class ConnectionsHandler implements IEventBusListener{
                 }
                 eventBus.postEvent(new ToActivityEvent(new MsgConnectionStatus(couldConnect)));
 
+            } else if (message instanceof MsgStartPlatformTimer) {
+                startTimer();
             }
         }
     }

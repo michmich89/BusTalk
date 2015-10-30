@@ -53,6 +53,8 @@ public class LoginActivity extends BindingActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //eventBus = EventBus.getInstance();
+        //eventBus.clearSubscribers();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         startService(new Intent(this, MainService.class));
@@ -223,5 +225,6 @@ public class LoginActivity extends BindingActivity {
 
     @Override
     public void onBackPressed() {
+        this.finish();
     }
 }

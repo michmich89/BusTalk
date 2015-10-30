@@ -1,5 +1,7 @@
 package com.busgen.bustalk.service;
 
+import android.util.Log;
+
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.model.IEventBusListener;
 
@@ -35,13 +37,18 @@ public class EventBus {
         }
     }
 
-    public synchronized void postEvent(Event event){
+    public void postEvent(Event event){
         for (int i = 0; i < subscribers.size(); i++){
-
-            System.out.println("skickar event till " + subscribers.size() + " subscribers...");
             subscribers.get(i).onEvent(event);
         }
+        Log.d("BusTag", "skickar event till " + subscribers.size() + " subscribers...");
 
+    }
+
+    public void clearSubscribers() {
+        if (subscribers != null) {
+            subscribers.clear();
+        }
     }
 
 
