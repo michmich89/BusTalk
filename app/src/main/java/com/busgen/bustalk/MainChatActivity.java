@@ -86,7 +86,7 @@ public class MainChatActivity extends BindingActivity {
 
                 messageInputLine.setText("");
                 displayMessage(message);
-                myChatroom.addMessage(message);
+                //myChatroom.addMessage(message);
 
                 Event event = new ToServerEvent(message);
                 eventBus.postEvent(event);
@@ -122,7 +122,6 @@ public class MainChatActivity extends BindingActivity {
                         displayMessage(chatMessage);
                     }
                 });
-                myChatroom.addMessage(chatMessage);
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 updateRoom(chatId);
