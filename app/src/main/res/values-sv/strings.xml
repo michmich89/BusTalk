@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Inställningar</string>
-    <string name="title_activity_main_chat">Buss 55 allmän chatt</string>
+    <string name="title_activity_main_chat">Buss 55</string>
     <string name="title_activity_login">BusTalk</string>
     <string name="message_edit_hint">Skriv meddelande...</string>
     <string name="button_text">Skicka</string>

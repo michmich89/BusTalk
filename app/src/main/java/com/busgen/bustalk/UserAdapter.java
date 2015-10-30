@@ -2,23 +2,22 @@ package com.busgen.bustalk;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IUser;
-import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import java.util.List;
 
 /**
- * Created by miche on 2015-10-02.
+ * This class is responsible for transforming User objects into suitable view items that
+ * are to be inserted in the ListView belonging to the UserActivity.
  */
 public class UserAdapter extends BaseAdapter{
-
 	private List<IUser> users;
 	private Activity context;
 	private LayoutInflater inflater;
@@ -61,24 +60,19 @@ public class UserAdapter extends BaseAdapter{
 
 	@Override
 	public long getItemId(int position) {
-		//Set to 0 until a suitable implementation is added
 		return 0;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
-		//ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
 		ViewHolder holder;
 		IUser user = getItem(position);
 
-		//Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
-		//future reuse
 		if(convertView == null){
 			convertView = inflater.inflate(R.layout.user_item, null);
 			holder = createViewHolder(convertView);
 			convertView.setTag(holder);
-		}//Reuses the holder set as tag to convertView, eliminates the need to call findViewById
+		}
 		else{
 			holder = (ViewHolder) convertView.getTag();
 		}
@@ -86,18 +80,25 @@ public class UserAdapter extends BaseAdapter{
 		holder.userInterest.setText(user.getInterest());
 		if (user.getUserName().equals(Client.getInstance().getUserName())) {
 				holder.userName.setTextColor(Color.rgb(0, 110, 0));
-			}
+		}
 
 		return convertView;
 	}
 
-	//ViewHolder class used for the ViewHolder design pattern
+	/**
+	 * Viewholder class that is used as part of the ViewHolder design pattern.
+	 */
 	private static class ViewHolder{
 		public TextView userName;
 		public TextView userInterest;
 	}
 
-	//Returns a ViewHolder corresponding to the View that is sent in as a parameter
+	/**
+	 * Creates a ViewHolder corresponding to the View passed in as a parameter.
+	 *
+	 * @param v The View that is used to create the ViewHolder.
+	 * @return Returns the ViewHolder corresponding to the view passed in as a parameter.
+	 */
 	private ViewHolder createViewHolder(View v){
 		ViewHolder holder = new ViewHolder();
 		holder.userName = (TextView) v.findViewById(R.id.user_name);

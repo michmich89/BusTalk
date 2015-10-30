@@ -1,18 +1,14 @@
 package com.busgen.bustalk;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.busgen.bustalk.events.Event;
@@ -25,22 +21,19 @@ import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRoomsRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectToServer;
-import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
 import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
-import com.busgen.bustalk.model.User;
-import com.busgen.bustalk.service.EventBus;
 import com.busgen.bustalk.service.MainService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LoginActivity extends BindingActivity {
     private EditText userNameInput;
     private EditText interestInput;
+    private TextView notificationText;
     private Button loginButton;
     private Toast loginToast;
     private Toast noConnectionToast;
@@ -90,6 +83,7 @@ public class LoginActivity extends BindingActivity {
     private void initViews() {
         userNameInput = (EditText) findViewById(R.id.user_name_input);
         interestInput = (EditText) findViewById(R.id.interest_input);
+        notificationText = (TextView) findViewById(R.id.notification_text);
         loginButton = (Button) findViewById(R.id.login_button);
         loginToast = Toast.makeText(LoginActivity.this, "You have to choose a nickname",
                 Toast.LENGTH_SHORT);
