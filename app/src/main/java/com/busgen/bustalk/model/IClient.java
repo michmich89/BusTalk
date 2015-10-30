@@ -1,6 +1,5 @@
 package com.busgen.bustalk.model;
 
-import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 import com.busgen.bustalk.service.EventBus;
 
 import java.util.Collection;

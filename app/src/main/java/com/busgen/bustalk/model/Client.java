@@ -2,23 +2,19 @@ package com.busgen.bustalk.model;
 
 import android.util.Log;
 
-import com.busgen.bustalk.MainChatActivity;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToClientEvent;
 import com.busgen.bustalk.events.ToServerEvent;
 import com.busgen.bustalk.model.ServerMessages.MsgAvailableRooms;
 import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
-import com.busgen.bustalk.model.ServerMessages.MsgChooseNickname;
 import com.busgen.bustalk.model.ServerMessages.MsgCreateRoom;
-import com.busgen.bustalk.model.ServerMessages.MsgJoinRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLeaveRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLostChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewChatRoom;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNicknameAvailable;
-import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
@@ -210,9 +206,9 @@ public class Client implements IClient, IEventBusListener {
             Log.d("MyTag", message.getClass().getName());
             if (message instanceof MsgChatMessage) {
                 MsgChatMessage chatMessage = (MsgChatMessage) message;
-                Log.d("MyTag", "sender of message: " + chatMessage.getNickname());
+                Log.d("MyTag", "sender of message: " + chatMessage.getUserName());
                 Log.d("MyTag", "And I am: " + getUserName());
-                Log.d("MyTag", "Is it me who sent it? " + chatMessage.getNickname().equals(getUserName()));
+                Log.d("MyTag", "Is it me who sent it? " + chatMessage.getUserName().equals(getUserName()));
 
                 Event newEvent = new ToActivityEvent(chatMessage);
                 eventBus.postEvent(newEvent);

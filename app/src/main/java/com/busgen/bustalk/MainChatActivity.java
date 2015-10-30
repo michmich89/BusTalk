@@ -5,8 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.*;
-import android.widget.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToServerEvent;
@@ -20,6 +26,7 @@ import com.busgen.bustalk.model.ServerMessages.MsgPlatformData;
 import com.busgen.bustalk.model.ServerMessages.MsgStartPlatformTimer;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgUsersInChatRequest;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -265,13 +272,13 @@ public class MainChatActivity extends BindingActivity {
 
     private void drawNewMessage(final MsgChatMessage chatMessage) {
         if (chatMessage.getChatId() == myChatroom.getChatID() &&
-                !chatMessage.getNickname().equals(client.getUserName())){
+                !chatMessage.getUserName().equals(client.getUserName())){
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     displayMessage(chatMessage);
                 }
             });
-    }
+        }
     }
 }
