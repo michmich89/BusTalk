@@ -1,10 +1,11 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+<<<<<<< HEAD:app/src/main/java/com/busgen/bustalk/MainChatActivity.java
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+=======
+import android.view.*;
+import android.widget.*;
+
+import com.busgen.bustalk.adapter.MessageAdapter;
+import com.busgen.bustalk.R;
+>>>>>>> Created new packages.:app/src/main/java/com/busgen/bustalk/activity/MainChatActivity.java
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToServerEvent;
@@ -46,8 +54,7 @@ public class MainChatActivity extends BindingActivity {
     private MenuItem usersPresent;
     private MenuItem userActivityMenuItem;
     private String userName;
-    private String interest;
-    private boolean backButtonPressed;
+    private String interest;    private boolean backButtonPressed;
     private AlertDialog alertDialog;
 
     @Override

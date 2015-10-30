@@ -1,9 +1,14 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
+<<<<<<< HEAD:app/src/main/java/com/busgen/bustalk/UserActivity.java
+=======
+import com.busgen.bustalk.R;
+import com.busgen.bustalk.adapter.UserAdapter;
+>>>>>>> Created new packages.:app/src/main/java/com/busgen/bustalk/activity/UserActivity.java
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.model.Client;

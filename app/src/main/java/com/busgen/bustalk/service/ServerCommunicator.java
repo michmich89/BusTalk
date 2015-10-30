@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.service;
 
 import android.util.Log;
 
@@ -11,6 +11,8 @@ import com.busgen.bustalk.model.IServerMessage;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionEstablished;
 import com.busgen.bustalk.model.ServerMessages.MsgConnectionLost;
 import com.busgen.bustalk.service.EventBus;
+import com.busgen.bustalk.service.JSONDecoder;
+import com.busgen.bustalk.service.JSONEncoder;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;

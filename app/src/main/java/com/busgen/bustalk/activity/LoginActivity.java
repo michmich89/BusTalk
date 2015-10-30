@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.busgen.bustalk.R;
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.events.ToServerEvent;

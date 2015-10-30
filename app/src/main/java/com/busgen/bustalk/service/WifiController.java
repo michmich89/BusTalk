@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.service;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;

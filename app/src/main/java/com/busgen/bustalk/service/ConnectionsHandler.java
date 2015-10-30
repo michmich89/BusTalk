@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.service;
 
 import android.net.wifi.WifiManager;
 
@@ -16,7 +16,6 @@ import com.busgen.bustalk.model.ServerMessages.MsgConnectionStatus;
 import com.busgen.bustalk.model.ServerMessages.MsgPlatformDataRequest;
 import com.busgen.bustalk.model.ServerMessages.MsgSetGroupId;
 import com.busgen.bustalk.model.ServerMessages.MsgStartPlatformTimer;
-import com.busgen.bustalk.service.EventBus;
 
 import java.util.Timer;
 import java.util.TimerTask;

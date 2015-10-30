@@ -1,4 +1,4 @@
-package com.busgen.bustalk;
+package com.busgen.bustalk.service;
 
 import android.util.Base64;
 import android.util.Log;
