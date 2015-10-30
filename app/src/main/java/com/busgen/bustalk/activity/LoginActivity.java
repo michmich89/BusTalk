@@ -165,6 +165,7 @@ public class LoginActivity extends BindingActivity {
             isConnected = false;
             progress.dismiss();
             noConnectionToast.show();
+            notificationText.setVisibility(View.VISIBLE);
         } else {
             System.out.println("Connected to server! Set username and interests");
             userName = userNameInput.getText().toString();
