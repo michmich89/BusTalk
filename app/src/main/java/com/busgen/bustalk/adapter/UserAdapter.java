@@ -5,15 +5,19 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< HEAD:app/src/main/java/com/busgen/bustalk/UserAdapter.java
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-=======
+
 import android.widget.*;
 
 import com.busgen.bustalk.R;
->>>>>>> Created new packages.:app/src/main/java/com/busgen/bustalk/adapter/UserAdapter.java
+
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import com.busgen.bustalk.R;
+
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IUser;
 

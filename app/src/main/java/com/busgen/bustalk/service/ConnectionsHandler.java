@@ -27,7 +27,6 @@ public class ConnectionsHandler implements IEventBusListener{
     private ServerCommunicator serverCom;
     private PlatformCommunicator platformCom;
     private WifiController wifiController;
-    private boolean connectionStatus;
 
     private EventBus eventBus;
     private String groupID;
@@ -58,7 +57,6 @@ public class ConnectionsHandler implements IEventBusListener{
      */
     private void startTimer() {
         if(!isTimerRunning) {
-            System.out.println("Trying to start timer");
             this.timer = new Timer("wifiCheck");
             TimerTask timerTask = new WifiTimerTask();
             timer.scheduleAtFixedRate(timerTask, 0, 5000);
@@ -70,7 +68,6 @@ public class ConnectionsHandler implements IEventBusListener{
         timer.cancel();
         timer.purge();
         isTimerRunning = false;
-        System.out.println("Timer stopped");
     }
 
     @Override

@@ -103,7 +103,6 @@ public class MainChatActivity extends BindingActivity {
 
                 messageInputLine.setText("");
                 displayMessage(message);
-                //myChatroom.addMessage(message);
 
                 Event event = new ToServerEvent(message);
                 eventBus.postEvent(event);
@@ -190,7 +189,6 @@ public class MainChatActivity extends BindingActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (dialog != null) {
                                     dialog.dismiss();
-                                    //dialog = null;
                                 }
                                 Intent intent = new Intent(MainChatActivity.this, LoginActivity.class);
                                 startActivity(intent);
@@ -264,11 +262,9 @@ public class MainChatActivity extends BindingActivity {
     }
 
     private void printNextBusTop(final MsgPlatformData platformData) {
-        System.out.println("Getting the busstop event");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Running the run");
                 String nextStop = platformData.getData();
                 String nextStop2 = getString(R.string.nextStop2) + " ";
                 ((TextView) findViewById(R.id.nextStopLabel)).setText(nextStop2 + nextStop);
