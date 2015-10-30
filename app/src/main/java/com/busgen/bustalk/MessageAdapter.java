@@ -61,18 +61,14 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        //ViewHolder design pattern is used to improve performance by minimizing findViewById calls.
         ViewHolder holder;
         MsgChatMessage message = getItem(position);
 
-        //Creates a new message_item-view and a viewHolder of the same view gets set as a tag for
-        //future reuse
         if(convertView == null){
             convertView = inflater.inflate(R.layout.message_item, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
-        }//Reuses the holder set as tag to convertView, eliminates the need to call findViewById
+        }
         else{
             holder = (ViewHolder) convertView.getTag();
         }
