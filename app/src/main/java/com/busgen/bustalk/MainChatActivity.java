@@ -128,6 +128,7 @@ public class MainChatActivity extends BindingActivity {
             if (message instanceof MsgChatMessage) {
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
                 drawNewMessage(chatMessage);
+
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 updateRoom(chatId);
@@ -256,11 +257,14 @@ public class MainChatActivity extends BindingActivity {
     }
 
     private void drawNewMessage(final MsgChatMessage chatMessage) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                displayMessage(chatMessage);
-            }
-        });
+        if (chatMessage.getChatId() == myChatroom.getChatID() &&
+                chatMessage.getNickname().equals(client.getUserName())){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayMessage(chatMessage);
+                }
+            });
+    }
     }
 }
