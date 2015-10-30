@@ -11,6 +11,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import com.busgen.bustalk.model.Client;
 
+/**
+ * Class that holds everything that is basically not an activity and is run by the android os.
+ */
 public class MainService extends Service {
 
     private static MainService instance;
@@ -31,7 +34,6 @@ public class MainService extends Service {
 
         eventBus = EventBus.getInstance();
         client = Client.getInstance();
-        //connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
         connectionsHandler = new ConnectionsHandler((WifiManager)getSystemService(Context.WIFI_SERVICE));
         eventBus.register(client);
 
@@ -58,7 +60,6 @@ public class MainService extends Service {
     }
 
     public Client getClient(){
-        Log.d("MyTag", "getting client from mainservice");
         return client;
     }
 }
