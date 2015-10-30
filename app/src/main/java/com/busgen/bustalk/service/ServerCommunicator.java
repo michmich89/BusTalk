@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Alexander Kloutschek on 2015-10-02.
+ * Class that is responsible for the connection to our websocket server.
  */
 public class ServerCommunicator implements IEventBusListener {
 <<<<<<< HEAD
