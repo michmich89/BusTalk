@@ -128,7 +128,6 @@ public class MainChatActivity extends BindingActivity {
             if (message instanceof MsgChatMessage) {
                 final MsgChatMessage chatMessage = (MsgChatMessage) message;
                 drawNewMessage(chatMessage);
-
             } else if (message instanceof MsgUsersInChat) {
                 int chatId = ((MsgUsersInChat) message).getChatID();
                 updateRoom(chatId);
