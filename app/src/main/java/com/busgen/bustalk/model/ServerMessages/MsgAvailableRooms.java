@@ -29,6 +29,10 @@ public class MsgAvailableRooms implements IServerMessage{
         roomList.add(chatroom);
     }
 
+    public void addRoomsToList(List<IChatroom> chatrooms) {
+        roomList.addAll(chatrooms);
+    }
+
     public String getGroupId(){
         return groupId;
     }
