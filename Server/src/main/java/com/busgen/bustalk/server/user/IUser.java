@@ -1,9 +1,5 @@
 package com.busgen.bustalk.server.user;
 
-import com.busgen.bustalk.server.chatroom.IChatroom;
-
-import java.util.List;
-
 /**
  * Interface for a user.
  *

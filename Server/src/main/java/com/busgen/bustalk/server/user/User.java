@@ -1,10 +1,5 @@
 package com.busgen.bustalk.server.user;
 
-import com.busgen.bustalk.server.chatroom.IChatroom;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Holds all important data related to a user.
  *

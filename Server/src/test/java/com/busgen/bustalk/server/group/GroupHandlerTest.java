@@ -3,8 +3,6 @@ package com.busgen.bustalk.server.group;
 import com.busgen.bustalk.server.BusTalkHandler;
 import com.busgen.bustalk.server.message.MessageType;
 import com.busgen.bustalk.server.message.UserMessage;
-import com.busgen.bustalk.server.user.IUser;
-import com.busgen.bustalk.server.user.User;
 import com.busgen.bustalk.server.user.UserHandler;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -13,7 +11,7 @@ import org.mockito.Mockito;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class GroupHandlerTest {
 

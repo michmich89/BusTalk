@@ -3,9 +3,9 @@ package com.busgen.bustalk.server.user;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.websocket.*;
+import javax.websocket.Session;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by danie on 2015-10-13.

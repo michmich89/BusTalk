@@ -14,7 +14,6 @@ import org.mockito.Mockito;
 
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
-
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;

@@ -1,10 +1,5 @@
 package com.busgen.bustalk.server.chatroom;
 
-import com.busgen.bustalk.server.user.IUser;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Data model of a chatroom
  */
