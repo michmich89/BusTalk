@@ -5,9 +5,11 @@ import android.test.AndroidTestCase;
 
 
 /**
- * Created by Alexander Kloutschek on 2015-10-29.
+ * Testclass for PlatformCommunicator. It is important to note that the 2 last tests
+ * will only work if the platform is up and running. (Our last test 30/10-15 the platform was down)
+ * The last method also requires that particular bus to be up and running.
  */
-public class TestPlatformCommunicator extends AndroidTestCase{
+public class PlatformCommunicatorTest extends AndroidTestCase{
     protected PlatformCommunicator platformCommunicator;
 
     @Override
@@ -33,8 +35,7 @@ public class TestPlatformCommunicator extends AndroidTestCase{
         assertTrue(platformData.equals("Next busstop could not be found"));
     }
 
-    public void testGetPlatformDataForTestBus(){
-        //needs to have an active bus.
+    public void testGetPlatformDataForSimulatedBus(){
         String busName = "Test";
         String platformData = platformCommunicator.getNextStopData(busName);
         System.out.println(platformData);
