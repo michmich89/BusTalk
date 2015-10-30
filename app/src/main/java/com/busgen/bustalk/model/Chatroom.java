@@ -96,9 +96,17 @@ public class Chatroom implements IChatroom, Serializable {
 
     @Override
     public boolean equals(Object object){
+        if(object == this){
+            return true;
+        }
+        if(object == null){
+            return false;
+        }
+        if(object.getClass() != this.getClass()){
+            return false;
+        }
 
-        //Borde den kolla något annat?
-        if ((object instanceof IChatroom) && this.getChatID() == ((IChatroom)object).getChatID()){
+        if (this.getChatID() == ((Chatroom)object).getChatID()){
             return true;
         }
         return false;
