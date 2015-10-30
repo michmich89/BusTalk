@@ -1,9 +1,5 @@
 package com.busgen.bustalk;
 
-import android.util.Log;
-
-import com.busgen.bustalk.events.Event;
-import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.model.Chatroom;
 import com.busgen.bustalk.model.Client;
 import com.busgen.bustalk.model.IChatroom;
@@ -11,8 +7,6 @@ import com.busgen.bustalk.model.ServerMessages.MsgChatMessage;
 
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

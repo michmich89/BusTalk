@@ -1,8 +1,9 @@
 package com.busgen.bustalk;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
+
 import com.busgen.bustalk.events.Event;
 import com.busgen.bustalk.events.ToActivityEvent;
 import com.busgen.bustalk.model.Client;
@@ -13,6 +14,7 @@ import com.busgen.bustalk.model.IUser;
 import com.busgen.bustalk.model.ServerMessages.MsgLostUserInChat;
 import com.busgen.bustalk.model.ServerMessages.MsgNewUserInChat;
 import com.busgen.bustalk.service.EventBus;
+
 import java.util.ArrayList;
 
 /**
